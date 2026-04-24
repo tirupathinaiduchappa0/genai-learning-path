@@ -1,0 +1,71 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# 📦 GenAI Learning Project — Dependencies
+# ═══════════════════════════════════════════════════════════════════════════════
+# Install all: pip install -r requirements.txt
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+# ─── 🔗 LangChain Core ──────────────────────────────────────────────────────
+# The main framework for building LLM-powered applications
+langchain                       # Core chains, prompts, output parsers, LCEL
+langchain-community             # Community-maintained loaders, tools, integrations
+langchain-core                  # Base abstractions (Documents, Runnables, Messages)
+
+
+# ─── 🔑 Environment & Config ────────────────────────────────────────────────
+# Load API keys from .env files — NEVER hardcode secrets
+python-dotenv                   # load_dotenv() reads .env into os.environ
+
+
+# ─── 📄 Document Loaders — File Format Support ──────────────────────────────
+# Each package enables loading a specific file type into LangChain Documents
+
+# PDF Loading (Lesson 3.2 — PyPDFLoader)
+pypdf                           # Pure-Python PDF parser, extracts text page-by-page
+
+# Web Scraping (Lesson 3.2 — WebBaseLoader)
+beautifulsoup4                  # HTML parser, used with SoupStrainer to filter content
+lxml                            # Fast XML/HTML parser backend for BeautifulSoup
+
+# Academic Papers (Lesson 3.2 — ArxivLoader)
+arxiv                           # Python wrapper for arXiv API (search & download papers)
+pymupdf                         # PDF text extraction engine used by ArxivLoader internally
+
+# Wikipedia (Lesson 3.2 — WikipediaLoader)
+wikipedia                       # Python wrapper for Wikipedia API (search & fetch articles)
+
+# XML Loading (Lesson 3.2 — UnstructuredXMLLoader)
+unstructured                    # General-purpose document parser (XML, HTML, DOCX, etc.)
+
+# JSON Loading (Lesson 3.2 — JSONLoader)
+jq                              # jq-style JSON query language for extracting fields
+
+
+# ─── ✂️ Text Splitting (Lesson 3.3) ──────────────────────────────────────────
+langchain-text-splitters        # All text splitter classes (Recursive, Character, HTML, JSON)
+
+
+# ─── 🧮 Embeddings (Lesson 4.1) ─────────────────────────────────────────────
+langchain-huggingface           # HuggingFace embedding integration for LangChain
+sentence-transformers           # Sentence-transformer models (all-MiniLM-L6-v2, etc.)
+# langchain-openai              # OpenAI embeddings + ChatOpenAI (needs OPENAI_API_KEY)
+
+
+# ─── 🤖 LLM Providers (Lesson 6.1) ─────────────────────────────────────────
+langchain-groq                  # Groq LLM integration (FREE API, ultra-fast inference)
+
+
+# ─── 🚀 LangServe (Lesson 7.1) ─────────────────────────────────────────────
+langserve[all]                  # Deploy LangChain chains as REST APIs (server + client)
+
+
+# ─── 🗄️ Vector Stores (Lesson 5.1) ──────────────────────────────────────────
+faiss-cpu                       # Facebook AI Similarity Search — in-memory vector store
+langchain-chroma                # Chroma vector DB integration for LangChain
+chromadb                        # Chroma — AI-native persistent vector database
+
+
+# ─── 🖥️ Frontend & API (upcoming lessons) ───────────────────────────────────
+# streamlit                     # Build chat UIs for GenAI apps
+# fastapi                       # REST API framework (used with LangServe)
+# langserve                     # Deploy LangChain chains as REST endpoints

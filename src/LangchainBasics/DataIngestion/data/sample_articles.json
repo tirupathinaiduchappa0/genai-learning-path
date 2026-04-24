@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Intro to RAG",
+    "content": "RAG combines retrieval with generation...",
+    "author": "Alice"
+  },
+  {
+    "title": "LangChain 101",
+    "content": "LangChain is a framework for LLM apps...",
+    "author": "Bob"
+  },
+  {
+    "title": "Vector DBs",
+    "content": "Vector databases store embeddings for similarity search...",
+    "author": "Charlie"
+  }
+]
