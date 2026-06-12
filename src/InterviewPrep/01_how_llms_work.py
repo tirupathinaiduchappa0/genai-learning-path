@@ -1,4 +1,32 @@
 """
+
+Yes, the Eisenhower Matrix (from Stephen Covey's 7 Habits) is a GREAT answer for this. It shows structured thinking. Let me give you the correct quadrants with a real software engineering example — no need for a full lesson file, just memorize this:
+
+THE 4 QUADRANTS (Eisenhower Matrix / Covey's Time Management):
+
+URGENT	NOT URGENT
+IMPORTANT	Q1: DO FIRST	Q2: SCHEDULE
+Production bug crashing the app	Building new AI feature, code reviews, learning
+NOT IMPORTANT	Q3: DELEGATE	Q4: ELIMINATE
+Unnecessary meetings, some emails	Social media, random browsing
+Real-world software engineering example:
+
+"I use the Eisenhower Matrix to prioritize. Let me give a real example from my week:
+
+Q1 (Urgent + Important) — Do immediately: Production API returning 500 errors → fix NOW, customers are affected.
+
+Q2 (Not Urgent + Important) — Schedule and protect this time: Building the new agentic RAG feature, writing tests, code reviews, learning new frameworks. This is where REAL progress happens. I block 2-3 hours daily for deep work here.
+
+Q3 (Urgent + Not Important) — Delegate or minimize: Attending status meetings that could be an email, responding to non-critical Slack messages. I batch these into specific time slots.
+
+Q4 (Not Urgent + Not Important) — Eliminate: Unnecessary notifications, random browsing. I turn these off during focus time."
+
+Your 30-second interview answer:
+
+"I prioritize using the Eisenhower Matrix — categorizing tasks by urgency and importance. Production issues go in Q1 — fix immediately. Feature development and learning go in Q2 — I protect dedicated focus time for these daily. Meetings and non-critical requests go in Q3 — I batch them. And I eliminate Q4 distractions during work hours. In agile, I also use sprint priorities — whatever the team committed to in sprint planning gets done first, and I communicate blockers early if priorities conflict."
+
+
+
 GenAI Interview Prep - Lesson 1: How LLMs Work Internally
 
 THIS IS THE #1 QUESTION IN GENAI INTERVIEWS:
@@ -228,6 +256,8 @@ Author: GenAI Learner
 #    Only consider tokens whose cumulative probability reaches P.
 #    top_p=0.9: pick from tokens that together have 90% probability.
 #    More adaptive than top-k (sometimes 10 tokens cover 90%, sometimes 100).
+#    top_p (nucleus sampling) is a parameter in large language models that controls text generation by limiting the 
+#    selection of next tokens to the smallest set whose cumulative probability exceeds a threshold p.
 #
 # 5. MAX_TOKENS
 #    Hard limit on how many tokens to generate.

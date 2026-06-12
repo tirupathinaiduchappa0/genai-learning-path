@@ -88,8 +88,8 @@ Author: GenAI Learner
 # 3. DECORATORS (Asked in 90% of Python interviews)
 # ==============================================================================
 #
-# A decorator WRAPS a function to add behavior WITHOUT modifying it.
-#
+# A decorator WRAPS a function to add an extra behavior WITHOUT modifying it.
+# A decorator takes a function, adds extra behavior, and returns a new function.
 #   def my_decorator(func):
 #       def wrapper(*args, **kwargs):
 #           print("Before")
@@ -580,15 +580,22 @@ Author: GenAI Learner
 
 
 # PROBLEM 7: Two Sum (find two numbers that add to target)
-#   def two_sum(nums: list, target: int) -> list:
-#       seen = {}
-#       for i, num in enumerate(nums):
-#           complement = target - num
-#           if complement in seen:
-#               return [seen[complement], i]
-#           seen[num] = i
-#       return []
-#   two_sum([2, 7, 11, 15], 9)  # [0, 1] (2 + 7 = 9)
+# def two_sum3(arr, target):
+#     result = []
+#     seen = set()
+    
+#     for ele in arr:
+#         complement = target - ele
+#         if complement in seen:
+#             result.append([ele, complement])
+#         seen.add(ele)
+    
+#     return result
+
+# target_array1 = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+# target_sum = 100
+
+# print(two_sum3(target_array1, target_sum))
 
 
 # PROBLEM 8: Remove duplicates preserving order

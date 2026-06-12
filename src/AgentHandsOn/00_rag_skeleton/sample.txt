@@ -1,0 +1,29 @@
+DocSage Project Overview
+
+DocSage is an Enterprise Document Intelligence Agent built using LangGraph with Agentic RAG.
+Users can upload documents like PDFs, DOCX, CSV, TXT, and Markdown files.
+The agent autonomously selects the right knowledge base using tool calling.
+
+Architecture:
+- LangGraph for the agent workflow with 5 nodes: agent, tools, grade, generate, rewrite
+- FAISS for vector storage with HuggingFace embeddings (all-MiniLM-L6-v2)
+- Groq API for LLM inference (llama-3.1-8b-instant for agent, llama-3.3-70b for grading)
+- Tavily for web search fallback
+- Gmail SMTP for email integration
+- Streamlit for the frontend UI
+
+RAG Patterns Used:
+1. Agentic RAG - Agent decides which document to search based on tool descriptions
+2. Corrective RAG - Grade node checks document relevance, rewrites query if irrelevant
+3. Adaptive RAG - Validate node checks for hallucination and answer relevance
+
+The project is deployed on Hugging Face Spaces and supports multi-turn conversations
+using MemorySaver checkpointer with thread_id for conversation isolation.
+
+Key Features:
+- Multi-document support (each document gets its own FAISS vector store)
+- URL web scraping via WebBaseLoader
+- Step-by-step streaming with real-time status updates
+- Source citations in expandable UI section
+- Error handling with retry (tool_use_failed fallback to direct LLM call)
+- Fingerprint-based graph caching to avoid re-ingesting documents on every Streamlit rerun
