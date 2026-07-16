@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCP Server Reference Blueprint — Visual Overview</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#818cf8; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --border:#334155; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  a{color:var(--accent);text-decoration:none}
+  .layout{display:flex;min-height:100vh}
+  nav.toc{width:300px;flex-shrink:0;background:#0b1424;border-right:1px solid var(--border);padding:22px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.toc h4{color:var(--accent);text-transform:uppercase;font-size:.78rem;letter-spacing:1px;margin:0 0 6px}
+  nav.toc .badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(56,189,248,.15);color:var(--accent);margin-bottom:14px}
+  nav.toc a{display:block;color:var(--muted);padding:6px 10px;border-radius:6px;font-size:.88rem;border-left:2px solid transparent}
+  nav.toc a:hover{background:var(--panel);color:var(--text);border-left-color:var(--accent)}
+  .content{flex:1;max-width:960px;margin:0 auto;padding:34px 40px 90px}
+  header.top{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);padding:34px;border-radius:14px;margin-bottom:14px}
+  header.top h1{margin:0;font-size:1.95rem}
+  header.top p{margin:8px 0 0;color:#dbeafe}
+  header.top .tag{display:inline-block;margin-top:12px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:20px;font-size:.8rem}
+  h2{color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:46px;scroll-margin-top:20px}
+  h3{color:var(--accent2);margin-top:26px}
+  .lead{color:var(--muted);font-size:1.05rem}
+  .analogy{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .analogy .t{font-weight:700;color:var(--amber);margin-bottom:4px}
+  .example{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .example .t{font-weight:700;color:var(--green);margin-bottom:4px}
+  .keyterm{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .keyterm .t{font-weight:700;color:var(--accent2)}
+  .warn{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .warn .t{font-weight:700;color:var(--red)}
+  .diagram{background:#0b1424;border:1px solid var(--border);border-radius:12px;padding:20px;margin:22px 0;text-align:center;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--panel);border-radius:10px;overflow:hidden}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:.93rem}
+  th{background:var(--panel2);color:var(--accent);font-size:.82rem;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;color:#7dd3fc;font-size:.88em}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .card h4{margin:0 0 6px;color:var(--accent)}
+  .card p{margin:0;color:var(--muted);font-size:.9rem}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;margin:3px 4px 3px 0;font-size:.82rem;color:var(--text)}
+  .steps{counter-reset:step}
+  .steps .s{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px 14px 54px;margin:12px 0;position:relative}
+  .steps .s::before{counter-increment:step;content:counter(step);position:absolute;left:16px;top:14px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--accent);color:#08131f;border-radius:50%;font-weight:700}
+  .steps .s b{color:var(--accent2)}
+  .recap{background:linear-gradient(135deg,#1e3a8a33,#0ea5e922);border:1px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:30px}
+  .recap h3{color:var(--accent);margin-top:0}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  @media(max-width:720px){.split{grid-template-columns:1fr}}
+  .note{font-size:.85rem;color:var(--muted);font-style:italic}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <span class="badge">VISUAL OVERVIEW</span>
+    <h4>On this page</h4>
+    <a href="#what">1. What is an MCP server</a>
+    <a href="#where">2. Where it sits</a>
+    <a href="#philosophy">3. Design philosophy</a>
+    <a href="#arch">4. Architecture at a glance</a>
+    <a href="#separation">5. Tools vs Agents</a>
+    <a href="#base">6. The base layer</a>
+    <a href="#auth">7. Authentication flow</a>
+    <a href="#toolpattern">8. The tool pattern</a>
+    <a href="#addtool">9. Adding a new tool</a>
+    <a href="#flow">10. End-to-end production flow</a>
+    <a href="#deploy">11. Deploy &amp; operate</a>
+    <a href="#pitfalls">12. Best practices &amp; pitfalls</a>
+    <a href="#checklist">13. Build checklist</a>
+    <hr style="border-color:#334155;margin:16px 0"/>
+    <span class="note">Full detail lives in<br/>MCP-Server-Reference-Blueprint.md</span>
+  </nav>
+
+  <div class="content">
+    <header class="top">
+      <h1>MCP Server Reference Blueprint</h1>
+      <p>A one-glance visual overview of the architecture, patterns, and lifecycle for building a production MCP server.</p>
+      <span class="tag">Concepts &amp; structure only — the companion .md holds the full detail &amp; code templates</span>
+    </header>
+
+    <p class="lead">
+      This page is the fast way in. Skim it in a few minutes to understand <b>what</b> the server is,
+      <b>how</b> it is layered, and <b>how</b> a request flows end to end. When you need exact folder
+      layouts, code templates, and step-by-step build instructions, open the companion document
+      <code>MCP-Server-Reference-Blueprint.md</code>.
+    </p>
+
+    <h2 id="what">1. What is an MCP server</h2>
+    <p>
+      The <b>Model Context Protocol (MCP)</b> is an open standard that lets an AI assistant call external
+      capabilities — called <b>tools</b> — in a structured, discoverable way. An <b>MCP server</b> is the
+      program that exposes those tools. Each tool is a well-described function with a name, typed inputs,
+      and a description that tells the AI <i>when</i> and <i>why</i> to use it.
+    </p>
+    <div class="analogy">
+      <div class="t">🔌 Think of it as a translation + safety layer</div>
+      The backend keeps its existing API, validations, and permissions untouched. The MCP server exposes a
+      curated, well-documented slice of that API as conversational "actions" an AI can safely use — it does
+      not add business logic and does not bypass any rule the backend already enforces.
+    </div>
+
+    <h2 id="where">2. Where it sits</h2>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  U([End User]) --> A[AI Assistant /<br/>Orchestrator]
+  A -->|selects a tool| M[MCP Server<br/>this architecture]
+  M -->|authenticated call| G[Backend API Gateway]
+  G --> S[(System of Record<br/>e.g. ERP)]
+      </pre>
+    </div>
+    <p>
+      The MCP server is a <b>stateless intermediary</b>. It never talks to the end user directly and never
+      touches the system of record directly — every call goes through the backend's own gateway, which keeps
+      enforcing that system's rules and permissions.
+    </p>
+    <div class="keyterm">
+      <div class="t">The server's entire job, in one line</div>
+      Receive a tool call → authenticate → call the real backend endpoint → return a clean, predictable result.
+    </div>
+
+    <h2 id="philosophy">3. Design philosophy</h2>
+    <div class="cards">
+      <div class="card"><h4>Thin tools</h4><p>Each tool wraps exactly one backend endpoint. No business logic in the tool.</p></div>
+      <div class="card"><h4>Authenticate once</h4><p>One shared helper resolves identity, tenant &amp; token and builds headers + URL for every tool.</p></div>
+      <div class="card"><h4>One endpoint = one tool</h4><p>Small, predictable tools the LLM can reason about. Vague mega-tools cause wrong selection.</p></div>
+      <div class="card"><h4>Config-driven</h4><p>Local vs cloud chosen by a factory + config, not scattered if-statements.</p></div>
+      <div class="card"><h4>Stateless &amp; scalable</h4><p>No conversation state kept; per-request context only. Scales out with no session affinity.</p></div>
+      <div class="card"><h4>Multi-tenant by design</h4><p>Tenant &amp; identity read from the inbound request every call — never hardcoded.</p></div>
+      <div class="card"><h4>Honest errors</h4><p>Never fabricates success. Backend rejections are surfaced verbatim, not masked.</p></div>
+    </div>
+
+    <h2 id="arch">4. Architecture at a glance</h2>
+    <p>Layered internally, each layer with one clear responsibility:</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  subgraph T[Entry / Transport]
+    A[ASGI app + HTTP server]
+  end
+  subgraph MW[Middleware -- ordered]
+    B[CORS -&gt; Inbound Auth -&gt; Context Injection]
+  end
+  subgraph C[MCP Core]
+    D[FastMCP instance + tool registry]
+  end
+  subgraph X[Request-Scoped Context]
+    E[config, backend client, session mgr, discovery, headers]
+  end
+  subgraph TL[Tools -- grouped by domain]
+    F[Domain A / Domain B / Domain N]
+  end
+  subgraph SH[Shared Tool Utilities]
+    H[validation decorators, auth helper, payload builder, response handler]
+  end
+  subgraph SV[Services]
+    I[HTTP client pool, session/token mgr, service discovery]
+  end
+  subgraph CF[Config &amp; Models]
+    J[config manager, secrets, response schemas]
+  end
+  A --> B --> D --> F --> H --> I --> J
+  B -.sets.-> E
+  H -.reads.-> E
+      </pre>
+    </div>
+    <div class="keyterm">
+      <div class="t">Middleware order is deliberate</div>
+      <b>CORS</b> (reject bad browser requests cheaply) → <b>Inbound Auth</b> (verify the caller; 401 early) →
+      <b>Context Injection</b> (extract tenant/user/token into request-scoped context for tools). Each layer
+      depends on the one before it running first.
+    </div>
+
+    <h2 id="separation">5. The critical separation — Tools vs Agents</h2>
+    <p>This is the single most important boundary in the whole system.</p>
+    <div class="split">
+      <div class="card">
+        <h4>🖐️ MCP Server (this codebase)</h4>
+        <p>The <b>hands</b>. Python code: tools, auth, config, backend calls. Decides <i>how</i> to execute an
+        action. Changes when a backend endpoint changes or a new capability is added.</p>
+      </div>
+      <div class="card">
+        <h4>🧠 Agent Instructions (assistant platform)</h4>
+        <p>The <b>rulebook</b>. A YAML/prompt authored outside this server. Decides <i>which</i> tool to call,
+        in what order, with what confirmation. Changes when conversational behavior or safety rules change.</p>
+      </div>
+    </div>
+    <div class="example">
+      <div class="t">✅ Why the split matters</div>
+      You can add or change tools without touching agents, and refine agent behavior without redeploying the
+      server. A new team building for a different domain builds the <b>server</b>; the agent instructions are
+      authored separately in whatever assistant platform they use.
+    </div>
+
+    <h2 id="base">6. The base layer (build this first, once)</h2>
+    <p>The foundation a new team copies and adapts. Get it right once and adding tools becomes trivial.</p>
+    <table>
+      <tr><th>Component</th><th>Responsibility</th></tr>
+      <tr><td><b>Entry point / bootstrap</b></td><td>Build the ASGI app, wire middleware, initialize shared services <i>once</i> at startup, mount the MCP app, handle graceful shutdown &amp; signals.</td></tr>
+      <tr><td><b>Middleware stack</b></td><td>CORS → inbound auth/signature verification → request-context injection (in that order).</td></tr>
+      <tr><td><b>MCP server instance</b></td><td>One FastMCP instance; importing domain packages runs the <code>@tool</code> decorators, which register the tools. Schema is generated from signatures + docstrings.</td></tr>
+      <tr><td><b>Request-scoped context</b></td><td>Thread-safe context variables hold per-request services (config, backend client, session manager, discovery, headers). No globals, no leaks.</td></tr>
+      <tr><td><b>Configuration manager</b></td><td>Centralized constants for endpoints/keys; local-vs-cloud detection; multi-source config; secret decryption; property mapping.</td></tr>
+      <tr><td><b>Service discovery + factory</b></td><td>Resolves backend URLs; factory returns local (fixed) or cloud (dynamic) implementations so tools never branch on environment.</td></tr>
+      <tr><td><b>Session / auth managers</b></td><td>Token passthrough (preferred) or client-credentials fallback; token + operator caching with TTL and auto-refresh.</td></tr>
+      <tr><td><b>Backend HTTP client</b></td><td>Pooled async client returning a standardized response object; masks secrets in logs; GET/POST/PUT/DELETE wrappers.</td></tr>
+      <tr><td><b>Models</b></td><td>One standardized backend-response shape + typed config models, so every call is handled uniformly.</td></tr>
+    </table>
+
+    <h2 id="auth">7. Authentication &amp; multi-tenancy</h2>
+    <p>Every tool calls <b>one shared helper</b> to get ready-to-use headers + URL. That helper is the whole auth model.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  T[Tool] --> H[authenticate_and_prepare]
+  H --> D{Service type<br/>needs session token?}
+  D -->|Yes| S[Session manager<br/>cache or login]
+  D -->|No| P[Use passthrough<br/>Authorization only]
+  S --> B[Build headers]
+  P --> B
+  B --> U[Build tenant-scoped URL]
+  U --> R[headers + url ready]
+      </pre>
+    </div>
+    <div class="steps">
+      <div class="s"><b>Tenant</b> comes from an inbound header — never hardcoded, never from a body field or a previous request.</div>
+      <div class="s"><b>Identity/operator</b> is derived from an identity header and, for backend sessions, <b>fetched from the backend</b> (never trusted from the caller) to prevent impersonation.</div>
+      <div class="s"><b>Token</b> — passthrough bearer token preferred; client-credentials only as fallback.</div>
+      <div class="s"><b>Headers + URL</b> built centrally as <code>base/tenant/endpoint</code>; nothing else interpolated in.</div>
+    </div>
+    <div class="warn">
+      <div class="t">⚠️ Two "authentications" — never conflate them</div>
+      <b>User login session</b> (human → app/assistant, owned by the platform) is different from the
+      <b>MCP server's backend session</b> (server → gateway, cached with a TTL of ~a couple hours,
+      auto-refreshed). If the backend token expires, the user never notices — the server re-authenticates silently.
+    </div>
+    <div class="keyterm">
+      <div class="t">Security rules (non-negotiable)</div>
+      Never hardcode tenant/company/operator · never string-interpolate user input into URLs/queries ·
+      mask secrets in every log line · validate inputs at the tool boundary · prefer passthrough tokens for real auditability.
+    </div>
+
+    <h2 id="toolpattern">8. The tool pattern (one endpoint = one tool)</h2>
+    <p>Every tool, in every domain, follows the same fixed shape:</p>
+    <div class="steps">
+      <div class="s"><b>Register</b> — the tool decorator makes it MCP-visible.</div>
+      <div class="s"><b>Guardrail decorators</b> — validation (required scope, positive numbers) + execution logging.</div>
+      <div class="s"><b>Typed parameters + docstring</b> — the docstring IS the description the LLM reads to decide when to call it.</div>
+      <div class="s"><b>Validate</b> business rules (e.g., "at least one filter/field required").</div>
+      <div class="s"><b>Authenticate &amp; prepare</b> — one call returns headers + URL.</div>
+      <div class="s"><b>Build payload</b> — merge required + non-null optional fields.</div>
+      <div class="s"><b>Call the backend</b>, then <b>handle the response</b> into a standardized result.</div>
+    </div>
+    <div class="keyterm">
+      <div class="t">The docstring is a contract, not a comment</div>
+      A good tool docstring states: one-line summary · when to use · when NOT to use (naming the correct
+      alternative tool) · every argument · the return shape. Weak docstrings cause the LLM to pick the wrong tool.
+    </div>
+    <h3>Reads vs writes</h3>
+    <div class="split">
+      <div class="card">
+        <h4>Read / preview tool</h4>
+        <p>Validate → prepare → build payload → call → normalize list/dict. Used before any write so the user can review first.</p>
+      </div>
+      <div class="card">
+        <h4>Write tool (atomic sequence)</h4>
+        <p>Remove stale lock → retrieve full record in edit mode → check eligibility → merge only the requested fields → submit the <i>full</i> record. Never a sparse patch.</p>
+      </div>
+    </div>
+    <div class="warn">
+      <div class="t">⚠️ Business rejection ≠ crash · never fabricate success</div>
+      Transport/5xx errors are raised. Business rejections (e.g., "not eligible", "locked") are returned
+      verbatim so the assistant can explain them plainly. The tool never claims a change happened when it didn't.
+    </div>
+
+    <h2 id="addtool">9. Adding a new tool (the recipe)</h2>
+    <div class="steps">
+      <div class="s">Add the <b>endpoint constant</b> to centralized constants.</div>
+      <div class="s">Create the <b>tool file</b> in the domain folder (one tool per file).</div>
+      <div class="s">Apply <b>decorators</b>; write <b>typed params + a complete docstring</b>.</div>
+      <div class="s">Call the <b>shared helpers</b> in order (auth → payload → call → handle).</div>
+      <div class="s"><b>Register</b> it (import in the domain's init; ensure the domain is imported at startup).</div>
+      <div class="s"><b>Test</b> via the MCP protocol: it appears in <code>tools/list</code> and behaves in <code>tools/call</code>.</div>
+    </div>
+    <div class="example">
+      <div class="t">✅ Keep tools thin</div>
+      If two tools look nearly identical except for the endpoint and a few field names, that's a sign the
+      shared utility layer needs a new capability — not a reason to copy-paste.
+    </div>
+
+    <h2 id="flow">10. End-to-end production flow</h2>
+    <p>How it all comes together in a live system, from a user's question to a natural-language answer:</p>
+    <div class="diagram">
+      <pre class="mermaid">
+sequenceDiagram
+  participant User
+  participant Assistant as GenAI Assistant
+  participant Sup as Supervisor Agent
+  participant Sub as Sub-Agent
+  participant MCP as MCP Server
+  participant GW as Backend Gateway
+  User->>Assistant: Logs in, asks a question
+  Assistant->>Sup: Forwards the question
+  Sup->>Sup: Interprets &amp; refactors intent
+  Sup->>Sub: Routes to the right domain sub-agent
+  Sub->>Sub: Reads instructions + bound tools
+  Sub->>MCP: Calls the chosen tool
+  MCP->>MCP: authenticate &amp; prepare
+  MCP->>GW: Authenticated backend call
+  GW-->>MCP: Result / rejection
+  MCP-->>Sub: Standardized result
+  Sub-->>User: Natural-language answer
+      </pre>
+    </div>
+    <div class="steps">
+      <div class="s"><b>Supervisor</b> agent doesn't call tools — it interprets intent and routes to the correct <b>sub-agent</b>.</div>
+      <div class="s"><b>Sub-agent</b> has its own instructions + a bound list of tools; it decides which one tool to call.</div>
+      <div class="s"><b>MCP server</b> authenticates (reusing its cached backend token) and calls the gateway.</div>
+      <div class="s"><b>Response</b> is normalized and handed back; the sub-agent formats it into the final answer.</div>
+    </div>
+    <div class="keyterm">
+      <div class="t">Where a new team's responsibility ends</div>
+      They build &amp; deploy the <b>MCP server + tools</b>. The supervisor/sub-agent orchestration lives in the
+      assistant platform (often a separate team). <b>Tool binding happens on the assistant side</b> — the server
+      just exposes well-documented tools; the same tool can be bound to multiple sub-agents.
+    </div>
+
+    <h2 id="deploy">11. Deploy &amp; operate</h2>
+    <div class="split">
+      <div class="card">
+        <h4>Deployment path</h4>
+        <p>Source → container image → registry → orchestrated runtime (e.g. Kubernetes, possibly on VMs) → healthy → tools become discoverable → bound to sub-agents.</p>
+      </div>
+      <div class="card">
+        <h4>Operate</h4>
+        <p>Health + monitoring endpoints, connection-pool &amp; token-cache stats, graceful shutdown, stateless horizontal scaling behind a load balancer.</p>
+      </div>
+    </div>
+    <p>
+      <span class="pill">CORS</span><span class="pill">Optional TLS / SSL</span><span class="pill">/healthcheck probes</span>
+      <span class="pill">CI/CD build → tag → push → deploy</span><span class="pill">Secrets decrypted at load</span>
+    </p>
+    <h3>Testing at a glance</h3>
+    <p>
+      <span class="pill">Unit (validation, payloads, response handling)</span>
+      <span class="pill">Integration (mocked backend)</span>
+      <span class="pill">Security (header masking)</span>
+      <span class="pill">Property-based (fuzz inputs)</span>
+      <span class="pill">MCP protocol: initialize / tools-list / tools-call</span>
+    </p>
+
+    <h2 id="pitfalls">12. Best practices &amp; pitfalls</h2>
+    <table>
+      <tr><th>Topic</th><th>Rule learned the hard way</th></tr>
+      <tr><td>Full vs sparse payload</td><td>Some endpoints reject partial bodies — send the full field set the real client sends.</td></tr>
+      <tr><td>Correct response key</td><td>Extract the exact nested result key, or you get "no results".</td></tr>
+      <tr><td>Retrieve-merge-save</td><td>To change one field, retrieve the full record, merge, save the whole record — sparse patches can blank derived fields.</td></tr>
+      <tr><td>Eligibility check</td><td>Validate the record's actual current state before a write; reject ineligible ones clearly.</td></tr>
+      <tr><td>Honest errors</td><td>Surface the backend's rejection message; never fabricate success, never a generic "something went wrong".</td></tr>
+      <tr><td>No hardcoding</td><td>Never hardcode tenant/company/operator; fetch identity from the backend for sessions.</td></tr>
+      <tr><td>No injection</td><td>Never string-interpolate user input into URLs/queries; validate &amp; strip first.</td></tr>
+      <tr><td>Agent side</td><td>One tool per turn; confirmation gate for writes owned by the stateful layer; paginate large result sets; mask nothing but secrets.</td></tr>
+    </table>
+    <div class="warn">
+      <div class="t">⚠️ The confirmation-gate trap (writes)</div>
+      A stateless sub-agent can't remember it already asked for confirmation, so it can loop forever. The gate
+      must be owned by whichever layer holds conversation state (the orchestrator/agent) — not enforced inside a
+      single stateless tool call.
+    </div>
+
+    <h2 id="checklist">13. From-scratch build checklist</h2>
+    <div class="steps">
+      <div class="s">Scaffold the structure &amp; pin dependencies.</div>
+      <div class="s">Build the base layer: constants → config/secrets → discovery+factory → session/auth → backend client → context → shared tool utilities.</div>
+      <div class="s">Create the MCP server instance &amp; the entry point (middleware, routes, lifespan).</div>
+      <div class="s">Run locally; confirm <code>/healthcheck</code> and startup logs are clean.</div>
+      <div class="s">Write the first READ tool; register it; verify via MCP protocol.</div>
+      <div class="s">Add more tools; add the first WRITE tool with the safe atomic sequence.</div>
+      <div class="s">Write tests (unit + integration + security).</div>
+      <div class="s">Containerize → deploy with probes &amp; secrets → wire CI/CD.</div>
+      <div class="s">Author the first agent in the assistant platform &amp; validate end to end.</div>
+    </div>
+
+    <div class="recap">
+      <h3>🎯 The whole idea in three sentences</h3>
+      <p>
+        An MCP server turns individual backend endpoints into safe, well-described <b>tools</b>, handling
+        authentication and multi-tenancy centrally so each tool stays thin. The <b>assistant platform</b> decides
+        which tool to call for a user's request; the <b>server</b> just executes it honestly against the backend.
+        Build the base layer once, keep tools thin and one-endpoint-each, never fabricate success — and the same
+        pattern scales to any business domain.
+      </p>
+      <p style="margin:10px 0 0">
+        📄 For exact folder layouts, code templates, and step-by-step instructions, open
+        <code>MCP-Server-Reference-Blueprint.md</code>.
+      </p>
+    </div>
+  </div>
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+</body>
+</html>

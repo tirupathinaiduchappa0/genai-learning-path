@@ -26,6 +26,18 @@ KEY SYNTAX DIFFERENCES (memorize these):
 # JS: const findDuplicates = (arr) => { const count = {}; ... }
 
 
+# i/p: [1,1,2,2,3,3,3,4,4,4,4] o/p: [[1,1],[2,2],[3,3,3],[4,4,4,4]]   write a python code
+
+out = []
+for n in inp:
+    
+    if out and out[-1][0] == n:
+        out[-1].append(n)
+    else:
+        out.append([n])
+
+
+
 for n in range(2, 101):
     is_prime = True
     for i in range(2, int(n**0.5) + 1):
@@ -333,6 +345,27 @@ def fibonacci(n):
 
 print("Fibonacci:", fibonacci(10))
 # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+
+FibLst = [0, 1]
+
+while len(FibLst) < 10:
+    next_num = FibLst[-1] + FibLst[-2]
+    FibLst.append(next_num)
+
+print(FibLst)
+
+
+Input = [1,3,4,3,5,7,2,7,3,2,4,3]
+Output= [3,3,3,3,7,7,4,4,2,2,5,1]
+
+freq = {}
+
+for i in Input:
+    freq[i] = freq.get(i, 0) + 1
+
+print(freq)
+Input.sort(key= lambda x : (-freq[x], -x))
+print(" ".join(str(i) for i in Input))
 
 
 # ==============================================================================

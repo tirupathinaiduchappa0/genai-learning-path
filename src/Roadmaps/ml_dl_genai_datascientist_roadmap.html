@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ML → DL → GenAI — Senior Data Scientist Roadmap</title>
+<style>
+  :root {
+    --bg: #f5f7fa; --panel: #ffffff; --text: #1f2933; --muted: #64748b;
+    --border: #e2e8f0; --accent: #0ea5e9; --accent2: #0369a1;
+    --core: #16a34a; --core-bg: #dcfce7; --deep: #2563eb; --deep-bg: #dbeafe;
+    --phase: #0891b2; --bar-bg: #e2e8f0;
+  }
+  html[data-theme="dark"] {
+    --bg: #0f172a; --panel: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
+    --border: #334155; --accent: #38bdf8; --accent2: #7dd3fc;
+    --core: #4ade80; --core-bg: #14532d; --deep: #60a5fa; --deep-bg: #1e3a8a;
+    --phase: #67e8f9; --bar-bg: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; padding: 28px 24px; position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px 80px; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin: 18px 0; position: sticky; top: 96px; z-index: 40;
+    background: var(--bg); padding: 10px 0;
+  }
+  .controls input[type="search"] {
+    flex: 1; min-width: 200px; padding: 9px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    font-size: 0.9rem;
+  }
+  button, .toggle {
+    padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text); cursor: pointer; font-size: 0.82rem;
+  }
+  button:hover { border-color: var(--accent); }
+  .progress-outer { background: var(--bar-bg); border-radius: 20px; height: 14px; overflow: hidden; margin: 6px 0 16px; }
+  .progress-inner { background: linear-gradient(90deg, var(--core), var(--accent)); height: 100%; width: 0%; transition: width .3s; }
+  .progress-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+  .phase {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    margin: 14px 0; overflow: hidden;
+  }
+  .phase > .phase-head {
+    padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 1.05rem; border-left: 5px solid var(--phase);
+  }
+  .phase-head .ptag { font-size: 0.7rem; color: #fff; background: var(--phase); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .node { margin-left: 8px; }
+  .node-head {
+    display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px;
+    border-radius: 6px; cursor: pointer;
+  }
+  .node-head:hover { background: rgba(14,165,233,0.08); }
+  .caret { width: 14px; display: inline-block; transition: transform .15s; color: var(--muted); flex-shrink: 0; margin-top: 3px; }
+  .caret.open { transform: rotate(90deg); }
+  .caret.leaf { visibility: hidden; }
+  .node-title { flex: 1; }
+  .badge { font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
+  .badge.core { color: var(--core); background: var(--core-bg); }
+  .badge.deep { color: var(--deep); background: var(--deep-bg); }
+  .children { margin-left: 20px; border-left: 1px dashed var(--border); padding-left: 6px; display: none; }
+  .children.open { display: block; }
+  input.chk { margin-top: 4px; cursor: pointer; flex-shrink: 0; }
+  .done > .node-title { text-decoration: line-through; color: var(--muted); }
+  .legend { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
+  .hidden { display: none !important; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📊 → 🧠 → 🤖 ML → DL → GenAI — Senior Data Scientist Roadmap</h1>
+  <p>Math &amp; Stats → Classical ML → Deep Learning → GenAI/LLMs → Production · full depth · Core &amp; Deep-dive</p>
+</header>
+<div class="wrap">
+  <div class="progress-label"><span id="progText">0 / 0 topics done</span></div>
+  <div class="progress-outer"><div class="progress-inner" id="progBar"></div></div>
+  <div class="controls">
+    <input type="search" id="search" placeholder="🔍 Search topics (e.g. gradient descent, transformers, SHAP)..." />
+    <button id="expandAll">Expand all</button>
+    <button id="collapseAll">Collapse all</button>
+    <button id="coreOnly" class="toggle">Show Core only</button>
+    <button id="theme">🌙 Dark</button>
+    <button id="reset">Reset progress</button>
+  </div>
+  <p class="legend"><span class="badge core">CORE</span> must-know &nbsp; <span class="badge deep">DEEP</span> nice-to-have / go deeper later &nbsp; · &nbsp; ✔ tick to track progress (saved in your browser)</p>
+  <div id="tree"></div>
+  <footer>Senior Data Scientist path · open in any browser, single self-contained file.</footer>
+</div>
+<script>
+const DATA = [
+{ t: "PHASE 1 — Math Foundations", phase: 1, c: [
+  { t: "Linear Algebra", b: "core", c: [
+    { t: "Scalars, vectors, matrices, tensors", b: "core" },
+    { t: "Matrix operations (add, multiply, transpose)", b: "core" },
+    { t: "Dot product & norms", b: "core" },
+    { t: "Identity, inverse, determinant", b: "deep" },
+    { t: "Eigenvalues & eigenvectors", b: "deep" },
+    { t: "Matrix decomposition (SVD, PCA link)", b: "deep" },
+  ]},
+  { t: "Calculus", b: "core", c: [
+    { t: "Derivatives & gradients", b: "core" },
+    { t: "Partial derivatives", b: "core" },
+    { t: "Chain rule (backprop foundation)", b: "core" },
+    { t: "Maxima/minima, convexity", b: "deep" },
+  ]},
+  { t: "Probability", b: "core", c: [
+    { t: "Random variables", b: "core" },
+    { t: "Conditional probability & Bayes theorem", b: "core" },
+    { t: "Expectation & variance", b: "core" },
+    { t: "Common distributions (normal, binomial, Poisson)", b: "core" },
+  ]},
+  { t: "Optimization (intuition)", b: "deep", c: [
+    { t: "Objective/loss functions", b: "core" },
+    { t: "Gradient descent intuition", b: "core" },
+    { t: "Convex vs non-convex", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 2 — Statistics", phase: 2, c: [
+  { t: "Descriptive Statistics", b: "core", c: [
+    { t: "Mean, median, mode", b: "core" },
+    { t: "Variance & standard deviation", b: "core" },
+    { t: "Percentiles, quartiles, IQR", b: "core" },
+    { t: "Skewness & kurtosis", b: "deep" },
+    { t: "Correlation vs causation", b: "core" },
+  ]},
+  { t: "Distributions", b: "core", c: [
+    { t: "Normal / Gaussian", b: "core" },
+    { t: "Bernoulli & Binomial", b: "core" },
+    { t: "Poisson, Uniform, Exponential", b: "deep" },
+    { t: "Central Limit Theorem", b: "core" },
+  ]},
+  { t: "Inferential Statistics", b: "core", c: [
+    { t: "Sampling & sampling distributions", b: "core" },
+    { t: "Confidence intervals", b: "core" },
+    { t: "Hypothesis testing (null/alternate)", b: "core" },
+    { t: "p-values & significance", b: "core" },
+    { t: "t-test, chi-square, ANOVA", b: "core" },
+    { t: "Type I & Type II errors", b: "deep" },
+  ]},
+  { t: "Bayesian Basics", b: "deep", c: [
+    { t: "Prior, likelihood, posterior", b: "deep" },
+    { t: "Bayesian vs frequentist", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 3 — Python for Data Science", phase: 3, c: [
+  { t: "Python Core (foundations)", b: "core", c: [
+    { t: "Syntax, data types, control flow", b: "core" },
+    { t: "Data structures (list/tuple/set/dict)", b: "core" },
+    { t: "Functions, comprehensions, lambda", b: "core" },
+    { t: "OOP basics + dataclasses", b: "core" },
+    { t: "Generators, decorators, typing", b: "deep" },
+    { t: "Virtual envs, logging, pytest, Git", b: "core" },
+  ]},
+  { t: "NumPy (deep)", b: "core", c: [
+    { t: "ndarray, dtypes, shape", b: "core" },
+    { t: "Vectorization (avoid loops)", b: "core" },
+    { t: "Broadcasting", b: "core" },
+    { t: "Indexing, slicing, boolean masks", b: "core" },
+    { t: "Aggregations & axis operations", b: "core" },
+    { t: "Linear algebra ops (np.linalg)", b: "deep" },
+  ]},
+  { t: "Scientific stack", b: "deep", c: [
+    { t: "SciPy basics", b: "deep" },
+    { t: "Jupyter notebooks workflow", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 4 — SQL for Data Science", phase: 4, c: [
+  { t: "Core SQL", b: "core", c: [
+    { t: "SELECT, WHERE, ORDER BY, LIMIT", b: "core" },
+    { t: "Aggregations & GROUP BY / HAVING", b: "core" },
+    { t: "JOINs (inner/left/right/full)", b: "core" },
+    { t: "Subqueries & CTEs (WITH)", b: "core" },
+  ]},
+  { t: "Advanced SQL (DS-heavy)", b: "core", c: [
+    { t: "Window functions (ROW_NUMBER, RANK, LAG/LEAD)", b: "core" },
+    { t: "CASE expressions", b: "core" },
+    { t: "Date/time functions", b: "deep" },
+    { t: "Query optimization & indexes", b: "deep" },
+  ]},
+  { t: "Practice", b: "core", c: [
+    { t: "SQLite / PostgreSQL hands-on", b: "core" },
+    { t: "Pandas ↔ SQL equivalence", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 5 — Data Handling & EDA", phase: 5, c: [
+  { t: "Pandas (deep)", b: "core", c: [
+    { t: "Series & DataFrame", b: "core" },
+    { t: "Reading data (CSV/Excel/JSON/SQL)", b: "core" },
+    { t: "Selection (loc, iloc, boolean)", b: "core" },
+    { t: "GroupBy, aggregation, pivot", b: "core" },
+    { t: "Merge / join / concat", b: "core" },
+    { t: "Apply, map, vectorized ops", b: "deep" },
+    { t: "MultiIndex", b: "deep" },
+  ]},
+  { t: "Data Cleaning", b: "core", c: [
+    { t: "Missing values (impute/drop)", b: "core" },
+    { t: "Outlier detection & handling", b: "core" },
+    { t: "Duplicates, type fixes", b: "core" },
+    { t: "Encoding categoricals (one-hot, label, target)", b: "core" },
+  ]},
+  { t: "Feature Scaling", b: "core", c: [
+    { t: "Normalization vs standardization", b: "core" },
+    { t: "MinMax, StandardScaler, RobustScaler", b: "core" },
+  ]},
+  { t: "Data Visualization (EDA)", b: "core", c: [
+    { t: "matplotlib", b: "core" },
+    { t: "seaborn", b: "core" },
+    { t: "plotly (interactive)", b: "deep" },
+    { t: "Univariate/bivariate/multivariate plots", b: "core" },
+    { t: "Correlation heatmaps", b: "core" },
+  ]},
+]},
+{ t: "PHASE 6 — Classical Machine Learning", phase: 6, c: [
+  { t: "ML Fundamentals", b: "core", c: [
+    { t: "Supervised vs unsupervised vs reinforcement", b: "core" },
+    { t: "Classification vs regression vs clustering", b: "core" },
+    { t: "Training/validation/test split", b: "core" },
+    { t: "Cross-validation (K-fold)", b: "core" },
+    { t: "Bias-variance tradeoff", b: "core" },
+    { t: "Overfitting vs underfitting", b: "core" },
+    { t: "Regularization (L1/L2, elastic net)", b: "core" },
+    { t: "Hyperparameter tuning (grid/random/Bayesian)", b: "core" },
+  ]},
+  { t: "Feature Engineering", b: "core", c: [
+    { t: "Feature creation & transformation", b: "core" },
+    { t: "Feature selection", b: "core" },
+    { t: "Dimensionality reduction (PCA, t-SNE, UMAP)", b: "deep" },
+    { t: "Handling imbalanced data (SMOTE, class weights)", b: "core" },
+  ]},
+  { t: "Supervised Algorithms", b: "core", c: [
+    { t: "Linear regression", b: "core" },
+    { t: "Logistic regression", b: "core" },
+    { t: "K-Nearest Neighbors (KNN)", b: "core" },
+    { t: "Support Vector Machines (SVM)", b: "core" },
+    { t: "Decision trees", b: "core" },
+    { t: "Random forest", b: "core" },
+    { t: "Gradient boosting (XGBoost, LightGBM, CatBoost)", b: "core" },
+    { t: "Naive Bayes", b: "core" },
+  ]},
+  { t: "Unsupervised Algorithms", b: "core", c: [
+    { t: "K-means clustering", b: "core" },
+    { t: "Hierarchical clustering", b: "deep" },
+    { t: "DBSCAN", b: "deep" },
+    { t: "PCA (dimensionality reduction)", b: "core" },
+    { t: "Anomaly detection", b: "deep" },
+  ]},
+  { t: "Evaluation Metrics", b: "core", c: [
+    { t: "Classification: accuracy, precision, recall, F1", b: "core" },
+    { t: "Confusion matrix", b: "core" },
+    { t: "ROC curve & AUC", b: "core" },
+    { t: "Regression: MAE, MSE, RMSE, R²", b: "core" },
+    { t: "Clustering: silhouette, inertia", b: "deep" },
+  ]},
+  { t: "scikit-learn", b: "core", c: [
+    { t: "Estimator API (fit/predict/transform)", b: "core" },
+    { t: "Pipelines & ColumnTransformer", b: "core" },
+    { t: "Model persistence (joblib/pickle)", b: "deep" },
+  ]},
+  { t: "Ensemble Methods", b: "deep", c: [
+    { t: "Bagging", b: "deep" },
+    { t: "Boosting", b: "deep" },
+    { t: "Stacking & voting", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 7 — Recommender Systems", phase: 7, c: [
+  { t: "Collaborative Filtering", b: "core", c: [
+    { t: "User-based CF", b: "core" },
+    { t: "Item-based CF", b: "core" },
+    { t: "Similarity measures (cosine, Pearson)", b: "core" },
+    { t: "Cold-start problem", b: "core" },
+  ]},
+  { t: "Matrix Factorization", b: "core", c: [
+    { t: "SVD", b: "core" },
+    { t: "ALS (Alternating Least Squares)", b: "deep" },
+    { t: "Latent factors", b: "core" },
+  ]},
+  { t: "Content-Based Filtering", b: "core", c: [
+    { t: "Item feature profiles", b: "core" },
+    { t: "TF-IDF / embedding similarity", b: "core" },
+  ]},
+  { t: "Hybrid & Modern", b: "core", c: [
+    { t: "Hybrid recommenders", b: "core" },
+    { t: "Embedding-based recommenders", b: "deep" },
+    { t: "Two-tower models", b: "deep" },
+    { t: "Deep learning recommenders (NCF)", b: "deep" },
+  ]},
+  { t: "Evaluation", b: "core", c: [
+    { t: "Precision@k / Recall@k", b: "core" },
+    { t: "NDCG", b: "core" },
+    { t: "MAP (Mean Average Precision)", b: "deep" },
+    { t: "Coverage & diversity", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 8 — Model Interpretability & Explainability", phase: 8, c: [
+  { t: "Global interpretability", b: "core", c: [
+    { t: "Feature importance", b: "core" },
+    { t: "Permutation importance", b: "deep" },
+    { t: "Partial dependence plots (PDP)", b: "deep" },
+  ]},
+  { t: "Local interpretability", b: "core", c: [
+    { t: "SHAP (Shapley values)", b: "core" },
+    { t: "LIME", b: "core" },
+    { t: "Counterfactual explanations", b: "deep" },
+  ]},
+  { t: "Why it matters", b: "core", c: [
+    { t: "Trust, debugging, compliance", b: "core" },
+    { t: "Interpretable vs black-box models", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 9 — A/B Testing, Experimentation & Causal Inference", phase: 9, c: [
+  { t: "Experiment Design", b: "core", c: [
+    { t: "Hypothesis & metrics (primary/guardrail)", b: "core" },
+    { t: "Control vs treatment groups", b: "core" },
+    { t: "Randomization & sample size", b: "core" },
+    { t: "Statistical power", b: "deep" },
+  ]},
+  { t: "Analysis", b: "core", c: [
+    { t: "Significance testing", b: "core" },
+    { t: "p-value & confidence intervals in A/B", b: "core" },
+    { t: "Common pitfalls (peeking, multiple testing)", b: "deep" },
+  ]},
+  { t: "Advanced Testing", b: "deep", c: [
+    { t: "Multi-armed bandits", b: "deep" },
+    { t: "Sequential testing", b: "deep" },
+  ]},
+  { t: "Causal Inference", b: "core", c: [
+    { t: "Correlation vs causation (deeper)", b: "core" },
+    { t: "Confounders & causal graphs (DAGs)", b: "core" },
+    { t: "Propensity score matching", b: "deep" },
+    { t: "Difference-in-differences", b: "deep" },
+    { t: "Instrumental variables", b: "deep" },
+    { t: "Uplift modeling", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 10 — Time Series Forecasting", phase: 10, c: [
+  { t: "Fundamentals", b: "core", c: [
+    { t: "Trend, seasonality, cyclicity, noise", b: "core" },
+    { t: "Stationarity & differencing", b: "core" },
+    { t: "Autocorrelation (ACF/PACF)", b: "deep" },
+    { t: "Decomposition", b: "core" },
+  ]},
+  { t: "Classical Models", b: "core", c: [
+    { t: "Moving average & smoothing", b: "core" },
+    { t: "ARIMA / SARIMA", b: "core" },
+    { t: "Exponential smoothing (Holt-Winters)", b: "deep" },
+    { t: "Prophet", b: "core" },
+  ]},
+  { t: "ML/DL for Time Series", b: "deep", c: [
+    { t: "Feature-based ML forecasting", b: "deep" },
+    { t: "LSTM/GRU for sequences", b: "deep" },
+    { t: "Evaluation (MAPE, RMSE, backtesting)", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 11 — NLP (Classical → Modern)", phase: 11, c: [
+  { t: "Text Preprocessing", b: "core", c: [
+    { t: "Tokenization", b: "core" },
+    { t: "Stemming vs lemmatization", b: "core" },
+    { t: "Stop words, n-grams", b: "core" },
+    { t: "POS tagging, NER", b: "deep" },
+  ]},
+  { t: "Classical Representations", b: "core", c: [
+    { t: "Bag of Words", b: "core" },
+    { t: "TF-IDF", b: "core" },
+    { t: "Word2Vec / GloVe / FastText", b: "core" },
+  ]},
+  { t: "NLP Tasks", b: "core", c: [
+    { t: "Text classification", b: "core" },
+    { t: "Sentiment analysis", b: "core" },
+    { t: "Topic modeling (LDA)", b: "deep" },
+    { t: "Named entity recognition", b: "deep" },
+  ]},
+  { t: "Modern NLP", b: "core", c: [
+    { t: "Sequence models (RNN/LSTM)", b: "deep" },
+    { t: "Attention & Transformers", b: "core" },
+    { t: "Contextual embeddings (BERT)", b: "core" },
+    { t: "Hugging Face transformers library", b: "core" },
+  ]},
+]},
+{ t: "PHASE 12 — Deep Learning", phase: 12, c: [
+  { t: "Neural Network Basics", b: "core", c: [
+    { t: "Perceptron & multilayer perceptron (MLP)", b: "core" },
+    { t: "Forward propagation", b: "core" },
+    { t: "Backpropagation", b: "core" },
+    { t: "Activation functions (ReLU, sigmoid, tanh, softmax)", b: "core" },
+    { t: "Loss functions (MSE, cross-entropy)", b: "core" },
+    { t: "Optimizers (SGD, Adam, RMSprop)", b: "core" },
+    { t: "Learning rate & schedules", b: "core" },
+  ]},
+  { t: "Regularization in DL", b: "core", c: [
+    { t: "Dropout", b: "core" },
+    { t: "Batch normalization", b: "core" },
+    { t: "Early stopping", b: "core" },
+    { t: "Weight decay", b: "deep" },
+  ]},
+  { t: "CNNs (Computer Vision core)", b: "core", c: [
+    { t: "Convolution & pooling", b: "core" },
+    { t: "Filters/kernels, stride, padding", b: "core" },
+    { t: "Architectures (LeNet, ResNet, EfficientNet)", b: "deep" },
+    { t: "Transfer learning", b: "core" },
+  ]},
+  { t: "Sequence Models", b: "core", c: [
+    { t: "RNN", b: "core" },
+    { t: "LSTM & GRU", b: "core" },
+    { t: "Vanishing/exploding gradients", b: "deep" },
+    { t: "Seq2seq & encoder-decoder", b: "deep" },
+  ]},
+  { t: "Transformers", b: "core", c: [
+    { t: "Self-attention & multi-head attention", b: "core" },
+    { t: "Positional encoding", b: "core" },
+    { t: "Encoder vs decoder architectures", b: "core" },
+    { t: "BERT vs GPT families", b: "core" },
+  ]},
+  { t: "Graph Machine Learning (GNNs)", b: "deep", c: [
+    { t: "Graph representation & node embeddings", b: "deep" },
+    { t: "Graph Convolutional Networks (GCN)", b: "deep" },
+    { t: "GraphSAGE / GAT", b: "deep" },
+    { t: "Use cases (fraud, recommendation, knowledge graphs)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 13 — DL Frameworks", phase: 13, c: [
+  { t: "PyTorch", b: "core", c: [
+    { t: "Tensors & operations", b: "core" },
+    { t: "Autograd", b: "core" },
+    { t: "nn.Module & building models", b: "core" },
+    { t: "Datasets & DataLoaders", b: "core" },
+    { t: "Training loop (loss, optimizer, backward)", b: "core" },
+    { t: "GPU/CUDA usage", b: "deep" },
+    { t: "Saving/loading models", b: "core" },
+  ]},
+  { t: "TensorFlow / Keras", b: "deep", c: [
+    { t: "Keras Sequential & Functional API", b: "deep" },
+    { t: "model.compile / fit / evaluate", b: "deep" },
+    { t: "Callbacks", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 14 — Reinforcement Learning", phase: 14, c: [
+  { t: "RL Fundamentals", b: "deep", c: [
+    { t: "Agent, environment, reward", b: "deep" },
+    { t: "Markov Decision Process (MDP)", b: "deep" },
+    { t: "Policy, value function, Q-value", b: "deep" },
+    { t: "Exploration vs exploitation", b: "deep" },
+  ]},
+  { t: "Core Methods", b: "deep", c: [
+    { t: "Q-learning", b: "deep" },
+    { t: "Deep Q-Networks (DQN)", b: "deep" },
+    { t: "Policy gradients", b: "deep" },
+    { t: "Actor-Critic (A2C/PPO)", b: "deep" },
+  ]},
+  { t: "Reward Modeling", b: "deep", c: [
+    { t: "Reward shaping", b: "deep" },
+    { t: "Link to RLHF (see Fine-Tuning)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 15 — The Evolution: ML → DL → GenAI", phase: 15, c: [
+  { t: "The progression", b: "core", c: [
+    { t: "Rule-based → ML → DL → GenAI (why each step)", b: "core" },
+    { t: "Feature engineering → representation learning", b: "core" },
+    { t: "RNN/LSTM → Transformer breakthrough", b: "core" },
+    { t: "Transformer → large language models", b: "core" },
+  ]},
+  { t: "Scaling & emergence", b: "deep", c: [
+    { t: "Scaling laws", b: "deep" },
+    { t: "Emergent abilities", b: "deep" },
+    { t: "Pretraining → fine-tuning → instruction tuning", b: "core" },
+    { t: "Toward AGI (concepts & debate)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 16 — LLMs & Generative AI Core", phase: 16, c: [
+  { t: "LLM Internals", b: "core", c: [
+    { t: "Tokenization (BPE, subword)", b: "core" },
+    { t: "Embeddings & vector space", b: "core" },
+    { t: "Next-token prediction", b: "core" },
+    { t: "Context window & attention cost", b: "core" },
+    { t: "Decoding (greedy, beam, top-k, top-p, temperature)", b: "core" },
+  ]},
+  { t: "Using LLMs", b: "core", c: [
+    { t: "Prompt engineering (zero/few-shot, CoT)", b: "core" },
+    { t: "Structured/JSON output", b: "core" },
+    { t: "APIs (OpenAI, Anthropic, Groq)", b: "core" },
+    { t: "Open-source serving (Ollama, vLLM, HF)", b: "deep" },
+    { t: "Hallucination & mitigation", b: "core" },
+  ]},
+  { t: "Multimodal & Diffusion", b: "deep", c: [
+    { t: "Vision-language models (CLIP, GPT-4V)", b: "deep" },
+    { t: "Diffusion models (Stable Diffusion)", b: "deep" },
+    { t: "Text-to-image / image-to-text", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 17 — Fine-Tuning & Customization", phase: 17, c: [
+  { t: "Adaptation Strategies", b: "core", c: [
+    { t: "RAG vs fine-tuning (when to use)", b: "core" },
+    { t: "Transfer learning", b: "core" },
+    { t: "Full fine-tuning", b: "core" },
+  ]},
+  { t: "Parameter-Efficient Fine-Tuning (PEFT)", b: "core", c: [
+    { t: "LoRA", b: "core" },
+    { t: "QLoRA", b: "core" },
+    { t: "Adapters & prefix tuning", b: "deep" },
+  ]},
+  { t: "Alignment", b: "deep", c: [
+    { t: "Instruction tuning (SFT)", b: "core" },
+    { t: "RLHF", b: "deep" },
+    { t: "DPO (Direct Preference Optimization)", b: "deep" },
+  ]},
+  { t: "Efficiency", b: "deep", c: [
+    { t: "Quantization (INT8/INT4, GPTQ, AWQ)", b: "deep" },
+    { t: "Distillation & pruning", b: "deep" },
+    { t: "Data prep for fine-tuning", b: "core" },
+    { t: "Synthetic data generation (augmentation, privacy-preserving)", b: "deep" },
+    { t: "Evaluating a fine-tuned model", b: "core" },
+  ]},
+]},
+{ t: "PHASE 18 — Applied GenAI Stack (LangChain / LangGraph / RAG / Agents / MCP)", phase: 18, c: [
+  { t: "LangChain", b: "core", c: [
+    { t: "Models, prompts, output parsers", b: "core" },
+    { t: "Chains & LCEL", b: "core" },
+    { t: "Memory", b: "core" },
+    { t: "Tools & tool calling", b: "core" },
+    { t: "Structured output", b: "core" },
+  ]},
+  { t: "LangGraph", b: "core", c: [
+    { t: "State, nodes, edges", b: "core" },
+    { t: "Conditional routing & reducers", b: "core" },
+    { t: "ReAct agents", b: "core" },
+    { t: "Checkpointing & memory", b: "core" },
+    { t: "Streaming & HITL", b: "deep" },
+    { t: "Workflow patterns (chaining/parallel/routing/orchestrator)", b: "deep" },
+  ]},
+  { t: "Vector Databases", b: "core", c: [
+    { t: "FAISS, Chroma, Pinecone, Weaviate, Qdrant", b: "core" },
+    { t: "Similarity metrics & indexing (HNSW/IVF)", b: "deep" },
+    { t: "Hybrid search & metadata filtering", b: "deep" },
+  ]},
+  { t: "RAG", b: "core", c: [
+    { t: "Ingestion, chunking, embeddings, retrieval", b: "core" },
+    { t: "Agentic / Corrective / Adaptive RAG", b: "deep" },
+    { t: "Re-ranking", b: "deep" },
+    { t: "RAG evaluation (RAGAS, precision/recall, faithfulness)", b: "core" },
+  ]},
+  { t: "Agents & MCP", b: "core", c: [
+    { t: "Agent loop, tools, create_react_agent", b: "core" },
+    { t: "Multi-agent systems", b: "deep" },
+    { t: "Model Context Protocol (MCP)", b: "deep" },
+    { t: "Guardrails & safety", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 19 — Computer Vision & Multimodal", phase: 19, c: [
+  { t: "Classic CV", b: "deep", c: [
+    { t: "OpenCV basics (filters, edges, contours)", b: "deep" },
+    { t: "Image transforms & augmentation", b: "deep" },
+  ]},
+  { t: "CV Tasks", b: "deep", c: [
+    { t: "Image classification", b: "deep" },
+    { t: "Object detection (YOLO, Faster R-CNN)", b: "deep" },
+    { t: "Segmentation (U-Net, Mask R-CNN)", b: "deep" },
+    { t: "OCR", b: "deep" },
+  ]},
+  { t: "Multimodal", b: "deep", c: [
+    { t: "CLIP & vision-language models", b: "deep" },
+    { t: "GPT-4V / multimodal LLMs", b: "deep" },
+    { t: "Diffusion / generative image models", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 20 — Responsible AI", phase: 20, c: [
+  { t: "Fairness & Bias", b: "core", c: [
+    { t: "Types of bias (data, label, sampling)", b: "core" },
+    { t: "Fairness metrics", b: "deep" },
+    { t: "Bias mitigation techniques", b: "deep" },
+  ]},
+  { t: "Trust & Governance", b: "core", c: [
+    { t: "Explainability (link to interpretability)", b: "core" },
+    { t: "Privacy (PII, differential privacy)", b: "core" },
+    { t: "Data & model governance", b: "deep" },
+    { t: "LLM safety (toxicity, prompt injection, guardrails)", b: "core" },
+    { t: "Regulations (GDPR, EU AI Act basics)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 21 — Data Engineering Basics (optional but useful)", phase: 21, c: [
+  { t: "Pipelines", b: "deep", c: [
+    { t: "ETL vs ELT", b: "deep" },
+    { t: "Batch vs streaming", b: "deep" },
+    { t: "Airflow (DAGs, scheduling)", b: "deep" },
+  ]},
+  { t: "Storage & Processing", b: "deep", c: [
+    { t: "Data warehouses vs lakes", b: "deep" },
+    { t: "Spark basics", b: "deep" },
+    { t: "Parquet, partitioning", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 22 — MLOps & LLMOps", phase: 22, c: [
+  { t: "Experiment & Model Management", b: "core", c: [
+    { t: "Experiment tracking (MLflow, W&B)", b: "core" },
+    { t: "Model registry & versioning", b: "core" },
+    { t: "Data & model versioning (DVC)", b: "deep" },
+  ]},
+  { t: "Deployment & Serving", b: "core", c: [
+    { t: "Model serving (FastAPI, BentoML, TorchServe)", b: "core" },
+    { t: "Containerization (Docker)", b: "core" },
+    { t: "Orchestration (Kubernetes basics)", b: "deep" },
+    { t: "CI/CD for ML", b: "deep" },
+  ]},
+  { t: "Monitoring", b: "core", c: [
+    { t: "Data drift & concept drift", b: "core" },
+    { t: "Model performance monitoring", b: "core" },
+    { t: "Retraining strategies", b: "deep" },
+  ]},
+  { t: "LLMOps specifics", b: "deep", c: [
+    { t: "Prompt versioning & management", b: "deep" },
+    { t: "LLM tracing (LangSmith)", b: "core" },
+    { t: "Token/cost/latency monitoring", b: "core" },
+    { t: "LLM evaluation pipelines", b: "deep" },
+  ]},
+  { t: "Cloud AI Platforms", b: "deep", c: [
+    { t: "AWS (SageMaker, Bedrock)", b: "deep" },
+    { t: "GCP (Vertex AI)", b: "deep" },
+    { t: "Azure (Azure ML, Azure OpenAI)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 23 — Production AI System Design", phase: 23, c: [
+  { t: "Architecture", b: "core", c: [
+    { t: "Scalable RAG architecture", b: "core" },
+    { t: "Multi-agent system design", b: "deep" },
+    { t: "Caching (semantic cache)", b: "deep" },
+    { t: "Load balancing & rate limiting", b: "deep" },
+    { t: "Fallbacks & multi-provider routing", b: "deep" },
+  ]},
+  { t: "Quality & Safety at Scale", b: "core", c: [
+    { t: "Evaluation at scale (offline + online)", b: "core" },
+    { t: "Guardrails & content moderation", b: "core" },
+    { t: "Cost optimization", b: "core" },
+    { t: "Latency optimization", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 24 — Interview & Career", phase: 24, c: [
+  { t: "DS/ML Interview", b: "core", c: [
+    { t: "ML concepts & algorithm tradeoffs", b: "core" },
+    { t: "Stats & probability questions", b: "core" },
+    { t: "SQL & Python coding rounds", b: "core" },
+    { t: "Case studies (business → ML framing)", b: "core" },
+    { t: "A/B testing questions", b: "core" },
+  ]},
+  { t: "GenAI/LLM Interview", b: "core", c: [
+    { t: "RAG end-to-end", b: "core" },
+    { t: "Agents & tool calling", b: "core" },
+    { t: "Fine-tuning vs RAG", b: "core" },
+    { t: "LLM evaluation", b: "core" },
+    { t: "Architecture whiteboarding", b: "deep" },
+  ]},
+  { t: "Portfolio & Growth", b: "core", c: [
+    { t: "Projects on GitHub + demos", b: "core" },
+    { t: "Kaggle / competitions", b: "deep" },
+    { t: "Reading papers (arXiv)", b: "deep" },
+    { t: "Roadmap to Senior Data Scientist", b: "core" },
+  ]},
+]},
+];
+
+const STORE_KEY = "mldlgenai_roadmap_progress_v1";
+const THEME_KEY = "mldlgenai_theme";
+let progress = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+let totalLeaves = 0, idCounter = 0;
+
+function badgeHtml(b) {
+  if (b === "core") return '<span class="badge core">CORE</span>';
+  if (b === "deep") return '<span class="badge deep">DEEP</span>';
+  return "";
+}
+
+function renderNode(node) {
+  const id = "n" + (idCounter++);
+  const hasChildren = node.c && node.c.length;
+  const isLeaf = !hasChildren;
+  if (isLeaf) totalLeaves++;
+  const done = progress[node.t] ? " done" : "";
+  const checked = progress[node.t] ? "checked" : "";
+  let html = '<div class="node" data-badge="' + (node.b || "") + '" data-leaf="' + isLeaf + '">';
+  html += '<div class="node-head' + done + '">';
+  html += '<span class="caret ' + (hasChildren ? "" : "leaf") + '" data-target="' + id + '">▶</span>';
+  html += '<input type="checkbox" class="chk" data-title="' + encodeURIComponent(node.t) + '" ' + checked + ' />';
+  html += '<span class="node-title">' + node.t + '</span>';
+  html += badgeHtml(node.b);
+  html += '</div>';
+  if (hasChildren) {
+    html += '<div class="children" id="' + id + '">';
+    node.c.forEach(ch => html += renderNode(ch));
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderPhase(phase) {
+  const id = "p" + (idCounter++);
+  let html = '<div class="phase">';
+  html += '<div class="phase-head" data-target="' + id + '"><span class="caret" style="color:var(--phase)">▶</span>';
+  html += '<span class="ptag">PHASE ' + phase.phase + '</span>' + phase.t.replace(/^PHASE \d+ — /, "");
+  html += '</div><div class="children" id="' + id + '">';
+  phase.c.forEach(ch => html += renderNode(ch));
+  html += '</div></div>';
+  return html;
+}
+
+const treeEl = document.getElementById("tree");
+treeEl.innerHTML = DATA.map(renderPhase).join("");
+
+treeEl.addEventListener("click", e => {
+  const caret = e.target.closest(".caret");
+  const head = e.target.closest(".phase-head, .node-head");
+  if (e.target.classList.contains("chk")) return;
+  if (head) {
+    const targetId = (caret && caret.dataset.target) || head.dataset.target ||
+      (head.querySelector(".caret") && head.querySelector(".caret").dataset.target);
+    if (!targetId) return;
+    const box = document.getElementById(targetId);
+    const c = head.querySelector(".caret");
+    if (box) {
+      box.classList.toggle("open");
+      if (c) c.classList.toggle("open");
+    }
+  }
+});
+
+treeEl.addEventListener("change", e => {
+  if (!e.target.classList.contains("chk")) return;
+  const title = decodeURIComponent(e.target.dataset.title);
+  const headEl = e.target.closest(".node-head");
+  if (e.target.checked) { progress[title] = true; headEl.classList.add("done"); }
+  else { delete progress[title]; headEl.classList.remove("done"); }
+  localStorage.setItem(STORE_KEY, JSON.stringify(progress));
+  updateProgress();
+});
+
+function updateProgress() {
+  const done = Object.keys(progress).length;
+  const pct = totalLeaves ? Math.round(done / totalLeaves * 100) : 0;
+  document.getElementById("progBar").style.width = pct + "%";
+  document.getElementById("progText").textContent = done + " / " + totalLeaves + " topics done (" + pct + "%)";
+}
+updateProgress();
+
+document.getElementById("expandAll").onclick = () => {
+  document.querySelectorAll(".children").forEach(c => c.classList.add("open"));
+  document.querySelectorAll(".caret:not(.leaf)").forEach(c => c.classList.add("open"));
+};
+document.getElementById("collapseAll").onclick = () => {
+  document.querySelectorAll(".children").forEach(c => c.classList.remove("open"));
+  document.querySelectorAll(".caret").forEach(c => c.classList.remove("open"));
+};
+
+let coreOnly = false;
+document.getElementById("coreOnly").onclick = e => {
+  coreOnly = !coreOnly;
+  e.target.textContent = coreOnly ? "Show All" : "Show Core only";
+  document.querySelectorAll('.node[data-badge="deep"]').forEach(n => {
+    n.classList.toggle("hidden", coreOnly);
+  });
+};
+
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  const nodes = document.querySelectorAll(".node");
+  if (!q) {
+    nodes.forEach(n => n.classList.remove("hidden"));
+    document.querySelectorAll(".children").forEach(c => c.classList.remove("open"));
+    document.querySelectorAll(".caret").forEach(c => c.classList.remove("open"));
+    return;
+  }
+  nodes.forEach(n => {
+    const title = n.querySelector(".node-title").textContent.toLowerCase();
+    const match = title.includes(q);
+    n.classList.toggle("hidden", !match);
+    if (match) {
+      let p = n.parentElement;
+      while (p && p.id !== "tree") {
+        if (p.classList.contains("children")) { p.classList.remove("hidden"); p.classList.add("open"); }
+        if (p.classList.contains("node")) p.classList.remove("hidden");
+        if (p.classList.contains("phase")) p.classList.remove("hidden");
+        p = p.parentElement;
+      }
+    }
+  });
+});
+
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+  localStorage.setItem(THEME_KEY, dark ? "light" : "dark");
+};
+if (localStorage.getItem(THEME_KEY) === "dark") {
+  document.documentElement.setAttribute("data-theme", "dark");
+  themeBtn.textContent = "☀️ Light";
+}
+
+document.getElementById("reset").onclick = () => {
+  if (confirm("Clear all progress ticks?")) {
+    progress = {}; localStorage.removeItem(STORE_KEY);
+    document.querySelectorAll(".chk").forEach(c => c.checked = false);
+    document.querySelectorAll(".node-head.done").forEach(h => h.classList.remove("done"));
+    updateProgress();
+  }
+};
+
+const firstPhaseChildren = document.querySelector(".phase .children");
+if (firstPhaseChildren) {
+  firstPhaseChildren.classList.add("open");
+  firstPhaseChildren.previousElementSibling.querySelector(".caret").classList.add("open");
+}
+</script>
+</body>
+</html>

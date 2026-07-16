@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python + Generative AI — Learning Roadmap</title>
+<style>
+  :root {
+    --bg: #f5f7fa; --panel: #ffffff; --text: #1f2933; --muted: #64748b;
+    --border: #e2e8f0; --accent: #6366f1; --accent2: #4338ca;
+    --core: #16a34a; --core-bg: #dcfce7; --deep: #2563eb; --deep-bg: #dbeafe;
+    --phase: #7c3aed; --bar-bg: #e2e8f0;
+  }
+  html[data-theme="dark"] {
+    --bg: #0f172a; --panel: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
+    --border: #334155; --accent: #818cf8; --accent2: #a5b4fc;
+    --core: #4ade80; --core-bg: #14532d; --deep: #60a5fa; --deep-bg: #1e3a8a;
+    --phase: #c4b5fd; --bar-bg: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; padding: 28px 24px; position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px 80px; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin: 18px 0; position: sticky; top: 96px; z-index: 40;
+    background: var(--bg); padding: 10px 0;
+  }
+  .controls input[type="search"] {
+    flex: 1; min-width: 200px; padding: 9px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    font-size: 0.9rem;
+  }
+  button, .toggle {
+    padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text); cursor: pointer; font-size: 0.82rem;
+  }
+  button:hover { border-color: var(--accent); }
+  .progress-outer { background: var(--bar-bg); border-radius: 20px; height: 14px; overflow: hidden; margin: 6px 0 16px; }
+  .progress-inner { background: linear-gradient(90deg, var(--core), var(--accent)); height: 100%; width: 0%; transition: width .3s; }
+  .progress-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+  .phase {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    margin: 14px 0; overflow: hidden;
+  }
+  .phase > .phase-head {
+    padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 1.05rem; border-left: 5px solid var(--phase);
+  }
+  .phase-head .ptag { font-size: 0.7rem; color: #fff; background: var(--phase); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .node { margin-left: 8px; }
+  .node-head {
+    display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px;
+    border-radius: 6px; cursor: pointer;
+  }
+  .node-head:hover { background: rgba(99,102,241,0.08); }
+  .caret { width: 14px; display: inline-block; transition: transform .15s; color: var(--muted); flex-shrink: 0; margin-top: 3px; }
+  .caret.open { transform: rotate(90deg); }
+  .caret.leaf { visibility: hidden; }
+  .node-title { flex: 1; }
+  .badge { font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
+  .badge.core { color: var(--core); background: var(--core-bg); }
+  .badge.deep { color: var(--deep); background: var(--deep-bg); }
+  .children { margin-left: 20px; border-left: 1px dashed var(--border); padding-left: 6px; display: none; }
+  .children.open { display: block; }
+  input.chk { margin-top: 4px; cursor: pointer; flex-shrink: 0; }
+  .done > .node-title { text-decoration: line-through; color: var(--muted); }
+  .legend { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
+  .hidden { display: none !important; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🐍 → 🤖 Python + Generative AI — Learning Roadmap</h1>
+  <!-- <p>From zero to shipping GenAI apps · ~3 month path · Core (must-know) &amp; Deep-dive (nice-to-have)</p> -->
+</header>
+<div class="wrap">
+  <div class="progress-label"><span id="progText">0 / 0 topics done</span></div>
+  <div class="progress-outer"><div class="progress-inner" id="progBar"></div></div>
+  <div class="controls">
+    <input type="search" id="search" placeholder="🔍 Search topics (e.g. decorators, RAG, FastAPI)..." />
+    <button id="expandAll">Expand all</button>
+    <button id="collapseAll">Collapse all</button>
+    <button id="coreOnly" class="toggle">Show Core only</button>
+    <button id="theme">🌙 Dark</button>
+    <button id="reset">Reset progress</button>
+  </div>
+  <p class="legend"><span class="badge core">CORE</span> must-know &nbsp; <span class="badge deep">DEEP</span> nice-to-have / go deeper later &nbsp; · &nbsp; ✔ tick to track progress (saved in your browser)</p>
+  <div id="tree"></div>
+  <footer>Built for the Python + GenAI journey · open in any browser, share this single file.</footer>
+</div>
+<script>
+/* ============================================================
+   ROADMAP DATA — File A (Python + Generative AI)
+   node = { t: title, b: 'core'|'deep', c: [children] }
+   Top level = Phases.
+   ============================================================ */
+const DATA = [
+{ t: "PHASE 1 — Python Foundations", phase: 1, c: [
+  { t: "Getting Started", b: "core", c: [
+    { t: "What is Python, interpreter vs compiler", b: "core" },
+    { t: "Install Python, pip, venv / uv", b: "core" },
+    { t: "IDE setup (VS Code), REPL, running scripts", b: "core" },
+    { t: "print(), input(), comments", b: "core" },
+  ]},
+  { t: "Variables & Data Types", b: "core", c: [
+    { t: "int, float, complex", b: "core" },
+    { t: "str, bool, NoneType", b: "core" },
+    { t: "Type casting & conversion", b: "core" },
+    { t: "Dynamic typing, id(), type()", b: "core" },
+    { t: "Mutable vs immutable", b: "core" },
+  ]},
+  { t: "Operators", b: "core", c: [
+    { t: "Arithmetic, comparison, logical", b: "core" },
+    { t: "Assignment, bitwise", b: "core" },
+    { t: "Identity (is) vs equality (==)", b: "core" },
+    { t: "Membership (in, not in)", b: "core" },
+    { t: "Operator precedence", b: "deep" },
+  ]},
+  { t: "Strings", b: "core", c: [
+    { t: "Indexing & slicing", b: "core" },
+    { t: "f-strings & formatting", b: "core" },
+    { t: "Common methods (split, join, strip, replace)", b: "core" },
+    { t: "Escape chars, raw strings", b: "core" },
+    { t: "String immutability", b: "core" },
+  ]},
+  { t: "Control Flow", b: "core", c: [
+    { t: "if / elif / else", b: "core" },
+    { t: "for loops, range, enumerate", b: "core" },
+    { t: "while loops", b: "core" },
+    { t: "break, continue, pass, else-on-loop", b: "core" },
+    { t: "match-case (structural pattern)", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 2 — Python Data Structures & Core Skills", phase: 2, c: [
+  { t: "Lists", b: "core", c: [
+    { t: "CRUD, methods, slicing", b: "core" },
+    { t: "List comprehensions", b: "core" },
+    { t: "Nested lists, copy vs deepcopy", b: "core" },
+    { t: "sort() vs sorted(), key/lambda", b: "core" },
+  ]},
+  { t: "Tuples", b: "core", c: [
+    { t: "Packing / unpacking", b: "core" },
+    { t: "Immutability & use cases", b: "core" },
+    { t: "namedtuple", b: "deep" },
+  ]},
+  { t: "Sets", b: "core", c: [
+    { t: "Operations (union/intersection/difference)", b: "core" },
+    { t: "Set comprehensions, frozenset", b: "deep" },
+  ]},
+  { t: "Dictionaries", b: "core", c: [
+    { t: "CRUD, methods, iteration", b: "core" },
+    { t: "Dict comprehensions", b: "core" },
+    { t: "Nested dicts, get() / setdefault()", b: "core" },
+    { t: "Merging (| operator, update)", b: "deep" },
+  ]},
+  { t: "collections module", b: "deep", c: [
+    { t: "Counter", b: "deep" },
+    { t: "defaultdict", b: "deep" },
+    { t: "OrderedDict", b: "deep" },
+    { t: "deque", b: "deep" },
+  ]},
+  { t: "Functions", b: "core", c: [
+    { t: "def, return, args & kwargs", b: "core" },
+    { t: "Default / positional / keyword args", b: "core" },
+    { t: "*args, **kwargs", b: "core" },
+    { t: "Lambda functions", b: "core" },
+    { t: "Scope (LEGB), global, nonlocal", b: "core" },
+    { t: "Closures", b: "deep" },
+    { t: "Recursion", b: "core" },
+  ]},
+  { t: "Modules & Packages", b: "core", c: [
+    { t: "import, from, as", b: "core" },
+    { t: "__name__ == '__main__'", b: "core" },
+    { t: "Standard library tour (os, sys, math, random, datetime, json)", b: "core" },
+    { t: "Creating your own package", b: "deep" },
+  ]},
+  { t: "File Handling", b: "core", c: [
+    { t: "open / read / write, with-statement", b: "core" },
+    { t: "Text vs binary, CSV, JSON files", b: "core" },
+    { t: "pathlib", b: "deep" },
+  ]},
+  { t: "Exceptions", b: "core", c: [
+    { t: "try / except / else / finally", b: "core" },
+    { t: "Common exception types", b: "core" },
+    { t: "raise, custom exceptions", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 3 — Python Advanced, OOP & Tooling", phase: 3, c: [
+  { t: "Object-Oriented Programming", b: "core", c: [
+    { t: "Classes, objects, __init__, self", b: "core" },
+    { t: "Instance vs class vs static methods", b: "core" },
+    { t: "Inheritance & super()", b: "core" },
+    { t: "Encapsulation, @property", b: "core" },
+    { t: "Polymorphism, method overriding", b: "core" },
+    { t: "Dunder / magic methods (__str__, __repr__, __eq__, __len__)", b: "deep" },
+    { t: "dataclasses", b: "core" },
+    { t: "Abstract base classes (ABC)", b: "deep" },
+    { t: "SOLID principles", b: "deep" },
+  ]},
+  { t: "Advanced Python", b: "core", c: [
+    { t: "Iterators & iter/next protocol", b: "core" },
+    { t: "Generators & yield", b: "core" },
+    { t: "Decorators (function & class)", b: "core" },
+    { t: "Context managers (with, __enter__/__exit__)", b: "deep" },
+    { t: "Type hints & typing module", b: "core" },
+    { t: "map / filter / reduce, functools", b: "deep" },
+    { t: "Regular expressions (re)", b: "deep" },
+  ]},
+  { t: "Concurrency & Parallelism", b: "deep", c: [
+    { t: "Threading & the GIL", b: "deep" },
+    { t: "Multiprocessing", b: "deep" },
+    { t: "asyncio, async / await", b: "core" },
+    { t: "concurrent.futures", b: "deep" },
+  ]},
+  { t: "Pro Tooling", b: "core", c: [
+    { t: "logging module (levels, handlers, formatters)", b: "core" },
+    { t: "Testing: unittest / pytest", b: "core" },
+    { t: "Virtual envs & dependency mgmt (uv, pip, requirements)", b: "core" },
+    { t: "Linting/formatting (ruff, black)", b: "deep" },
+    { t: "Git & GitHub basics", b: "core" },
+    { t: "Environment variables & .env (python-dotenv)", b: "core" },
+  ]},
+]},
+{ t: "PHASE 4 — Data Libraries, SQL & Web (FastAPI)", phase: 4, c: [
+  { t: "Essential Libraries", b: "core", c: [
+    { t: "requests (HTTP calls)", b: "core" },
+    { t: "Pydantic (data validation, models)", b: "core" },
+    { t: "NumPy basics (arrays, ops)", b: "deep" },
+    { t: "Pandas basics (DataFrame, read_csv, filtering)", b: "core" },
+  ]},
+  { t: "SQL (light but essential)", b: "core", c: [
+    { t: "What is a relational DB, tables, keys", b: "core" },
+    { t: "SELECT, WHERE, ORDER BY, LIMIT", b: "core" },
+    { t: "INSERT / UPDATE / DELETE", b: "core" },
+    { t: "JOINs (inner/left/right)", b: "core" },
+    { t: "GROUP BY & aggregations", b: "core" },
+    { t: "SQLite hands-on", b: "core" },
+    { t: "SQLAlchemy ORM basics", b: "deep" },
+    { t: "Connecting a DB to a GenAI app", b: "core" },
+  ]},
+  { t: "FastAPI", b: "core", c: [
+    { t: "REST fundamentals (methods, status codes)", b: "core" },
+    { t: "First app, path & query params", b: "core" },
+    { t: "Request/response models (Pydantic)", b: "core" },
+    { t: "Dependency injection", b: "core" },
+    { t: "Middleware & CORS", b: "deep" },
+    { t: "Async endpoints", b: "core" },
+    { t: "Auth (API keys, JWT/OAuth2 basics)", b: "deep" },
+    { t: "Streaming responses (SSE / StreamingResponse)", b: "deep" },
+    { t: "Swagger / OpenAPI docs", b: "core" },
+  ]},
+]},
+
+{ t: "PHASE 5 — Generative AI Foundations", phase: 5, c: [
+  { t: "GenAI & LLM Concepts", b: "core", c: [
+    { t: "AI vs ML vs DL vs GenAI (big picture)", b: "core" },
+    { t: "What is an LLM, next-token prediction", b: "core" },
+    { t: "Tokens & tokenization", b: "core" },
+    { t: "Embeddings (what & why)", b: "core" },
+    { t: "Context window", b: "core" },
+    { t: "Temperature, top-p, max tokens", b: "core" },
+    { t: "Hallucination (what & why)", b: "core" },
+    { t: "Transformers & attention (intuition only)", b: "deep" },
+    { t: "Open vs closed models", b: "core" },
+  ]},
+  { t: "Accessing / Calling LLMs", b: "core", c: [
+    { t: "OpenAI API (chat completions, params)", b: "core" },
+    { t: "Anthropic (Claude) API", b: "core" },
+    { t: "Groq API (fast, free tier)", b: "core" },
+    { t: "Streaming responses", b: "core" },
+    { t: "Token counting & cost basics", b: "core" },
+    { t: "Open-source serving: Ollama (local)", b: "deep" },
+    { t: "vLLM (high-throughput serving)", b: "deep" },
+    { t: "Hugging Face Inference API / transformers", b: "deep" },
+    { t: "Rate limits, retries, error handling", b: "core" },
+  ]},
+  { t: "Prompt Engineering", b: "core", c: [
+    { t: "Anatomy of a prompt (system/user/assistant)", b: "core" },
+    { t: "Zero-shot prompting", b: "core" },
+    { t: "Few-shot prompting", b: "core" },
+    { t: "Chain-of-Thought (CoT)", b: "core" },
+    { t: "Structured / JSON output", b: "core" },
+    { t: "Role & persona prompting", b: "deep" },
+    { t: "ReAct-style prompting", b: "deep" },
+    { t: "Prompt injection & jailbreak basics", b: "core" },
+    { t: "Prompt versioning & templates", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 6 — Vector Databases & RAG", phase: 6, c: [
+  { t: "Vector Databases", b: "core", c: [
+    { t: "What is a vector DB & similarity search", b: "core" },
+    { t: "Cosine similarity, dot product, L2", b: "core" },
+    { t: "FAISS (local, in-memory)", b: "core" },
+    { t: "Chroma", b: "core" },
+    { t: "Pinecone (managed)", b: "deep" },
+    { t: "Weaviate", b: "deep" },
+    { t: "Qdrant", b: "deep" },
+    { t: "Indexing (HNSW, IVF, flat)", b: "deep" },
+    { t: "Metadata filtering & hybrid search", b: "deep" },
+  ]},
+  { t: "RAG (Retrieval-Augmented Generation)", b: "core", c: [
+    { t: "Why RAG (vs fine-tuning)", b: "core" },
+    { t: "Document ingestion & loaders", b: "core" },
+    { t: "Chunking strategies (size, overlap, semantic)", b: "core" },
+    { t: "Embedding models (choosing one)", b: "core" },
+    { t: "Retrieval (top-k, MMR)", b: "core" },
+    { t: "Augmentation (context injection)", b: "core" },
+    { t: "Generation & source citation", b: "core" },
+    { t: "Advanced: Agentic RAG", b: "deep" },
+    { t: "Advanced: Corrective RAG (CRAG)", b: "deep" },
+    { t: "Advanced: Adaptive RAG", b: "deep" },
+    { t: "Re-ranking (cross-encoders)", b: "deep" },
+    { t: "RAG evaluation basics (precision/recall, RAGAS)", b: "core" },
+  ]},
+]},
+{ t: "PHASE 7 — LangChain & LangGraph", phase: 7, c: [
+  { t: "LangChain", b: "core", c: [
+    { t: "What & why LangChain", b: "core" },
+    { t: "Chat models & init_chat_model", b: "core" },
+    { t: "Prompt templates", b: "core" },
+    { t: "Output parsers (str, JSON, Pydantic)", b: "core" },
+    { t: "Chains & LCEL (| pipe syntax)", b: "core" },
+    { t: "Runnables (invoke, batch, stream)", b: "core" },
+    { t: "Memory & conversation history", b: "core" },
+    { t: "Tools & @tool decorator", b: "core" },
+    { t: "bind_tools & tool calling", b: "core" },
+    { t: "Structured output", b: "core" },
+    { t: "Messages (Human/AI/Tool/System)", b: "core" },
+    { t: "Middleware (summarization, HITL)", b: "deep" },
+    { t: "LangServe (serve chains as API)", b: "deep" },
+  ]},
+  { t: "LangGraph", b: "core", c: [
+    { t: "Why LangGraph (vs chains)", b: "core" },
+    { t: "State (TypedDict, schema)", b: "core" },
+    { t: "Nodes", b: "core" },
+    { t: "Edges (normal & conditional)", b: "core" },
+    { t: "Reducers (add_messages, operator.add)", b: "core" },
+    { t: "Building & compiling a graph", b: "core" },
+    { t: "Conditional routing (tools_condition, route fns)", b: "core" },
+    { t: "ReAct agent pattern", b: "core" },
+    { t: "Checkpointing & memory (MemorySaver, thread_id)", b: "core" },
+    { t: "Streaming (values/updates/messages)", b: "core" },
+    { t: "Human-in-the-loop (interrupt)", b: "deep" },
+    { t: "Graph visualization (mermaid)", b: "deep" },
+    { t: "Workflow patterns", b: "core", c: [
+      { t: "Prompt chaining", b: "core" },
+      { t: "Parallelization (fan-out/fan-in)", b: "core" },
+      { t: "Routing", b: "core" },
+      { t: "Orchestrator-workers (Send API)", b: "deep" },
+      { t: "Evaluator-optimizer", b: "deep" },
+    ]},
+  ]},
+]},
+
+{ t: "PHASE 8 — Agents & MCP", phase: 8, c: [
+  { t: "AI Agents", b: "core", c: [
+    { t: "AI agent vs agentic AI", b: "core" },
+    { t: "Agent loop (reason → act → observe)", b: "core" },
+    { t: "Tools & tool calling in depth", b: "core" },
+    { t: "create_react_agent", b: "core" },
+    { t: "ReAct (reasoning + acting)", b: "core" },
+    { t: "Planning & reflection", b: "deep" },
+    { t: "Multi-agent systems (supervisor, workers)", b: "deep" },
+    { t: "Guardrails & safety", b: "core" },
+  ]},
+  { t: "MCP (Model Context Protocol)", b: "deep", c: [
+    { t: "What is MCP & why it exists", b: "deep" },
+    { t: "MCP server vs client", b: "deep" },
+    { t: "Exposing tools via MCP", b: "deep" },
+    { t: "Connecting MCP to an agent", b: "deep" },
+    { t: "FastMCP basics", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 9 — Observability, Deployment & Cloud", phase: 9, c: [
+  { t: "Observability", b: "core", c: [
+    { t: "LangSmith (tracing, @traceable)", b: "core" },
+    { t: "Logging & debugging agents", b: "core" },
+    { t: "Token/cost/latency monitoring", b: "deep" },
+  ]},
+  { t: "App UI & Packaging", b: "core", c: [
+    { t: "Streamlit (chat apps)", b: "core" },
+    { t: "Gradio (quick demos)", b: "deep" },
+    { t: "Environment & secrets management", b: "core" },
+  ]},
+  { t: "Deployment", b: "core", c: [
+    { t: "Docker basics (image, container, Dockerfile)", b: "core" },
+    { t: "Hugging Face Spaces", b: "core" },
+    { t: "Deploying a FastAPI service", b: "core" },
+  ]},
+  { t: "Cloud Basics", b: "deep", c: [
+    { t: "Cloud concepts (compute, storage, IAM)", b: "deep" },
+    { t: "AWS basics (EC2, S3, Lambda, Bedrock)", b: "deep" },
+    { t: "GCP basics (Vertex AI)", b: "deep" },
+    { t: "Azure basics (Azure OpenAI)", b: "deep" },
+    { t: "Serverless & when to use it", b: "deep" },
+  ]},
+]},
+
+{ t: "PHASE 10 — Capstone Project & Interview Prep", phase: 10, c: [
+  { t: "Capstone Project", b: "core", c: [
+    { t: "Build an end-to-end RAG or agent app", b: "core" },
+    { t: "Multi-document Q&A + tools + memory", b: "core" },
+    { t: "Deploy & write a README", b: "core" },
+    { t: "Put it on GitHub + live demo", b: "core" },
+  ]},
+  { t: "DSA / Coding-Round Prep", b: "core", c: [
+    { t: "Time & space complexity (Big-O)", b: "core" },
+    { t: "Arrays & strings problems", b: "core" },
+    { t: "Hashmaps / sets problems", b: "core" },
+    { t: "Two pointers & sliding window", b: "deep" },
+    { t: "Recursion & backtracking basics", b: "deep" },
+    { t: "Sorting & searching", b: "core" },
+    { t: "Python-specific idioms for interviews", b: "core" },
+  ]},
+  { t: "GenAI Interview Prep", b: "core", c: [
+    { t: "Explain RAG end-to-end", b: "core" },
+    { t: "Agents & tool-calling questions", b: "core" },
+    { t: "Prompt engineering questions", b: "core" },
+    { t: "Vector DB & embeddings questions", b: "core" },
+    { t: "Project walkthrough (STAR format)", b: "core" },
+    { t: "System design for a GenAI app", b: "deep" },
+  ]},
+]},
+];
+
+/* ============================================================
+   RENDER + INTERACTIVITY
+   ============================================================ */
+const STORE_KEY = "pygenai_roadmap_progress_v1";
+let progress = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+let totalLeaves = 0, idCounter = 0;
+
+function badgeHtml(b) {
+  if (b === "core") return '<span class="badge core">CORE</span>';
+  if (b === "deep") return '<span class="badge deep">DEEP</span>';
+  return "";
+}
+
+function renderNode(node) {
+  const id = "n" + (idCounter++);
+  const hasChildren = node.c && node.c.length;
+  const isLeaf = !hasChildren;
+  if (isLeaf) totalLeaves++;
+  const done = progress[node.t] ? " done" : "";
+  const checked = progress[node.t] ? "checked" : "";
+  let html = '<div class="node" data-badge="' + (node.b || "") + '" data-leaf="' + isLeaf + '">';
+  html += '<div class="node-head' + done + '">';
+  html += '<span class="caret ' + (hasChildren ? "" : "leaf") + '" data-target="' + id + '">▶</span>';
+  html += '<input type="checkbox" class="chk" data-title="' + encodeURIComponent(node.t) + '" ' + checked + ' />';
+  html += '<span class="node-title">' + node.t + '</span>';
+  html += badgeHtml(node.b);
+  html += '</div>';
+  if (hasChildren) {
+    html += '<div class="children" id="' + id + '">';
+    node.c.forEach(ch => html += renderNode(ch));
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderPhase(phase) {
+  const id = "p" + (idCounter++);
+  let html = '<div class="phase">';
+  html += '<div class="phase-head" data-target="' + id + '"><span class="caret" style="color:var(--phase)">▶</span>';
+  html += '<span class="ptag">PHASE ' + phase.phase + '</span>' + phase.t.replace(/^PHASE \d+ — /, "");
+  html += '</div><div class="children" id="' + id + '">';
+  phase.c.forEach(ch => html += renderNode(ch));
+  html += '</div></div>';
+  return html;
+}
+
+const treeEl = document.getElementById("tree");
+treeEl.innerHTML = DATA.map(renderPhase).join("");
+
+/* caret toggle */
+treeEl.addEventListener("click", e => {
+  const caret = e.target.closest(".caret");
+  const head = e.target.closest(".phase-head, .node-head");
+  if (e.target.classList.contains("chk")) return;
+  if (head) {
+    const targetId = (caret && caret.dataset.target) || head.dataset.target ||
+      (head.querySelector(".caret") && head.querySelector(".caret").dataset.target);
+    if (!targetId) return;
+    const box = document.getElementById(targetId);
+    const c = head.querySelector(".caret");
+    if (box) {
+      box.classList.toggle("open");
+      if (c) c.classList.toggle("open");
+    }
+  }
+});
+
+/* checkbox progress */
+treeEl.addEventListener("change", e => {
+  if (!e.target.classList.contains("chk")) return;
+  const title = decodeURIComponent(e.target.dataset.title);
+  const headEl = e.target.closest(".node-head");
+  if (e.target.checked) { progress[title] = true; headEl.classList.add("done"); }
+  else { delete progress[title]; headEl.classList.remove("done"); }
+  localStorage.setItem(STORE_KEY, JSON.stringify(progress));
+  updateProgress();
+});
+
+function updateProgress() {
+  const done = Object.keys(progress).length;
+  const pct = totalLeaves ? Math.round(done / totalLeaves * 100) : 0;
+  document.getElementById("progBar").style.width = pct + "%";
+  document.getElementById("progText").textContent = done + " / " + totalLeaves + " topics done (" + pct + "%)";
+}
+updateProgress();
+
+/* expand / collapse all */
+document.getElementById("expandAll").onclick = () => {
+  document.querySelectorAll(".children").forEach(c => c.classList.add("open"));
+  document.querySelectorAll(".caret:not(.leaf)").forEach(c => c.classList.add("open"));
+};
+document.getElementById("collapseAll").onclick = () => {
+  document.querySelectorAll(".children").forEach(c => c.classList.remove("open"));
+  document.querySelectorAll(".caret").forEach(c => c.classList.remove("open"));
+};
+
+/* core-only filter */
+let coreOnly = false;
+document.getElementById("coreOnly").onclick = e => {
+  coreOnly = !coreOnly;
+  e.target.textContent = coreOnly ? "Show All" : "Show Core only";
+  document.querySelectorAll('.node[data-badge="deep"]').forEach(n => {
+    n.classList.toggle("hidden", coreOnly);
+  });
+};
+
+/* search */
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  const nodes = document.querySelectorAll(".node");
+  if (!q) {
+    nodes.forEach(n => n.classList.remove("hidden"));
+    document.querySelectorAll(".children").forEach(c => c.classList.remove("open"));
+    document.querySelectorAll(".caret").forEach(c => c.classList.remove("open"));
+    return;
+  }
+  nodes.forEach(n => {
+    const title = n.querySelector(".node-title").textContent.toLowerCase();
+    const match = title.includes(q);
+    n.classList.toggle("hidden", !match);
+    if (match) {
+      let p = n.parentElement;
+      while (p && p.id !== "tree") {
+        if (p.classList.contains("children")) { p.classList.remove("hidden"); p.classList.add("open"); }
+        if (p.classList.contains("node")) p.classList.remove("hidden");
+        if (p.classList.contains("phase")) p.classList.remove("hidden");
+        p = p.parentElement;
+      }
+    }
+  });
+});
+
+/* theme toggle */
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+  localStorage.setItem("pygenai_theme", dark ? "light" : "dark");
+};
+if (localStorage.getItem("pygenai_theme") === "dark") {
+  document.documentElement.setAttribute("data-theme", "dark");
+  themeBtn.textContent = "☀️ Light";
+}
+
+/* reset progress */
+document.getElementById("reset").onclick = () => {
+  if (confirm("Clear all progress ticks?")) {
+    progress = {}; localStorage.removeItem(STORE_KEY);
+    document.querySelectorAll(".chk").forEach(c => c.checked = false);
+    document.querySelectorAll(".node-head.done").forEach(h => h.classList.remove("done"));
+    updateProgress();
+  }
+};
+
+/* open phase 1 by default */
+const firstPhaseChildren = document.querySelector(".phase .children");
+if (firstPhaseChildren) {
+  firstPhaseChildren.classList.add("open");
+  firstPhaseChildren.previousElementSibling.querySelector(".caret").classList.add("open");
+}
+</script>
+</body>
+</html>
