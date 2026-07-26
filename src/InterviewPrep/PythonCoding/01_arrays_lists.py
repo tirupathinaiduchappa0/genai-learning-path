@@ -25,6 +25,68 @@ KEY SYNTAX DIFFERENCES (memorize these):
 # ==============================================================================
 # JS: const findDuplicates = (arr) => { const count = {}; ... }
 
+# merge intervals programme Input: [ [1,3], [2,6], [8,10], [15,18] ] Output: [ [1,6], [8,10], [15,18] ] Input: [ [1,4], [4,5] ] Output: [ [1,5] ]
+
+def merge(intervals):
+    intervals.sort(key=lambda x: x[0])      # sort by start
+    merged = []
+    for start, end in intervals:
+        # overlap or touching: current start is within the last merged interval
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+
+print(merge([ [1,3], [2,6], [8,10], [15,18] ]))
+
+
+#1.See an opening bracket (, {, [ → push it onto the stack. It's now waiting to be closed.
+#2.See a closing bracket ), }, ] → look at the top of the stack (the most recent unclosed opener). If it matches, pop it off. If it doesn't match, or the stack is empty (nothing to close), return False.
+#3.At the end, the stack must be empty. If anything is left, there are unclosed brackets → False.
+
+def is_valid(s):
+    # Map each closing bracket to its matching opening bracket
+    pairs = {')': '(', '}': '{', ']': '['}
+    stack = []
+
+    for ch in s:
+        if ch in "([{":
+            # Opening bracket -> push it
+            stack.append(ch)
+        elif ch in ")]}":
+            # Closing bracket -> must match the last opened one
+            if not stack or stack.pop() != pairs[ch]:
+                return False
+        # any other character (like letters) is ignored
+
+    # Valid only if nothing is left unclosed
+    return not stack
+
+print(is_valid("(n){a}[i]du"))  # True
+print(is_valid("([)]"))          # False
+print(is_valid("((("))           # False
+
+#Function to find the maximum sum of i*arr[i] among all rotations
+# Example usage
+
+#arr1111 = [3, 6, 9, 12]
+def max_rotate_sum_brute(arr):
+    n = len(arr)
+    max_sum = float('-inf')
+
+    for _ in range(n):
+        # compute i * arr[i] for current arrangement
+        current = sum(i * arr[i] for i in range(n))
+        max_sum = max(max_sum, current)
+
+        # rotate right by 1: move last element to front
+        arr = [arr[-1]] + arr[:-1]
+
+    return max_sum
+
+print(max_rotate_sum_brute(arr1111))
+
 
 # i/p: [1,1,2,2,3,3,3,4,4,4,4] o/p: [[1,1],[2,2],[3,3,3],[4,4,4,4]]   write a python code
 
@@ -105,6 +167,25 @@ def find_duplicates_set(arr):
 
 print("Duplicates:", find_duplicates([1, 2, 3, 2, 4, 5, 3]))
 # [2, 3]
+
+
+funcs = []
+
+for i in range(3):
+    funcs.append(lambda: i)
+
+for f in funcs:
+
+    print(f()) # 2,2,2
+
+#This is the classic Python closure late-binding gotcha. The lambdas don't capture the value of i at creation time. They capture the variable i itself. By the time you actually call the functions in the second loop, the loop has finished and i is left at its final value, 2. So all three lambdas look up the same i and see 2.
+
+funcs = []
+for i in range(3):
+    funcs.append(lambda i=i: i)  # i=i captures the value now
+
+for f in funcs:
+    print(f()) # 0 1 2, bind the current value as a default argument:
 
 
 # ==============================================================================

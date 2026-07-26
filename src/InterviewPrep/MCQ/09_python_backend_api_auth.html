@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Backend & API/Auth Design — Scenario MCQs (10)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#0284c7; --accent2:#0369a1;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#7c3aed; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#38bdf8; --accent2:#7dd3fc;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#c4b5fd; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙️ Python Backend &amp; API/Auth Design — Scenario MCQs</h1>
+  <p>Topic 09 · 10 real-world questions · FastAPI, Pydantic, async, OAuth/JWT, sessions, dependency injection, production API design · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 10</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in real backend engineering (your FastMCP/FastAPI + OAuth/session work). ⚠ = debatable. Deep-dive: SeniorDS_RealTime + DeloitteHashedIn FastAPI/async lessons.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Async event loop blocking", trap:"Sync-in-async trap", diff:"Senior",
+  q:"Your FastAPI endpoint calls an LLM via a SYNCHRONOUS client inside an `async def` handler. Under load, ALL requests slow to a crawl even though the server has spare CPU. What's happening?",
+  code:"@app.post('/chat')\nasync def chat(req: ChatReq):\n    resp = openai_sync_client.create(...)  # BLOCKING call in async handler\n    return resp",
+  opts:[
+    "FastAPI is single-threaded and can never handle concurrency.",
+    "A blocking (sync) call inside an async handler blocks the entire event loop, so no other request can progress while it waits — use an async client (await) or run the blocking call in a threadpool (run_in_executor / def endpoint).",
+    "The LLM API is rate-limiting you; there's nothing to fix in your code.",
+    "You need more CPU cores; async performance scales only with cores."
+  ],
+  correct:1,
+  exp:"An `async def` handler runs on the event loop. A blocking/synchronous call inside it doesn't yield control, so the ENTIRE loop stalls — every concurrent request waits behind it, which is why throughput collapses despite idle CPU. Fix: use an async client and `await` the I/O, or offload the blocking call to a threadpool (run_in_executor), or declare the endpoint as a plain `def` (FastAPI runs sync endpoints in a threadpool automatically).",
+  why:[
+    "FastAPI handles concurrency well — the problem is YOU blocked the loop, not a framework limit.",
+    "✅ Correct. Blocking call in an async handler stalls the event loop; use an async client/await or offload to a threadpool.",
+    "Rate limiting would cause errors/429s, not a loop-wide slowdown of unrelated requests.",
+    "This is I/O-bound (waiting on the LLM), not CPU-bound — more cores won't fix a blocked event loop."
+  ],
+  deep:"The event loop is cooperative: coroutines must `await` at I/O points to yield control. A sync network call never yields, so one in-flight request freezes all others (head-of-line blocking). Three fixes: (1) use the provider's ASYNC client and await it — best for I/O; (2) `await loop.run_in_executor(None, blocking_fn)` to push blocking work to a threadpool; (3) make the endpoint `def` (not `async def`) — FastAPI then runs it in its threadpool, so blocking is isolated. Rule: in an async handler, everything must be non-blocking, or explicitly offloaded.",
+  learn:"Go deeper → DeloitteHashedIn Phase 2 (async/concurrency) + Lesson 01 (GIL/threads)."
+},
+{
+  id:2, topic:"Pydantic validation", trap:"Manual-validation trap", diff:"Intermediate",
+  q:"Your FastAPI endpoint receives JSON and you manually check each field with if-statements, returning 400s. It's verbose and misses edge cases. What's the idiomatic FastAPI approach?",
+  code:"class QuoteReq(BaseModel):\n    customer_id: int\n    sku: str\n    quantity: int = Field(gt=0)\n\n@app.post('/quote')\ndef quote(req: QuoteReq):   # auto-validated + parsed\n    ...",
+  opts:[
+    "Keep the manual if-checks; explicit is better than a framework.",
+    "Declare a Pydantic model as the request type — FastAPI auto-validates types/constraints, returns 422 with clear errors, and hands you a typed object; no manual field checks needed.",
+    "Validate on the client side only, trusting whatever arrives at the server.",
+    "Use raw dicts and try/except around every field access."
+  ],
+  correct:1,
+  exp:"FastAPI is built on Pydantic: declare the request body as a Pydantic model and the framework automatically parses and VALIDATES it (types, required fields, constraints like gt=0), returns a structured 422 with per-field errors on bad input, and passes your handler a typed object. This replaces error-prone manual if-checks with a declarative, self-documenting contract.",
+  why:[
+    "Manual if-checks are verbose, miss edge cases, and duplicate what Pydantic does declaratively and correctly.",
+    "✅ Correct. Pydantic request model → auto validation + 422 errors + typed object; the idiomatic FastAPI way.",
+    "Client-side validation is a UX nicety, NOT security — the server must always validate (never trust the client).",
+    "Raw dicts + try/except reinvents validation badly and loses typing, docs, and clear errors."
+  ],
+  deep:"Pydantic models give you: type coercion, constraints (Field(gt=0), Literal enums, regex), nested models, defaults, and auto-generated OpenAPI schema/docs. FastAPI turns validation failures into 422 responses with a machine-readable error list. This is the same 'structured input' discipline as your MCP tools — validate at the trust boundary, fail early with clear errors. Also validate OUTPUT (response_model=) so you don't accidentally leak internal fields. Never rely on client validation for correctness or security.",
+  learn:"Go deeper → DeloitteHashedIn Phase 1 (FastAPI) + Lesson 09-H1 (structured I/O)."
+},
+{
+  id:3, topic:"Dependency injection", trap:"Global-state trap", diff:"Senior",
+  q:"Every endpoint needs an authenticated DB session and the current user. You create a global DB connection and parse the auth header inside each handler. It's repetitive and hard to test. What's the FastAPI-idiomatic fix?",
+  code:"def get_current_user(token: str = Depends(oauth2_scheme)) -> User: ...\ndef get_db() -> Session: ...\n\n@app.get('/orders')\ndef orders(user: User = Depends(get_current_user),\n           db: Session = Depends(get_db)): ...",
+  opts:[
+    "Keep globals and copy-paste the auth parsing into every handler.",
+    "Use FastAPI's Depends (dependency injection): declare get_current_user and get_db as dependencies; FastAPI resolves them per request, injects them, and they're trivially overridable in tests.",
+    "Put the DB session and user in module-level globals shared across all requests.",
+    "Parse the token manually in a middleware and stuff results into a global variable."
+  ],
+  correct:1,
+  exp:"FastAPI's Depends provides dependency injection: define reusable dependencies (get_current_user, get_db) and declare them as parameters; FastAPI resolves them PER REQUEST, injects the results, and handles cleanup (yield dependencies). This removes repetition, centralizes auth/DB logic, and — crucially — lets you OVERRIDE dependencies in tests (app.dependency_overrides) for easy mocking.",
+  why:[
+    "Copy-pasted auth parsing is exactly the repetition/testability problem DI solves.",
+    "✅ Correct. Depends injects per-request DB/user dependencies; DRY, centralized, and overridable in tests.",
+    "Module-level globals for a DB session/user are a concurrency hazard (shared mutable state across requests) and untestable.",
+    "Stuffing per-request results into a global variable is a race condition under concurrency — request A can read request B's user."
+  ],
+  deep:"Depends builds a dependency graph resolved per request; dependencies can themselves depend on others (get_current_user depends on the token scheme). Use `yield` dependencies for setup/teardown (open a DB session, close it after the response) — the FastAPI equivalent of a context manager per request. Testability is the big win: app.dependency_overrides[get_db] = fake_db swaps real infra for mocks with no code change. Never share per-request state (DB session, current user) in globals — that's a cross-request data-leak/race just like the module-level cache bug.",
+  learn:"Go deeper → DeloitteHashedIn Phase 1 (DI/middleware)."
+},
+{
+  id:4, topic:"JWT vs sessions", trap:"Auth-mechanism trap", diff:"Senior",
+  q:"You're designing auth for a stateless, horizontally-scaled API behind a load balancer. What's the key trade-off between JWT (token) auth and server-side sessions, and a common pitfall of JWT?",
+  opts:[
+    "Sessions are always better; JWTs are insecure.",
+    "JWTs are self-contained/stateless (any instance can verify without shared session storage — great for horizontal scale), but you CAN'T easily revoke them before expiry; server-side sessions are revocable but need shared session storage (e.g., Redis).",
+    "JWTs and sessions are identical; pick either randomly.",
+    "JWTs must be stored in the database to be validated on every request."
+  ],
+  correct:1,
+  exp:"JWTs carry their claims + signature, so any API instance can verify them WITHOUT a shared session store — ideal for stateless horizontal scaling. The catch: because they're self-contained, you can't trivially revoke one before it expires (a stolen token stays valid until expiry). Server-side sessions are instantly revocable but require shared session storage (Redis/DB) that every instance reads. Choose based on scale vs revocation needs.",
+  why:[
+    "JWTs aren't inherently insecure — they're a valid, widely-used mechanism with different trade-offs.",
+    "✅ Correct. JWT = stateless/scalable but hard to revoke pre-expiry; sessions = revocable but need shared storage. Trade-off, not good/bad.",
+    "They differ meaningfully (statelessness, revocation, storage) — not interchangeable.",
+    "A JWT is validated by verifying its SIGNATURE (no DB lookup needed) — that's its whole point; storing it in the DB defeats statelessness."
+  ],
+  deep:"JWT = header.payload.signature, verified with the server's key — stateless, no lookup, scales horizontally. Revocation is the weakness: mitigations are SHORT-LIVED access tokens + refresh tokens, and/or a denylist of revoked token IDs (which reintroduces some state). Sessions store a session ID in a cookie mapping to server-side state — instantly revocable, but every instance must reach shared storage (Redis). For a stateless scaled API, short-lived JWT + refresh is common; for apps needing immediate revocation/logout-everywhere, sessions (or JWT + denylist) fit better. This ties to your MCP OAuth/session work.",
+  learn:"Go deeper → Lesson 08, G3 (access control) + Lesson 03-MCP (OAuth/sessions)."
+},
+{
+  id:5, topic:"SQL injection / parameterization", trap:"String-format trap", diff:"Senior",
+  q:"Your Text-to-SQL feature builds a query by f-string-formatting the user's input into the SQL. Security review flags it. What's the correct fix?",
+  code:"# VULNERABLE:\nq = f\"SELECT * FROM orders WHERE customer = '{user_input}'\"\n# SAFE:\ncur.execute('SELECT * FROM orders WHERE customer = %s', (user_input,))",
+  opts:[
+    "Escape quotes in the user input with str.replace and keep the f-string.",
+    "Use PARAMETERIZED queries (bind parameters / prepared statements) so user input is treated as DATA, never executable SQL — the database driver handles escaping safely.",
+    "Trust the input because the LLM generated the SQL, not the user.",
+    "Validate the input length and keep formatting it into the string."
+  ],
+  correct:1,
+  exp:"Building SQL by string-formatting user input is the classic SQL-injection vulnerability — a crafted input can break out and run arbitrary SQL. The correct, robust fix is PARAMETERIZED queries (bind parameters / prepared statements): the query structure and the data are sent separately, so user input can never be interpreted as SQL. Manual escaping is error-prone; parameterization is the standard.",
+  why:[
+    "Manual quote-escaping is fragile and misses edge cases (encodings, comment tricks) — parameterization is the real fix.",
+    "✅ Correct. Parameterized queries treat input as data, not SQL; the driver escapes safely. Standard defense against injection.",
+    "'The LLM wrote it' is dangerous — in Text-to-SQL the LLM's output is influenced by user input and can be injected; treat generated SQL as untrusted.",
+    "Length validation alone doesn't prevent injection; a short input can still break out of the string."
+  ],
+  deep:"Parameterized queries separate the SQL TEMPLATE from the VALUES: the driver compiles the template once and binds values as pure data, so injection is structurally impossible. For LLM Text-to-SQL specifically, add defense in depth: least-privilege read-only DB role, allow-list of tables/columns, query validation/parsing, and never let generated SQL run destructive statements. This is the same 'treat external content as untrusted + least privilege' principle from the agent/MCP topics — user input (directly or via the LLM) must never become executable code.",
+  learn:"Go deeper → Lesson 08, G4 (injection/least-privilege) + Lesson 03-MCP (Q9)."
+},
+{
+  id:6, topic:"Long-running requests / background jobs", trap:"Sync-timeout trap", diff:"Senior",
+  q:"An endpoint kicks off a 3-minute document-ingestion + embedding job. Clients time out waiting for the HTTP response, and retries trigger duplicate jobs. What's the correct API design?",
+  opts:[
+    "Increase the HTTP timeout to 5 minutes and tell clients to wait.",
+    "Make it asynchronous: accept the request, enqueue the work to a background worker/queue, return 202 Accepted with a job id immediately, and let the client poll a status endpoint (or use a webhook) for completion.",
+    "Run the job synchronously but show a spinner on the client.",
+    "Split the job into 3 separate synchronous endpoints the client calls in sequence."
+  ],
+  correct:1,
+  exp:"Long jobs shouldn't block an HTTP request — clients (and load balancers/proxies) time out, and retries duplicate work. The correct pattern: accept the request, ENQUEUE the work to a background worker/task queue, immediately return 202 Accepted with a job id, and expose a status endpoint the client polls (or fire a webhook on completion). The request returns in milliseconds; the work runs asynchronously.",
+  why:[
+    "Longer timeouts just move the problem — proxies/clients still drop long connections, and it ties up a worker for minutes.",
+    "✅ Correct. Enqueue to a background worker, return 202 + job id, poll status / webhook. Standard long-job API design.",
+    "A spinner doesn't fix the underlying timeout/blocking; the connection is still held open for minutes.",
+    "Three sync endpoints still block on each long step and pushes orchestration onto the client — fragile."
+  ],
+  deep:"Async job pattern: POST /jobs → enqueue (Celery/RQ/Arq/a queue like SQS/Redis) → 202 + {job_id} → worker processes → client GET /jobs/{id} for status/result (or webhook). Benefits: fast responses, decoupled scaling of workers, retry/back-off on the worker side, and no held-open connections. Pair with IDEMPOTENCY (idempotency key or dedup by content hash) so client retries don't create duplicate jobs — exactly the duplicate-job symptom here. This is the production answer to 'how do you handle slow AI operations (ingestion, batch embedding, long generations)?'",
+  learn:"Go deeper → DeloitteHashedIn Phase 11 (background jobs) + Lesson 01 (idempotency)."
+},
+{
+  id:7, topic:"Rate limiting / throttling", trap:"No-throttle trap", diff:"Intermediate",
+  q:"Your public LLM-backed API has no rate limiting. One client's runaway script sends thousands of requests, spiking your LLM bill and degrading service for everyone. What's the correct mitigation?",
+  opts:[
+    "Nothing — just pay the bill and hope it doesn't happen again.",
+    "Add per-user/per-key rate limiting (e.g., token bucket) enforced at the gateway or app layer, return 429 with Retry-After, and back it with shared storage (Redis) so limits hold across instances.",
+    "Block the client's IP permanently after the first spike.",
+    "Cache all responses so repeated calls are free."
+  ],
+  correct:1,
+  exp:"An unthrottled LLM API is a cost and availability risk — one bad client can blow your budget and starve others. Enforce per-user/per-key rate limits (token bucket allows bursts while capping average rate), return 429 Too Many Requests with a Retry-After header, and store counters in shared storage (Redis) so the limit is consistent across horizontally-scaled instances.",
+  why:[
+    "Doing nothing leaves you exposed to cost blowouts and noisy-neighbor degradation.",
+    "✅ Correct. Per-user/key rate limiting (token bucket) + 429/Retry-After + Redis-backed for multi-instance consistency.",
+    "Permanent IP bans are blunt (shared IPs, false positives) and don't address legitimate high-volume users — throttling is the right tool.",
+    "Caching helps repeats but doesn't cap a client sending thousands of DISTINCT requests — you still need rate limiting."
+  ],
+  deep:"Algorithms: fixed-window (simple, edge-burst flaw), sliding-window (accurate), token bucket (allows controlled bursts to capacity — what most gateways use). Enforce per API key/user, and in a scaled deployment keep the counter in Redis (atomic INCR/Lua) so all instances share it. Return 429 + Retry-After so well-behaved clients back off (exponential backoff on their side). For LLM APIs specifically, also cap tokens/cost per user, not just request count — a few huge-context requests can cost more than many small ones. Ties directly to Lesson 01's rate-limiter algorithms.",
+  learn:"Go deeper → Lesson 01, A3 (rate limiter) + Lesson 08, G3."
+},
+{
+  id:8, topic:"Secrets / config management", trap:"Hard-coded-key trap", diff:"Intermediate",
+  q:"You find an OpenAI API key hard-coded as a string literal in a committed source file. What's the correct practice, and why does it matter?",
+  code:"# BAD: api_key = 'sk-abc123...'  (committed to git forever)\n# GOOD:\nimport os\napi_key = os.environ['OPENAI_API_KEY']   # from env / secrets manager",
+  opts:[
+    "Hard-coding is fine if the repo is private.",
+    "Never hard-code secrets: load them from environment variables or a secrets manager, keep them out of git (.gitignore, .env.example), and ROTATE any key that was ever committed — git history preserves it forever.",
+    "Base64-encode the key in the source so it's 'hidden'.",
+    "Put the key in a code comment so it's not 'active code'."
+  ],
+  correct:1,
+  exp:"Secrets must never be in source: a committed key lives in git history FOREVER (even after deletion) and leaks to anyone with repo access. Correct practice: load secrets from environment variables or a secrets manager (AWS Secrets Manager, Vault), keep them out of git (.gitignore the .env, ship a .env.example with placeholder names), and ROTATE any key that was ever committed — assume it's compromised.",
+  why:[
+    "Private repos still leak (forks, access grants, breaches) — 'private' is not a secrets strategy.",
+    "✅ Correct. Env vars / secrets manager, keep out of git, and rotate any key that was ever committed (history is forever).",
+    "Base64 is encoding, not encryption — trivially reversible; it hides nothing.",
+    "A comment is still committed text — equally exposed in history."
+  ],
+  deep:"Layers: (1) load from env/secrets manager, not code; (2) .gitignore secrets, provide .env.example with KEY NAMES only; (3) use per-environment secrets (dev/stage/prod); (4) if a secret was ever committed, ROTATE it and scrub is optional but rotation is mandatory (history persists across clones/forks); (5) scan for secrets in CI (git-secrets, trufflehog). This is your `.env` + `.env.example` pattern already in the repo. For an ERP MCP server handling OAuth, credential hygiene is critical — a leaked key can act on real business data.",
+  learn:"Go deeper → Lesson 09, H3 (API key management) + Lesson 08, G3."
+},
+{
+  id:9, topic:"Error handling / status codes", trap:"Everything-200 trap", diff:"Intermediate",
+  q:"Your API returns HTTP 200 for everything, embedding errors as {'error': '...'} in the body. Clients and monitoring can't distinguish success from failure. What's the correct approach?",
+  opts:[
+    "200-for-everything is simpler; clients should just read the body.",
+    "Use correct HTTP status codes: 200/201 for success, 4xx for client errors (400 bad request, 401 unauthenticated, 403 forbidden, 404 not found, 422 validation, 429 rate-limited), 5xx for server errors — with a structured error body.",
+    "Return 500 for all errors so clients always retry.",
+    "Use only 200 and 404; other codes confuse clients."
+  ],
+  correct:1,
+  exp:"HTTP status codes are a contract that clients, proxies, and monitoring rely on. 200-for-everything breaks retries (clients can't tell a failure), monitoring (error rates look like 0%), and caching. Use the right codes: 2xx success, 4xx client errors (400/401/403/404/422/429), 5xx server errors — plus a structured, consistent error body for details. This makes failures observable and correctly handled.",
+  why:[
+    "'Simpler' hides failures from retries, alerting, and dashboards — a real production liability.",
+    "✅ Correct. Proper 2xx/4xx/5xx codes + structured error body — the contract clients and monitoring depend on.",
+    "500-for-all makes clients retry non-retryable errors (e.g., a 400 bad request) forever — wasteful and wrong.",
+    "Only 200/404 loses critical distinctions (auth vs validation vs rate-limit vs server error) clients must handle differently."
+  ],
+  deep:"Status-code semantics matter for behavior: 4xx = client's fault, DON'T retry (fix the request); 5xx/429 = retryable (with backoff); this maps directly to the transient-vs-permanent error distinction from the robust API-call topic. Also: distinguish 401 (not authenticated) from 403 (authenticated but not authorized), and 422 (validation) from 400. Pair with a consistent error schema ({code, message, details}) and correlation IDs for tracing. Correct codes make your API observable (real error-rate metrics) and let clients + load balancers behave correctly.",
+  learn:"Go deeper → DeloitteHashedIn Phase 3 (API design) + Lesson 09, H3 (retry/backoff)."
+},
+{
+  id:10, topic:"N+1 queries / DB performance", trap:"ORM-loop trap", diff:"Senior",
+  q:"An endpoint returns 100 orders, each with its customer's name. It's slow. Logs show 101 database queries for one request. What's the problem and fix?",
+  code:"orders = db.query(Order).all()          # 1 query\nfor o in orders:\n    name = o.customer.name              # +1 query EACH -> 100 more",
+  opts:[
+    "The database is just slow; add more RAM to the DB server.",
+    "The N+1 query problem: the loop lazily loads each order's customer separately (1 + N queries). Fix with eager loading / a JOIN (e.g., selectinload/joinedload) so related data is fetched in one or two queries.",
+    "Add a caching layer so the 101 queries are faster.",
+    "Split into 101 endpoints so each query is isolated."
+  ],
+  correct:1,
+  exp:"This is the classic N+1 query problem: 1 query fetches the 100 orders, then accessing each order's .customer lazily fires a SEPARATE query — 100 more, for 101 total. The fix is eager loading: tell the ORM to fetch the related customers up front via a JOIN or a batched IN query (SQLAlchemy joinedload/selectinload), turning 101 queries into 1-2.",
+  why:[
+    "More DB RAM doesn't fix issuing 101 round-trips per request — the query COUNT is the problem, not hardware.",
+    "✅ Correct. N+1 problem; fix with eager loading (joinedload/selectinload) or a JOIN to fetch related data in 1-2 queries.",
+    "Caching masks it for repeats but the underlying 101-query pattern still hammers the DB on cache misses.",
+    "101 endpoints is absurd — it multiplies round-trips and complexity; the fix is fewer queries, not more calls."
+  ],
+  deep:"N+1 happens with lazy-loaded relationships in a loop. Fixes: joinedload (one query with a JOIN — good for one-to-one/many-to-one), selectinload (a second batched IN query — good for one-to-many, avoids row explosion), or explicit JOINs. Detect it by logging query counts per request or using ORM echo/telemetry. This is a top backend performance interview topic and a real production latency killer — an endpoint that's fast with 5 rows falls over at 500. General principle: watch how many DB round-trips a request makes, and batch/eager-load related data.",
+  learn:"Go deeper → DeloitteHashedIn Phase 4 (databases & optimization)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Your Java-backend instincts transfer well to Python APIs.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

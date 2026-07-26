@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vector Databases & Embeddings — Scenario MCQs (13)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#0891b2; --accent2:#0e7490;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#7c3aed; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#22d3ee; --accent2:#67e8f9;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#c4b5fd; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗄️ Vector Databases &amp; Embeddings — Scenario MCQs</h1>
+  <p>Topic 06 · 13 real-world questions · FAISS / Chroma / Pinecone, cosine similarity, ANN indexes, metadata filtering, scaling · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 13</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in real vector-search engineering (your DocSage FAISS + HF embeddings). ⚠ = debatable. Deep-dive: SeniorDS_RealTime Lesson 03.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Library vs Database", trap:"FAISS-is-a-DB trap", diff:"Intermediate",
+  q:"You prototyped with FAISS in memory. In production you now need persistence across restarts, metadata filtering, and concurrent access from multiple app instances. A teammate says 'FAISS already does all that.' What's accurate?",
+  opts:[
+    "FAISS is a full database and handles persistence, metadata, and concurrency out of the box.",
+    "FAISS is a LIBRARY — a fast in-process ANN index with no built-in persistence, metadata store, CRUD, or server/API; for those you need a vector DATABASE (Chroma/Qdrant/Milvus/Pinecone) or to build that layer yourself.",
+    "FAISS can't run in production at all; it's only for research.",
+    "FAISS and Chroma are the same product with different names."
+  ],
+  correct:1,
+  exp:"FAISS is a library: a blazing-fast in-process ANN index (build, add, search vectors). It has NO persistence layer, no metadata filtering, no CRUD-by-id, no network API, no auth — you wrap all of that yourself. A vector DATABASE (Chroma, Qdrant, Milvus, Pinecone) is built AROUND an index and adds exactly those production concerns.",
+  why:[
+    "FAISS does NOT provide persistence/metadata/concurrency as a DB does — that's the whole distinction.",
+    "✅ Correct. FAISS = library (index only); production persistence/metadata/CRUD/API needs a vector DB (or you build it).",
+    "FAISS runs fine in production (many do) — but as an embedded index you operate, not a full DB.",
+    "Chroma is a database built around an index; FAISS is a library — they're different categories."
+  ],
+  deep:"What a full vector DB adds over a raw index: durable persistence (survive restarts), metadata storage + FILTERED search ('WHERE source=policy.pdf'), CRUD by id (upsert/delete), horizontal scaling/sharding, a client/server API, auth, and monitoring. A common production pattern is 'FAISS + a metadata sidecar (SQLite/JSON)' — essentially a poor-man's vector DB, which is what many DocSage-style apps do. Rule: FAISS when you want a fast embedded index you control; a vector DB when you need durability, filtering, updates, and multi-user access without building infra.",
+  learn:"Go deeper → Lesson 03, section C2 (library vs database)."
+},
+{
+  id:2, topic:"Similarity metrics", trap:"Metric-mismatch trap", diff:"Senior",
+  q:"Your embedding model's docs say vectors are L2-normalized and recommend cosine similarity, but you configured your index for Euclidean (L2) distance and results are odd. What should you know?",
+  code:"# for L2-NORMALIZED vectors:\n#   cosine(a,b) = a . b            (dot product)\n#   L2(a,b)^2   = 2 - 2*(a . b)    (monotonic in cosine)\n# -> on normalized vectors, cosine / dot / L2 give the SAME ranking",
+  opts:[
+    "Cosine and L2 always give completely different, unrelated rankings; you must re-embed.",
+    "On L2-NORMALIZED vectors, cosine, dot product, and Euclidean produce the SAME ranking (L2 is monotonic in cosine) — so match the metric to how the model was trained; mixing is usually harmless when normalized but you should use the recommended metric.",
+    "Euclidean is always better than cosine for text, so keep it.",
+    "The metric doesn't matter at all for any embeddings."
+  ],
+  correct:1,
+  exp:"For L2-normalized vectors, cosine similarity equals the dot product, and squared Euclidean distance = 2 − 2·cosine — so all three rank neighbors identically. If your vectors are normalized, Euclidean and cosine give the same order (the 'odd results' are likely something else, e.g., un-normalized vectors or a mismatch). Best practice: use the metric the embedding model was trained/recommended for.",
+  why:[
+    "They don't always differ — on normalized vectors they're equivalent in ranking; blanket 're-embed' is wrong.",
+    "✅ Correct. Normalized vectors → cosine = dot, and L2 is monotonic in cosine → same ranking. Use the model's recommended metric.",
+    "Euclidean isn't universally better for text; cosine (magnitude-invariant) is the usual default, but on normalized vectors it's moot.",
+    "The metric CAN matter when vectors aren't normalized (magnitude then affects L2/dot differently) — so it's not universally irrelevant."
+  ],
+  deep:"Cosine = angle only (magnitude-invariant) — the text default because length shouldn't dominate meaning. Dot product = cosine × magnitudes (rewards large-norm vectors; equals cosine when normalized). Euclidean (L2) = straight-line distance (magnitude-sensitive). Key fact: normalize → all three agree on ranking, which is why many pipelines normalize and then use fast dot-product/inner-product search. The real gotcha is inconsistency: un-normalized vectors + L2 can rank by magnitude rather than meaning. Match the index metric to the embedding model's training objective.",
+  learn:"Go deeper → Lesson 03, section C5 (similarity/distance metrics)."
+},
+{
+  id:3, topic:"ANN index: IVF", trap:"Exact-search trap", diff:"Senior",
+  q:"Your exact (flat) similarity search over 50M vectors is too slow. You switch to an IVF index. How does IVF speed things up, and what's the tuning knob?",
+  opts:[
+    "IVF compresses each vector to 1 byte so comparisons are faster; there's no accuracy trade-off.",
+    "IVF clusters vectors into cells (k-means centroids); at query time it searches only the nprobe cells nearest the query — nprobe trades recall for speed (more probes = higher recall, slower).",
+    "IVF sorts all vectors alphabetically for binary search.",
+    "IVF stores vectors in a B-tree keyed by their first dimension."
+  ],
+  correct:1,
+  exp:"IVF (Inverted File index) partitions the vector space into cells via k-means, assigning each vector to its nearest centroid. At query time it finds the nprobe centroids closest to the query and searches ONLY those cells — scanning a small fraction of the data instead of all 50M. nprobe is the recall/speed dial: higher = more cells searched = higher recall but slower.",
+  why:[
+    "That describes Product Quantization (PQ) compression, not IVF's core mechanism — and there IS an accuracy (recall) trade-off with ANN.",
+    "✅ Correct. IVF = cluster into cells, probe only the nprobe nearest cells; nprobe trades recall for speed.",
+    "Vectors aren't alphabetical/sortable for similarity — high-dim similarity search isn't a 1-D sort.",
+    "A B-tree on one dimension ignores the other dimensions and doesn't support nearest-neighbor in high-dim space."
+  ],
+  deep:"IVF is an ANN (approximate nearest neighbor) method: it accepts occasionally missing a true neighbor in exchange for scanning far fewer vectors. Build: k-means to nlist centroids; each vector → nearest cell's inverted list. Query: rank centroids by distance to the query, search the top nprobe cells' lists exactly. Tuning: nlist (number of cells) and nprobe (cells probed). Often combined with PQ (IVF-PQ) to also COMPRESS vectors for memory. Contrast with HNSW (graph navigation) — IVF is memory-light with tunable recall; HNSW is faster/higher-recall but memory-heavy.",
+  learn:"Go deeper → Lesson 03, section C1 (IVF vs HNSW)."
+},
+{
+  id:4, topic:"ANN index: HNSW", trap:"Index-choice trap", diff:"Senior",
+  q:"You need very low query latency and high recall for a few million vectors, and you have RAM to spare. Which index fits, and what's its main cost?",
+  opts:[
+    "Flat (exact) index — it's the only way to get high recall.",
+    "HNSW: a multi-layer proximity graph you navigate greedily toward the query — excellent recall AND speed (log-ish hops), at the cost of HIGH memory (stores the graph) and slower index build.",
+    "IVF with nprobe=1, because fewer probes is always faster and just as accurate.",
+    "A relational index (B-tree) on the vector column."
+  ],
+  correct:1,
+  exp:"HNSW (Hierarchical Navigable Small World) builds a layered proximity graph — sparse long-range links up top, dense local links at the bottom — and searches by greedily hopping toward the query while descending layers. It delivers top-tier recall and low latency (roughly log-scaling hops), which is why it's the default in Chroma/Qdrant/Weaviate/Milvus/pgvector. The cost: high memory (the graph) and slower, more expensive index construction.",
+  why:[
+    "Flat/exact gives 100% recall but is the SLOWEST (scans everything) — the opposite of low-latency at millions of vectors.",
+    "✅ Correct. HNSW = graph navigation → high recall + low latency; cost = high memory + slower build. Fits 'RAM to spare, want speed+recall.'",
+    "IVF nprobe=1 is fast but LOW recall (searches one cell) — 'fewer probes just as accurate' is false.",
+    "A B-tree can't do high-dimensional nearest-neighbor search; vector search needs ANN structures."
+  ],
+  deep:"HNSW knobs: M (neighbors per node — higher = better recall, more memory), ef_construction (build-time search width — higher = better graph, slower build), ef_search (query-time width — higher = better recall, slower query). It's the go-to when you want the best speed/recall and can afford RAM. Choose by constraints: Flat for small data or when 100% recall is required; IVF (memory-light, tunable) for huge datasets on a memory budget; HNSW for best speed+recall when memory allows. DiskANN exists for billion-scale on SSD.",
+  learn:"Go deeper → Lesson 03, section C1 (HNSW)."
+},
+{
+  id:5, topic:"Embedding model consistency", trap:"Silent-mismatch trap", diff:"Senior-trap",
+  q:"You 'upgrade' your embedding model and redeploy, reusing the existing index to save re-embedding time. Retrieval now returns near-random results — with no errors. Why?",
+  code:"index = build_index(old_model.embed(corpus))   # built with MODEL A\n...\nresults = index.search(new_model.embed(query))  # queried with MODEL B  # BUG",
+  opts:[
+    "The new model is broken; roll back to the old model.",
+    "The index was built with the OLD model's vectors; querying it with the NEW model compares vectors from two DIFFERENT embedding spaces, which is meaningless. You must re-embed the corpus and rebuild the index.",
+    "The similarity metric changed automatically; reset it to cosine.",
+    "The index cache is stale; clear the query cache."
+  ],
+  correct:1,
+  exp:"Embeddings from different models live in different vector spaces — their dimensions mean different things. Searching an index built with Model A using Model B's query vectors compares incompatible spaces, so results are effectively random. There's no error because the shapes may still be valid. The iron rule: index and query with the SAME model. Any model change requires re-embedding the whole corpus and rebuilding the index.",
+  why:[
+    "The new model isn't broken — the bug is mixing two models' spaces. Rolling back hides the real lesson.",
+    "✅ Correct. Old index + new query model = mismatched embedding spaces → meaningless similarity. Re-embed + rebuild.",
+    "The metric didn't change; the vectors are from incompatible spaces regardless of metric.",
+    "It's not a cache issue — the stored vectors themselves are from a different model."
+  ],
+  deep:"Two models can even share the SAME dimensionality and still be totally incompatible — 'dimension 200 means X' is model-specific geometry. This bug is silent and dangerous: no exception, and a fresh eval on the new model looks fine, but production users get garbage because the STORED vectors are from the old model. Guardrail: store the embedding model name/version as index metadata and refuse queries whose model doesn't match. Treat any embedding-model change as a data MIGRATION (full re-index), not a config tweak.",
+  learn:"Go deeper → Lesson 03, section C3 (same-model rule)."
+},
+{
+  id:6, topic:"Metadata filtering", trap:"Post-filter trap", diff:"Senior",
+  q:"Users should only retrieve chunks from documents they're authorized to see (department = user's department). You currently retrieve top-5 by similarity, THEN drop unauthorized ones in Python — and users sometimes get 1-2 results or none. What's the correct design?",
+  opts:[
+    "Increase top-K to 100 and keep filtering afterward; eventually enough authorized chunks survive.",
+    "Use the vector DB's METADATA FILTERING to constrain the search to authorized documents (filter by department) as part of the query, so the top-K is drawn only from the allowed set.",
+    "Store each department's chunks in the same index and hope similarity separates them.",
+    "Filter in the LLM prompt by telling it to ignore unauthorized chunks."
+  ],
+  correct:1,
+  exp:"Post-filtering (retrieve top-K, then drop unauthorized) breaks because the top-K may be dominated by unauthorized chunks, leaving few or none after filtering. The fix is metadata filtering AT QUERY TIME: attach department (and other) metadata to each vector and pass a filter so the similarity search only considers authorized documents — the top-K is then guaranteed to come from the allowed set.",
+  why:[
+    "Bumping K and post-filtering is a fragile band-aid — it wastes work and still can't guarantee enough authorized results.",
+    "✅ Correct. Query-time metadata filtering constrains the search to authorized docs, so top-K is drawn only from the allowed set.",
+    "Relying on similarity to 'separate' departments is not security — unauthorized chunks can be most similar.",
+    "Telling the LLM to ignore chunks is not access control; the unauthorized data already left the store and reached the model."
+  ],
+  deep:"Metadata filtering is a core reason to use a vector DB over a raw FAISS index. Two strategies: PRE-filter (restrict the candidate set before/inside ANN search — correct and secure here) vs POST-filter (search then drop — the broken approach above). For ACCESS CONTROL specifically, filtering must happen server-side at query time (the LLM must never even receive unauthorized chunks — that's both a correctness and a data-leakage/security issue). Design chunk metadata up front (department, source, date, doc_id, version) so you can filter and also do freshness/audit.",
+  learn:"Go deeper → Lesson 03, section C2 (metadata-filtered search)."
+},
+{
+  id:7, topic:"Vector DB selection", trap:"One-tool trap", diff:"Intermediate",
+  q:"An interviewer asks how you'd choose between FAISS, Milvus, and Pinecone for a project. What's the strongest answer?",
+  opts:[
+    "Always pick Pinecone; managed services are always best.",
+    "Match to constraints: FAISS (embedded library, max control, you run the infra) for prototypes/single-node; Milvus/Qdrant (open-source, self-host or managed, distributed) for large-scale you want to control; Pinecone (fully managed SaaS) for near-zero ops when you'll pay for it.",
+    "They're interchangeable; pick whichever has the nicest logo.",
+    "Always self-host FAISS because managed databases can't scale."
+  ],
+  correct:1,
+  exp:"There's no universal best — you choose on constraints. FAISS: an embedded library, fastest to start and maximally under your control, but YOU build persistence/metadata/scaling. Milvus (or Qdrant/Weaviate): open-source vector databases, self-hosted or managed, built for distributed scale with filtering/persistence. Pinecone: fully managed serverless — near-zero ops, metadata filtering, HA — at a cost and with cloud lock-in.",
+  why:[
+    "Managed isn't always best — cost, lock-in, and data-residency needs can rule Pinecone out.",
+    "✅ Correct. Choose by control vs scale vs ops/cost: FAISS (embedded/control), Milvus/Qdrant (OSS scale), Pinecone (zero-ops managed).",
+    "They differ meaningfully in hosting, scale, features, and cost — not interchangeable.",
+    "Managed DBs scale very well (that's their point); 'always self-host FAISS' ignores real ops burden and scaling limits."
+  ],
+  deep:"Decision axes: hosting (embedded vs self-host vs managed), scale (single-node vs distributed/billions), features (metadata filtering, hybrid search, persistence, CRUD), and ops/cost (who runs it, $ per usage, data residency). Quick chooser: prototype / embedded / full control → FAISS (or Chroma for a light local DB); self-hosted at big scale, open-source → Milvus/Qdrant/Weaviate; ship fast with minimal ops → Pinecone; already on Postgres and modest scale → pgvector. For an enterprise with data-residency rules, self-hosted (or in-VPC) beats a SaaS that moves data out.",
+  learn:"Go deeper → Lesson 03, section C4 (Milvus vs FAISS vs Pinecone)."
+},
+{
+  id:8, topic:"Chunk-embedding granularity", trap:"Wrong-granularity trap", diff:"Intermediate",
+  q:"You embed each ENTIRE document as one vector to 'keep it simple.' Retrieval returns whole documents but the LLM's answers are vague and often cite the wrong section. What's the issue?",
+  opts:[
+    "One vector per document is ideal; the LLM is just bad at reading.",
+    "A single vector per document is an AVERAGE of all its topics, so it matches broadly but imprecisely and can't point to the right passage — embed at CHUNK granularity so each vector represents one focused piece.",
+    "You should embed each character separately for maximum precision.",
+    "The embedding model is too small; a bigger model fixes document-level embedding."
+  ],
+  correct:1,
+  exp:"Embedding a whole multi-topic document produces one 'averaged' vector that represents everything and nothing precisely — so it matches many queries loosely and can't localize the relevant passage. Chunk-level embeddings give each vector a focused meaning, so retrieval returns the specific relevant piece and the LLM has tight, on-point context.",
+  why:[
+    "Document-level embedding is the PROBLEM here (averaging), not an ideal — it's not the LLM's fault.",
+    "✅ Correct. One-vector-per-doc averages all topics → imprecise; embed at chunk granularity for focused, localizable retrieval.",
+    "Character-level embedding is meaningless noise — far too granular to carry semantics.",
+    "A bigger model can't fix the fundamental averaging problem of representing a whole multi-topic doc as one vector."
+  ],
+  deep:"Granularity is a precision dial: too coarse (whole doc) → averaged, imprecise vectors; too fine (tiny fragments) → lost context, more vectors/cost. The sweet spot is meaningful chunks (~200-500 tokens, structure-aware where possible). Advanced pattern: PARENT-DOCUMENT / small-to-big retrieval — embed and search SMALL chunks for precise matching, but return the LARGER parent section as context so the LLM gets both precision and surrounding context. This decouples 'what you search on' from 'what you feed the model.'",
+  learn:"Go deeper → Lesson 03, C3 + Lesson 04 (chunking) + Lesson 01 (parent-doc)."
+},
+{
+  id:9, topic:"Dimensionality & cost", trap:"Bigger-dim trap", diff:"Senior",
+  q:"You're choosing between a 384-dim and a 3072-dim embedding model for 20M chunks. What trade-offs should drive the decision?",
+  opts:[
+    "Always pick the highest dimension; more dimensions always mean better retrieval.",
+    "Higher dims can capture more nuance but cost more storage/memory and slower search at 20M scale; pick based on your quality-vs-cost/latency needs (benchmark both on YOUR data), not 'bigger is always better.'",
+    "Dimension has no effect on storage or speed, only on accuracy.",
+    "Lower dimension is always better because it's cheaper."
+  ],
+  correct:1,
+  exp:"Embedding dimension is a quality-vs-resource trade-off. Higher dims (3072) can encode more nuance and may improve retrieval quality, but at 20M chunks they multiply storage/RAM and slow similarity search. Smaller dims (384) are cheaper and faster but may lose some nuance. The right call is empirical: benchmark both on YOUR data/queries and weigh the quality gain against the cost/latency hit — not a blanket 'bigger is better.'",
+  why:[
+    "'Higher dim always better' is false — you often get diminishing returns at large scale for big cost.",
+    "✅ Correct. More dims = more nuance but more storage/memory + slower search; decide by measured quality vs cost/latency on your data.",
+    "Dimension directly affects storage (bytes/vector) and search speed — not just accuracy.",
+    "Lower isn't 'always better' either — too small can lose retrieval quality; it's a trade-off, not a rule."
+  ],
+  deep:"Storage ≈ N × dim × bytes-per-float (e.g., 20M × 3072 × 4 bytes ≈ 246 GB raw for float32 — huge; 384-dim ≈ 30 GB). Higher dim also means more compute per similarity op. Mitigations: quantization (float16/int8/PQ) to shrink memory, or Matryoshka embeddings (train so you can truncate dims with graceful quality loss). Also check the MTEB benchmark for quality, but always validate on YOUR domain — public benchmarks don't guarantee your retrieval quality. Bottom line: dimension is a cost/quality knob to measure, not maximize.",
+  learn:"Go deeper → Lesson 03, C3 (dimensionality) + C1 (memory)."
+},
+{
+  id:10, topic:"Approximate vs exact (recall)", trap:"ANN-magic trap", diff:"Senior",
+  q:"After moving from a flat (exact) index to HNSW for speed, a few queries occasionally miss a result they used to return. QA files it as a bug. What's the correct explanation?",
+  opts:[
+    "It's a bug in HNSW; switch back to flat permanently.",
+    "This is expected: ANN indexes (HNSW/IVF) are APPROXIMATE — they trade a small amount of recall for large speed gains. Tune recall (e.g., ef_search / nprobe) to the accuracy you need; use flat only where 100% recall is mandatory.",
+    "HNSW should never miss anything; your data is corrupted.",
+    "Missing results mean the embeddings are wrong; re-embed everything."
+  ],
+  correct:1,
+  exp:"'ANN' literally means Approximate Nearest Neighbor — HNSW/IVF occasionally miss a true neighbor in exchange for order-of-magnitude speedups. This is by design, not a bug. You control the recall/speed trade-off with knobs (ef_search for HNSW, nprobe for IVF): raise them for higher recall (slower), lower for more speed. Reserve exact/flat for the rare cases where 100% recall is truly required.",
+  why:[
+    "It's not a bug and reverting to flat sacrifices the speed you needed — tune recall instead.",
+    "✅ Correct. ANN is approximate by design; tune ef_search/nprobe for the recall you need, flat only when 100% is mandatory.",
+    "HNSW CAN miss neighbors (approximate) — that's not data corruption.",
+    "The embeddings aren't wrong; the index is approximate. Re-embedding won't change ANN's nature."
+  ],
+  deep:"Measure it with recall@k against a flat ground truth on a sample: e.g., recall@10 = fraction of the true top-10 the ANN index returns. Then set knobs to hit your target (say 98-99% recall) at acceptable latency. HNSW: higher ef_search → higher recall, slower. IVF: higher nprobe → higher recall, slower. This is the fundamental ANN triangle — speed vs recall vs memory. Educating stakeholders that 'approximate' is intentional (and tunable) is part of the job; 99% recall at 50x speed is usually the right trade for RAG.",
+  learn:"Go deeper → Lesson 03, section C1 (ANN, recall@k)."
+},
+{
+  id:11, topic:"Normalization & dot product", trap:"Raw-vector trap", diff:"Senior",
+  q:"Your retrieval quality is inconsistent: long documents seem to dominate results regardless of relevance. You're using DOT PRODUCT similarity on un-normalized embeddings. What's likely happening and the fix?",
+  code:"# dot(a,b) = cos(a,b) * |a| * |b|\n# un-normalized -> larger-magnitude vectors score higher\n# fix: L2-normalize, then dot == cosine",
+  opts:[
+    "Dot product is always correct; the model is just bad.",
+    "With un-normalized vectors, dot product rewards larger MAGNITUDE (which can correlate with doc length), swamping true relevance — L2-normalize the vectors (then dot product == cosine, magnitude-invariant).",
+    "Switch to Euclidean, which ignores magnitude entirely.",
+    "Longer documents are genuinely more relevant, so this is correct behavior."
+  ],
+  correct:1,
+  exp:"Dot product = cosine × |a| × |b|, so on un-normalized vectors, high-magnitude embeddings score higher regardless of true semantic similarity — and magnitude can correlate with things like document length, letting long docs dominate. The fix is to L2-normalize the embeddings; then dot product equals cosine similarity, which is magnitude-invariant and ranks by direction (meaning) only.",
+  why:[
+    "It's not that the model is bad — it's the magnitude sensitivity of dot product on un-normalized vectors.",
+    "✅ Correct. Un-normalized dot product rewards magnitude (∝ length) over relevance; L2-normalize → dot = cosine (magnitude-invariant).",
+    "Euclidean is also magnitude-SENSITIVE on un-normalized vectors; normalization is the real fix, not switching to L2.",
+    "Length ≠ relevance; the ranking artifact is from magnitude, not genuine relevance of long docs."
+  ],
+  deep:"This is why 'normalize your embeddings' is standard advice. Many embedding models output roughly unit-norm vectors already; some don't. If you use inner-product/dot-product search (fast, common in FAISS IndexFlatIP), you MUST normalize to get cosine semantics — otherwise magnitude leaks into ranking. After normalization, cosine/dot/L2 all rank identically (see Q2). Practical rule: normalize at index time AND query time, and use inner-product search = cosine. Mismatched normalization (index normalized, query not) is a subtle bug.",
+  learn:"Go deeper → Lesson 03, section C5 (normalize → cosine=dot)."
+},
+{
+  id:12, topic:"Re-indexing / freshness", trap:"Stale-vector trap", diff:"Intermediate",
+  q:"A source document is edited (a policy clause changes). Your app keeps returning the OLD clause for days. What's the root cause and correct production practice?",
+  opts:[
+    "The LLM cached the old clause in its weights; fine-tune it on the new version.",
+    "The old chunks/vectors still live in the index; you need an ingestion pipeline that detects the source change and re-chunks + re-embeds + upserts (or deletes old + adds new) by document id/version.",
+    "The cosine threshold drifted; recalibrate it to prefer newer text.",
+    "Clear the browser cache; it's a front-end issue."
+  ],
+  correct:1,
+  exp:"Retrieval answers from what's IN the index, not from the live document. If the old clause's vectors are still stored, that's what gets retrieved until you re-ingest. Correct practice: an ingestion/sync pipeline that detects the source change and re-chunks, re-embeds, and upserts the updated content (or deletes the old chunks and adds new), keyed by document id/version so you don't leave orphaned stale vectors.",
+  why:[
+    "The old clause isn't in the LLM's weights — it's stored as vectors in your index. Fine-tuning is the wrong, heavy tool.",
+    "✅ Correct. Stale vectors in the index → re-ingest changed docs (re-chunk/re-embed/upsert or delete+add) by doc id/version.",
+    "Thresholds don't track recency; this doesn't remove the stale vectors.",
+    "It's not a browser cache issue — the stale data is server-side in the index."
+  ],
+  deep:"Index freshness is an operational concern demos skip. Options: event-driven (a webhook/CDC on the source triggers re-ingestion of just that doc), or scheduled re-crawl with change detection (hash/timestamp so you only re-embed what changed). Store doc_id + version + last_updated in chunk metadata so you can delete-then-insert cleanly (avoid orphaned old chunks) and surface freshness. This ties to CRUD-by-id — a capability a vector DB gives you but a raw FAISS index makes you build. Deleting old vectors matters: an upsert that only adds leaves the stale clause retrievable.",
+  learn:"Go deeper → Lesson 03, C2 (CRUD) + Lesson 04 (ingestion) + Lesson 01 (Q16)."
+},
+{
+  id:13, topic:"Choosing an embedding model", trap:"Leaderboard-blindly trap", diff:"Senior",
+  q:"You need an embedding model for a legal-document RAG system. A teammate says 'just pick the #1 on the MTEB leaderboard.' What's the more rigorous approach?",
+  opts:[
+    "Yes — the MTEB #1 is objectively best for every use case.",
+    "Use MTEB as a starting shortlist, but EVALUATE candidates on YOUR domain data and queries (legal text), and weigh dimension/cost/latency/hosting — the best general model isn't guaranteed best for your domain.",
+    "Pick the model with the largest embedding dimension regardless of benchmarks.",
+    "Pick whichever model your LLM provider offers, for convenience only."
+  ],
+  correct:1,
+  exp:"MTEB is a useful SHORTLIST, not a verdict — it aggregates general benchmarks that may not reflect your domain (legal language is specialized). The rigorous approach: shortlist strong candidates from MTEB, then evaluate them on YOUR legal documents and real queries (build a small labeled retrieval eval), and factor in dimension/cost/latency/hosting constraints. The best general-purpose model can underperform a domain-suited one on specialized text.",
+  why:[
+    "MTEB #1 is not universally best — general benchmarks don't guarantee performance on specialized domains like legal.",
+    "✅ Correct. MTEB shortlists; validate on YOUR domain data + weigh dim/cost/latency/hosting. Domain fit can beat general rank.",
+    "Biggest dimension isn't a quality guarantee and ignores cost/latency (see Q9).",
+    "Convenience alone is a weak criterion — quality on your domain and constraints should drive it."
+  ],
+  deep:"Selection process: (1) shortlist from MTEB and licensing/hosting fit (API vs open-weight for in-VPC/data-residency); (2) build a small domain eval set (queries → known relevant chunks) and measure recall@k / MRR per candidate on YOUR data; (3) weigh dimension (storage/latency at your scale), cost per token, and hosting; (4) consider DOMAIN-ADAPTED options (e.g., fine-tuning an embedding model on your corpus, or a legal-domain model) when general models underperform. Same-model rule still applies (Q5). Bottom line: measure on your data, don't outsource the decision to a general leaderboard.",
+  learn:"Go deeper → Lesson 03, C3 (choosing embeddings / MTEB caveat)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Solid vector-search intuition.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

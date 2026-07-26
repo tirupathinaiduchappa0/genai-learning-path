@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Session 3 — Building It for Real + Advanced Topics</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#818cf8; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --border:#334155; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  a{color:var(--accent);text-decoration:none}
+  .layout{display:flex;min-height:100vh}
+  nav.toc{width:310px;flex-shrink:0;background:#0b1424;border-right:1px solid var(--border);padding:22px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.toc h4{color:var(--accent);text-transform:uppercase;font-size:.78rem;letter-spacing:1px;margin:0 0 6px}
+  nav.toc .badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(248,113,113,.15);color:var(--red);margin-bottom:14px}
+  nav.toc a{display:block;color:var(--muted);padding:7px 10px;border-radius:6px;font-size:.9rem;border-left:2px solid transparent}
+  nav.toc a:hover{background:var(--panel);color:var(--text);border-left-color:var(--accent)}
+  .content{flex:1;max-width:900px;margin:0 auto;padding:36px 40px 80px}
+  header.top{background:linear-gradient(135deg,#7f1d1d,#b45309);padding:34px;border-radius:14px;margin-bottom:10px}
+  header.top h1{margin:0;font-size:1.9rem}
+  header.top p{margin:6px 0 0;color:#fde8e8}
+  h2{color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:48px;scroll-margin-top:20px}
+  h3{color:var(--accent2);margin-top:26px}
+  .time{display:inline-block;font-size:.78rem;color:var(--accent);background:var(--panel);padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+  .analogy{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .analogy .t{font-weight:700;color:var(--amber);margin-bottom:4px}
+  .example{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .example .t{font-weight:700;color:var(--green);margin-bottom:4px}
+  .keyterm{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .keyterm .t{font-weight:700;color:var(--accent2)}
+  .warn{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .warn .t{font-weight:700;color:var(--red)}
+  .poc{background:var(--panel2);border:1px dashed var(--amber);border-radius:8px;padding:6px 16px;margin:16px 0;color:var(--amber);font-size:.85rem;font-weight:600}
+  .diagram{background:#0b1424;border:1px solid var(--border);border-radius:12px;padding:20px;margin:22px 0;text-align:center;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--panel);border-radius:10px;overflow:hidden}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:.95rem}
+  th{background:var(--panel2);color:var(--accent);font-size:.85rem;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;color:#7dd3fc;font-size:.9em}
+  pre.codeblock{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:'Consolas','Courier New',monospace;font-size:.86rem;color:#cbd5e1;line-height:1.5}
+  pre.codeblock .cm{color:#64748b}
+  pre.codeblock .kw{color:#c084fc}
+  pre.codeblock .st{color:#7dd3fc}
+  .recap{background:linear-gradient(135deg,#1e3a8a33,#0ea5e922);border:1px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:30px}
+  .recap h3{color:var(--accent);margin-top:0}
+  .pager{display:flex;justify-content:space-between;margin-top:40px;gap:10px}
+  .pager a{background:var(--panel);border:1px solid var(--border);padding:12px 18px;border-radius:8px;flex:1;text-align:center}
+  .pager a:hover{border-color:var(--accent)}
+  ol li,ul li{margin:6px 0}
+  .steps{counter-reset:step}
+  .steps .s{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px 14px 54px;margin:12px 0;position:relative}
+  .steps .s::before{counter-increment:step;content:counter(step);position:absolute;left:16px;top:14px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--accent);color:#08131f;border-radius:50%;font-weight:700}
+  .steps .s b{color:var(--accent2)}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <span class="badge">SESSION 3 · Advanced</span>
+    <h4>On this page</h4>
+    <a href="#s31">3.1 The dev lifecycle</a>
+    <a href="#s32">3.2 Build a tool (walkthrough)</a>
+    <a href="#s33">3.3 Writing agent instructions</a>
+    <a href="#s34">3.4 Best practices &amp; pitfalls</a>
+    <a href="#s35">3.5 Security &amp; multi-tenancy</a>
+    <a href="#s36">3.6 Token optimization (POC)</a>
+    <a href="#s37">3.7 Bonus: What is RAG?</a>
+    <a href="#s38">3.8 Final recap &amp; roadmap</a>
+    <hr style="border-color:#334155;margin:16px 0"/>
+    <a href="KT-Session-2-Our-MCP-Server.html">← Session 2</a>
+    <a href="KT-Session-Index.html">Index</a>
+  </nav>
+
+  <div class="content">
+    <header class="top">
+      <h1>Session 3 — Building It for Real + Advanced</h1>
+      <p>The real day-to-day: from a sprint ticket to a shipped tool &amp; agent — plus token optimization and RAG.</p>
+    </header>
+
+    <p style="color:var(--muted);font-size:1.05rem">
+      Now we go hands-on. This session mirrors what the team actually does every sprint: take a ticket,
+      understand the endpoints, build a tool, test it, write the agent, and ship it. We finish with two
+      advanced topics — a token-optimization experiment and an intro to RAG.
+    </p>
+
+    <h2 id="s31">3.1 The development lifecycle <span class="time"></span></h2>
+    <p>Here's the end-to-end process from ticket to production:</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  J[Sprint Jira] --> A[Analyze endpoints<br/>&amp; payloads]
+  A --> B[Build the tool<br/>constant + code]
+  B --> C[Test in<br/>MCP Inspector]
+  C --> D[Write agent<br/>YAML]
+  D --> E[Review<br/>&amp; verify]
+  E --> F[Commit to<br/>production]
+  F --> G[QA testing]
+      </pre>
+    </div>
+    <div class="steps">
+      <div class="s"><b>Analyze:</b> read the Jira, find the SX.e endpoints, learn the request payload &amp; response shape (often from the existing UI/frontend code).</div>
+      <div class="s"><b>Build:</b> add the endpoint constant, then write the tool following our standard pattern.</div>
+      <div class="s"><b>Test:</b> run the tool in the MCP Inspector with real inputs; verify the response and that it reflects in the ERP.</div>
+      <div class="s"><b>Agent:</b> write/extend the YAML instructions — tools, routing, behavior, examples.</div>
+      <div class="s"><b>Review &amp; commit:</b> diagnostics, import check, code review, then commit only the relevant files.</div>
+      <div class="s"><b>QA:</b> hand off with test questions; QA validates against a tenant.</div>
+    </div>
+
+    <h2 id="s32">3.2 Building a tool — a real walkthrough <span class="time"></span></h2>
+    <p>Let's trace how <code>acknowledge_po</code> was built, step by step:</p>
+    <pre class="codeblock"><span class="cm"># STEP 1 — add the endpoint constant (constants.py)</span>
+PO_ACK_UPDATE = <span class="st">"/SX/.../po/aspoentry/poeaupdt"</span>
+
+<span class="cm"># STEP 2 — write the tool (acknowledge_po.py)</span>
+<span class="kw">@mcp.tool()</span>
+<span class="kw">@require_cono</span>
+<span class="kw">async def</span> acknowledge_po(cono, pos, ackrsn):
+    <span class="st">"""Acknowledge PO(s): Ordered/Printed -&gt; Acknowledged. Batch supported."""</span>
+    <span class="cm"># validate ackrsn + each PO has rowidPoeh</span>
+    <span class="cm"># build the batch array [{ackrsn, pono, posuf, rowidPoeh, stagecd}]</span>
+    <span class="cm"># POST to PO_ACK_UPDATE, interpret messaging, return per-PO result</span>
+
+<span class="cm"># STEP 3 — register it (__init__.py)</span>
+<span class="kw">from</span> app.tools.po_action <span class="kw">import</span> acknowledge_po</pre>
+    <div class="example">
+      <div class="t">✅ How we test it (MCP Inspector)</div>
+      Start the server, open the Inspector, pick <code>acknowledge_po</code>, fill inputs
+      (<code>cono</code>, the <code>pos</code> array with the <code>rowidPoeh</code> from the preview tool, and <code>ackrsn</code>),
+      hit Run — then confirm in the SX.e screen the PO moved to <b>Acknowledged</b>. That's exactly how we
+      validated it live on PO 23.
+    </div>
+    <div class="keyterm">
+      <div class="t">Where do payloads come from?</div>
+      We learn the exact request/response shape by reading the existing SX.e frontend/API code that already
+      calls that endpoint — then mirror it in the tool. This is why our tools "just work" against the real system.
+    </div>
+
+    <h2 id="s33">3.3 Writing agent instructions <span class="time"></span></h2>
+    <p>
+      We build agent YAMLs <b>part by part</b> (agent → rules → tools → routing → behavior → display → examples),
+      validating the YAML after each part. For a <b>write</b> agent the most important part is the confirmation gate.
+    </p>
+    <pre class="codeblock"><span class="kw">critical_rules:</span> &gt;
+  RULE 1 - CONFIRMATION GATE: never call a write tool until the user
+  explicitly confirms. Flow is always: preview -&gt; ask -&gt; user says yes -&gt; write.
+  RULE 2 - ONE TOOL PER TURN. Preview + write in one turn is forbidden.
+  RULE 3 - never bypass API validations; surface errors as-is.</pre>
+    <div class="warn">
+      <div class="t">⚠️ A YAML gotcha we hit repeatedly</div>
+      In a YAML list item, a colon followed by a space (<code>text: more</code>) makes the parser think it's a
+      key/value map and breaks the file. Fix: reword or use a dash (<code>text - more</code>). We validate the
+      whole YAML after every edit to catch this early.
+    </div>
+
+    <h2 id="s34">3.4 Best practices &amp; real pitfalls <span class="time"></span></h2>
+    <table>
+      <tr><th>Topic</th><th>Lesson learned</th></tr>
+      <tr><td>Full vs sparse payload</td><td>Some endpoints need the <b>complete</b> field set (e.g., <code>poearetrieve</code> returned 420 until we sent all fields). Others recalculate if you send a partial record.</td></tr>
+      <tr><td>Correct data key</td><td>Extract the right response array (e.g., <code>loadpoearesults</code>). Wrong key = empty results.</td></tr>
+      <tr><td>Retrieve-merge-save</td><td>To change a field on a record, retrieve the full record, merge your change, then save — so you don't blank out other fields (this is why PO line price recalculated to 0 when sent sparse).</td></tr>
+      <tr><td>Stage validation</td><td>Only edit/acknowledge POs in eligible stages; reject others with a clear reason.</td></tr>
+      <tr><td>Write safety</td><td>Atomic sequences (remove lock → retrieve → update) so a record is never left half-edited or locked.</td></tr>
+      <tr><td>Know your limits</td><td>Some things aren't a simple field write (PO line <b>price</b> needs the pricing worksheet) — descope honestly rather than fake success.</td></tr>
+    </table>
+
+    <h2 id="s35">3.5 Security &amp; multi-tenancy <span class="time"></span></h2>
+    <p>
+      Our server talks to a real ERP that many companies use. So two questions matter for every single call:
+      <b>who is asking</b> (authentication) and <b>which company's data</b> are they allowed to see (multi-tenancy).
+    </p>
+    <div class="analogy">
+      <div class="t">🏢 Analogy — an office building</div>
+      Authentication is the badge that proves you're an employee. The company number (<code>cono</code>) is which
+      floor your badge unlocks. You can be a valid employee (authenticated) but still only allowed onto your own
+      floor (your tenant). The building never lets you wander onto another company's floor.
+    </div>
+    <h3>How our framework handles it for us</h3>
+    <p>
+      The good news: individual tools don't re-implement login. A shared helper
+      (<code>authenticate_and_prepare</code>) resolves the token, the operator, and the company context before the
+      tool runs. Each tool just receives a valid <code>cono</code> and makes its call.
+    </p>
+    <ul>
+      <li><b>Token &amp; operator</b> — resolved by the framework from the session, not typed by the user.</li>
+      <li><b>cono (company number)</b> — comes from the request context (the &quot;IBC&quot; context), so the tool always acts on the right tenant.</li>
+      <li><b>oper (operator)</b> — used for locks and audit; also resolved, never guessed.</li>
+    </ul>
+    <div class="warn">
+      <div class="t">⚠️ Rules we never break</div>
+      <ul style="margin:6px 0">
+        <li><b>Never hardcode</b> <code>cono</code> or <code>oper</code> in a tool — always take them from context.</li>
+        <li><b>Never build queries by string-gluing user input</b> (no SQL/URL interpolation) — it invites injection and broken calls. Validate and <code>.strip()</code> inputs first.</li>
+        <li><b>Never bypass the ERP's own validations</b> — surface its errors as-is instead of &quot;forcing&quot; a write.</li>
+      </ul>
+    </div>
+    <div class="keyterm">
+      <div class="t">Why this matters</div>
+      In a multi-tenant system, one leaked or hardcoded company number could show Company A's orders to Company B.
+      Letting the framework own auth + tenant resolution keeps every tool safe by default.
+    </div>
+
+    <h2 id="s36">3.6 Token optimization — a POC <span class="time"></span></h2>
+    <div class="poc">🧪 PROOF OF CONCEPT — this is an experiment, NOT in production yet.</div>
+    <h3>The problem</h3>
+    <p>
+      Many ERP endpoints return <b>huge</b> records — sometimes ~100 fields per row (balances, dates, flags,
+      costs, addresses…). But a user's question usually needs only a handful of them. Every field we hand back
+      to the LLM costs <b>tokens</b>, and tokens cost money and context space.
+    </p>
+    <div class="example">
+      <div class="t">📊 The rough numbers</div>
+      A single fat endpoint response can cost roughly <b>800–2100 tokens per question</b> — even when the answer
+      only needed 3 or 4 fields. Multiply that across every question, every user, every day.
+    </div>
+    <div class="keyterm">
+      <div class="t">Key term — token</div>
+      A token is a chunk of text (roughly ¾ of a word) that the LLM reads and bills for. Fewer irrelevant tokens
+      = cheaper, faster, and more room in the context window for what actually matters.
+    </div>
+    <h3>The idea</h3>
+    <p>
+      Instead of dumping all 100 fields, <b>send only the fields relevant to the question</b>. We match the user's
+      question to the right fields using embeddings:
+    </p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  A[Field keys<br/>+ meaning] --> B[Turn into<br/>embeddings]
+  B --> C[Save once<br/>pickle file]
+  Q[User question] --> D[Embed the<br/>question]
+  C --> E{Compare /<br/>similarity}
+  D --> E
+  E --> F[Pick only the<br/>relevant fields]
+  F --> G[Send small<br/>payload to LLM]
+      </pre>
+    </div>
+    <div class="steps">
+      <div class="s"><b>Describe fields:</b> map each cryptic field key to a short natural-language meaning (e.g. <code>arbal</code> → &quot;accounts receivable balance&quot;).</div>
+      <div class="s"><b>Embed &amp; store:</b> convert those descriptions to embeddings once and save them to a <code>pickle</code> file (a cached, ready-to-load index).</div>
+      <div class="s"><b>Embed the question:</b> at query time, turn the user's question into an embedding too.</div>
+      <div class="s"><b>Match:</b> compare and keep only the fields whose meaning is closest to the question.</div>
+      <div class="s"><b>Send small:</b> return just those fields to the LLM instead of the whole record.</div>
+    </div>
+    <div class="keyterm">
+      <div class="t">Key term — embedding</div>
+      An embedding turns text into a list of numbers that captures its <i>meaning</i>. Texts with similar meaning
+      land close together, so we can measure &quot;is this field related to this question?&quot; mathematically.
+    </div>
+    <h3>The result</h3>
+    <p>
+      In the POC, trimming to only relevant fields cut the payload dramatically — a big drop in tokens per question
+      while still answering correctly. It's promising, but it's still an experiment: it needs accuracy tuning and
+      guardrails (never drop a field the answer truly needs) before it could go to production.
+    </p>
+    <div class="poc">Status: validated as a concept · needs hardening · NOT shipped.</div>
+
+    <h2 id="s37">3.7 Bonus — What is RAG? <span class="time"></span></h2>
+    <p>
+      An LLM only &quot;knows&quot; what it saw during training, up to a <b>knowledge cut-off date</b>. It doesn't know
+      your company's latest documents, your internal wiki, or anything that happened after training.
+      <b>RAG (Retrieval Augmented Generation)</b> fixes that by letting the model look things up before it answers.
+    </p>
+    <div class="analogy">
+      <div class="t">📖 Analogy — open-book exam</div>
+      A plain LLM answers from memory (closed book). RAG is an open-book exam: before answering, it flips to the
+      right pages of <i>your</i> book (your documents) and answers using what it found. Same student, far better
+      answers on your specific material.
+    </div>
+    <div class="keyterm">
+      <div class="t">Key term — RAG</div>
+      <b>Retrieval Augmented Generation:</b> retrieve relevant text from your own documents, then feed it to the
+      LLM alongside the question so the answer is grounded in your data — not just training memory.
+    </div>
+    <h3>How it works</h3>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  D[Your files<br/>docs, PDFs, wiki] --> C[Chunk into<br/>small pieces]
+  C --> E[Embed each<br/>chunk]
+  E --> V[(Vector<br/>store)]
+  Q[User question] --> QE[Embed the<br/>question]
+  QE --> S{Find closest<br/>chunks}
+  V --> S
+  S --> R[Relevant chunks<br/>+ question]
+  R --> L[LLM writes a<br/>grounded answer]
+      </pre>
+    </div>
+    <div class="steps">
+      <div class="s"><b>Ingest:</b> take your files (docs, PDFs, pages) and split them into small <b>chunks</b>.</div>
+      <div class="s"><b>Embed:</b> convert each chunk into an embedding and store it in a <b>vector store</b>.</div>
+      <div class="s"><b>Retrieve:</b> embed the user's question and find the chunks whose meaning is closest.</div>
+      <div class="s"><b>Augment &amp; generate:</b> hand those chunks + the question to the LLM, which writes an answer grounded in your content.</div>
+    </div>
+    <div class="example">
+      <div class="t">🔗 Notice the connection</div>
+      RAG and our token-optimization POC (3.6) rely on the <b>same core trick</b>: embeddings + similarity to pull
+      only what's relevant. One trims fields from a record; the other pulls chunks from documents. Learn embeddings
+      once, and both make sense.
+    </div>
+    <div class="warn">
+      <div class="t">⚠️ RAG vs MCP — don't confuse them</div>
+      RAG brings <b>knowledge</b> (facts from documents) to the model. MCP brings <b>actions &amp; live data</b>
+      (call an endpoint, acknowledge a PO). They're complementary: an assistant can use RAG to know your policy and
+      MCP to actually do the task.
+    </div>
+
+    <h2 id="s38">3.8 Final recap &amp; roadmap <span class="time"></span></h2>
+    <div class="recap">
+      <h3>🎓 The whole journey, in one breath</h3>
+      <ul>
+        <li><b>Session 1 — Foundations:</b> LLMs and agents needed a standard way to reach the outside world. MCP is that standard — a host/client/server model exposing tools, resources, and prompts.</li>
+        <li><b>Session 2 — Our MCP server:</b> we turn SX.e endpoints into tools (one endpoint = one tool), and agents (YAML instructions) decide which tools to call for a user's request.</li>
+        <li><b>Session 3 — For real + advanced:</b> the ticket-to-production lifecycle, building &amp; testing a tool, writing safe write-agent instructions, security/multi-tenancy, and two embedding-powered ideas — the token-optimization POC and RAG.</li>
+      </ul>
+      <p style="margin:10px 0 0">
+        You can now explain what MCP is, read our tools and agents, build a new tool from a ticket, and speak to the
+        advanced topics. That's the full arc — congratulations. 🚀
+      </p>
+    </div>
+
+    <div class="pager">
+      <a href="KT-Session-2-Our-MCP-Server.html">← Session 2 — Our MCP Server</a>
+      <a href="KT-Session-Index.html">Index</a>
+    </div>
+  </div>
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAG Evaluation & Hallucination Mitigation — Scenario MCQs (12)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#dc2626; --accent2:#b91c1c;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#7c3aed; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#f87171; --accent2:#fca5a5;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#c4b5fd; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>📏 RAG Evaluation &amp; Hallucination Mitigation — Scenario MCQs</h1>
+  <p>Topic 08 · 12 real-world questions · RAGAS, LLM-as-judge, faithfulness/relevancy, test sets, drift, grounding · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 12</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>The evaluation layer — historically the toughest interview area (RAGAS, precision/recall, LLM-as-judge). ⚠ = debatable. Deep-dive: SeniorDS_RealTime Lesson 08 + Lesson 17.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Stage-wise evaluation", trap:"Single-score trap", diff:"Senior",
+  q:"Your RAG system gives bad answers and leadership asks 'is it the retrieval or the model?'. You only track one end-to-end 'quality score', so you can't tell. What's the correct evaluation design?",
+  opts:[
+    "One overall quality score is enough; drill into examples manually when it drops.",
+    "Evaluate the pipeline in separate STAGES — retrieval (context precision/recall, hit-rate, MRR/NDCG) and generation (faithfulness, answer relevancy) plus end-to-end — so you can localize WHERE it fails.",
+    "Only evaluate the final answer; retrieval quality doesn't matter if the answer is wrong.",
+    "Measure only latency and cost; answer quality is subjective."
+  ],
+  correct:1,
+  exp:"A single blended score tells you SOMETHING is wrong but not WHERE. RAG fails in two independent places: retrieval can return the wrong chunks, or generation can hallucinate/ignore good context. Measuring each stage separately — retrieval metrics vs generation metrics — plus end-to-end lets you localize the failure and fix the right component.",
+  why:[
+    "One score can't disambiguate retrieval failure from generation failure — exactly the question leadership asked.",
+    "✅ Correct. Separate retrieval-stage and generation-stage metrics (+ end-to-end) to localize where the pipeline breaks.",
+    "Retrieval quality absolutely matters — if you feed the model garbage, even a perfect generator produces a wrong answer.",
+    "Latency/cost matter operationally but don't tell you about answer QUALITY, which is measurable, not merely subjective."
+  ],
+  deep:"The three eval stages: (1) RETRIEVAL — did we fetch the right chunks? context precision/recall, hit-rate, MRR, NDCG (needs a golden set of query→relevant-chunk labels). (2) GENERATION — given the retrieved context, is the answer good? faithfulness (grounded?) + answer relevancy (addresses the question?). (3) END-TO-END — answer correctness vs a reference. Separating them turns 'it's bad' into 'retrieval recall dropped to 0.6' or 'faithfulness is fine but relevancy is low' — actionable, component-level signal. This stage separation is the single most important RAG-eval concept.",
+  learn:"Go deeper → Lesson 08, section G1 (evaluating RAG in depth)."
+},
+{
+  id:2, topic:"RAGAS metrics", trap:"Metric-salad trap", diff:"Senior",
+  q:"You adopt RAGAS. An interviewer asks what its core metrics measure. Which mapping is correct?",
+  opts:[
+    "Faithfulness = answer speed; answer relevancy = grammar; context precision = token count.",
+    "Faithfulness = is each claim in the answer supported by the retrieved context (hallucination); answer relevancy = does the answer address the question; context precision/recall = quality of the retrieved context vs what's relevant.",
+    "They all measure the same thing (overall accuracy) with different names.",
+    "RAGAS only measures retrieval, never generation."
+  ],
+  correct:1,
+  exp:"RAGAS separates the axes: FAITHFULNESS — are the answer's claims entailed by the retrieved context (catches hallucination)? ANSWER RELEVANCY — does the answer actually address the question? CONTEXT PRECISION — are the retrieved/ranked contexts relevant (not noise)? CONTEXT RECALL — did retrieval capture the info needed to answer? Together they pinpoint whether a failure is retrieval-side or generation-side.",
+  why:[
+    "These are semantic quality metrics, not speed/grammar/token counts.",
+    "✅ Correct. Faithfulness (grounded?), answer relevancy (on-question?), context precision/recall (retrieval quality) — distinct axes.",
+    "They measure DIFFERENT axes deliberately; collapsing them to 'accuracy' loses the diagnostic value.",
+    "RAGAS covers BOTH retrieval (context precision/recall) and generation (faithfulness, answer relevancy)."
+  ],
+  deep:"RAGAS is reference-light: faithfulness and answer_relevancy need only (question, contexts, answer) — no gold answer required, which is why it's practical when you lack labels. Context recall typically needs a ground-truth answer/relevant set. Under the hood these are computed via LLM-as-judge prompts (e.g., faithfulness decomposes the answer into claims and checks each against context). Map each metric to a fix: low context recall → retrieval/chunking; low faithfulness → grounding/prompt/temperature; low answer relevancy → prompt/query understanding.",
+  learn:"Go deeper → Lesson 08, section G1 (RAGAS) + Lesson 17."
+},
+{
+  id:3, topic:"Faithfulness in code", trap:"Vibe-check trap", diff:"Senior",
+  q:"You must compute a faithfulness score programmatically (no eyeballing). What's the standard approach?",
+  code:"# faithfulness = supported_claims / total_claims\nclaims = decompose(answer)                  # split answer into atomic claims\nsupported = [c for c in claims\n             if judge_entailed(c, context)] # LLM/NLI: is c entailed by context?\nfaithfulness = len(supported) / len(claims)",
+  opts:[
+    "Compute cosine similarity between the answer and the question; higher = more faithful.",
+    "Decompose the answer into atomic claims, then for each claim check whether it's ENTAILED by the retrieved context (via an LLM-as-judge or NLI model); score = supported_claims / total_claims.",
+    "Count how many words in the answer also appear in the context.",
+    "Ask the SAME model that wrote the answer 'was this faithful?' and trust its yes."
+  ],
+  correct:1,
+  exp:"Faithfulness is computed by claim decomposition + entailment checking: break the answer into atomic factual claims, and for each ask an LLM-as-judge (or an NLI entailment model) whether the retrieved context supports it. The score is the fraction of claims that are supported. This is exactly how RAGAS computes it, and it's robust because it checks grounding claim-by-claim.",
+  why:[
+    "Answer-question cosine measures topical similarity, not whether claims are grounded in the CONTEXT — unrelated to faithfulness.",
+    "✅ Correct. Decompose into claims → entailment-check each against context (LLM/NLI) → supported/total. This is the RAGAS approach.",
+    "Raw word overlap is a weak proxy (paraphrases fail it, and copied-but-wrong text passes it) — not a real entailment check.",
+    "Asking the author model to self-grade is unreliable (self-consistency bias); use a separate judge, ideally a stronger/different model."
+  ],
+  deep:"Two implementations of the entailment check: (1) LLM-as-judge — prompt a (preferably different/stronger) model: 'Given this context, is the following statement supported? yes/no' per claim; (2) NLI model — a trained natural-language-inference classifier outputs entailment/neutral/contradiction. Claim decomposition itself is often an LLM step. Pitfalls: judge cost (many calls), judge bias/calibration, and decomposition quality. Faithfulness is the direct, in-code counter to hallucination — pair it with citations so failures are human-verifiable.",
+  learn:"Go deeper → Lesson 08, G1 + Lesson 05 (E4 hallucination)."
+},
+{
+  id:4, topic:"Precision/recall in retrieval", trap:"TP/FP/FN trap", diff:"Senior",
+  q:"For a set of test queries with labeled relevant chunks, you compute retrieval precision and recall. How are TP/FP/FN defined here, and what do the two metrics tell you?",
+  code:"precision = TP / (TP + FP)   # of retrieved, how many were relevant?\nrecall    = TP / (TP + FN)   # of relevant, how many did we retrieve?\n# TP = retrieved & relevant, FP = retrieved & NOT relevant, FN = relevant & NOT retrieved",
+  opts:[
+    "TP = fast queries, FP = slow queries, FN = failed queries.",
+    "TP = retrieved AND relevant; FP = retrieved but NOT relevant (noise); FN = relevant but NOT retrieved (miss). Precision = am I feeding noise? Recall = am I missing needed chunks?",
+    "Precision and recall are identical for retrieval.",
+    "Recall = TP/(TP+FP); precision = TP/(TP+FN) (the standard formulas reversed)."
+  ],
+  correct:1,
+  exp:"In retrieval: TP = a chunk that was retrieved AND is relevant; FP = retrieved but irrelevant (noise you fed the LLM); FN = relevant but not retrieved (a miss). Precision = TP/(TP+FP) answers 'how much of what I retrieved was actually relevant?' (noise). Recall = TP/(TP+FN) answers 'how much of the relevant material did I actually find?' (misses). You need a labeled golden set to compute them.",
+  why:[
+    "TP/FP/FN are about relevance vs retrieval, not query speed.",
+    "✅ Correct. TP=retrieved&relevant, FP=retrieved&irrelevant, FN=relevant&missed; precision=noise check, recall=miss check.",
+    "They measure different things — precision (noise) vs recall (coverage) — and usually trade off.",
+    "The formulas are swapped here: precision uses FP in the denominator, recall uses FN — this option reverses them."
+  ],
+  deep:"Precision vs recall trade off: retrieving more chunks (higher K) tends to raise recall but lower precision (more noise); retrieving fewer raises precision but risks missing relevant chunks. F1 = 2PR/(P+R) balances them. For RAG, high recall matters (missing the key chunk = wrong answer) but too-low precision floods the context with noise (and triggers lost-in-the-middle). This is 'Context Precision/Recall' in RAGAS terms. Crucially, you need a GOLDEN SET (query → relevant chunk IDs) to define 'relevant' — the metric doesn't come free from the system.",
+  learn:"Go deeper → Lesson 08, section G2 (precision/recall in code)."
+},
+{
+  id:5, topic:"LLM-as-judge", trap:"Blind-trust-judge trap", diff:"Senior",
+  q:"You adopt LLM-as-judge to score answer quality at scale. What are the key caveats a senior engineer must handle?",
+  opts:[
+    "None — an LLM judge is objective and needs no oversight.",
+    "The judge is itself imperfect: it has biases (position/verbosity/self-preference), needs a clear rubric, benefits from being a different/stronger model, and should be CALIBRATED against human labels on a sample before you trust it.",
+    "LLM-as-judge only works if the judge is the exact same model that generated the answer.",
+    "LLM-as-judge replaces the need for any human evaluation forever."
+  ],
+  correct:1,
+  exp:"LLM-as-judge is scalable but NOT ground truth. Known biases: position bias (favoring the first option), verbosity bias (favoring longer answers), and self-preference (favoring outputs from the same model family). Mitigations: give a clear scoring rubric, prefer a different/stronger judge model, randomize option order for pairwise, and calibrate the judge against human labels on a sample to confirm it agrees before relying on it at scale.",
+  why:[
+    "An LLM judge is not objective — it has measurable biases and must be validated.",
+    "✅ Correct. Judge is imperfect (position/verbosity/self-preference bias); use a rubric, a different/stronger judge, and calibrate vs human labels.",
+    "Using the SAME model to judge its own output invites self-preference bias — prefer a separate judge.",
+    "It reduces but doesn't eliminate the need for human eval — you still calibrate against humans and review edge/high-stakes cases."
+  ],
+  deep:"To make LLM-as-judge trustworthy: (1) explicit RUBRIC (define what a 3/5 vs 5/5 looks like); (2) prefer PAIRWISE comparison ('is A better than B?') over absolute scoring — LLMs are more consistent at relative judgments; (3) mitigate biases (randomize order, control for length, use a different-family judge); (4) CALIBRATE: score a sample both by humans and the judge, measure agreement (e.g., correlation/kappa), and only trust the judge where it agrees. This is how you scale evaluation without a giant labeled dataset — but you never skip the human calibration step.",
+  learn:"Go deeper → Lesson 08, G1 + Lesson 17 (LLM-as-judge)."
+},
+{
+  id:6, topic:"Bootstrapping eval without labels", trap:"No-data-paralysis trap", diff:"Intermediate",
+  q:"You ship a RAG bot to a client who asks 'how do we know it works?' You have NO labeled ground-truth dataset yet. What's the most practical FIRST evaluation step?",
+  opts:[
+    "Wait until you've manually labeled 1,000 QA pairs before evaluating anything.",
+    "Use reference-free evaluation now: LLM-as-judge scoring a SAMPLE of real production queries on faithfulness and answer relevancy (needs no gold answers), then build a labeled set over time.",
+    "Measure only the vector DB's query latency as a proxy for quality.",
+    "Assume it works because it passed a few manual demos."
+  ],
+  correct:1,
+  exp:"With no labels, reference-free metrics unblock you immediately: faithfulness and answer relevancy need only (question, context, answer), so you can LLM-as-judge a sample of real production queries today. That gives actionable signal while you incrementally build a labeled golden set for reference-based metrics (context recall, answer correctness) later.",
+  why:[
+    "Blocking all evaluation until 1,000 labels exist is analysis paralysis — you can get signal now, reference-free.",
+    "✅ Correct. Reference-free LLM-as-judge (faithfulness + answer relevancy) on sampled real queries — no gold answers needed; build labels over time.",
+    "Latency is an ops metric, not answer quality — it says nothing about correctness.",
+    "A few passing demos is anecdote, not evaluation — it won't catch the failure distribution."
+  ],
+  deep:"Evaluation maturity path: (0) reference-free metrics on sampled traffic (faithfulness, answer/context relevancy via RAGAS/LLM-as-judge) — start here with zero labels; (1) build a small golden set (curate real queries + verified answers/relevant chunks) → enables context recall, answer correctness; (2) automate in CI (regression suite) + continuous production sampling; (3) close the loop with user feedback (thumbs up/down, escalations). Don't let 'no dataset' stall evaluation — reference-free is the practical first move, and you grow the labeled set from real traffic.",
+  learn:"Go deeper → Lesson 08, G1 (bootstrapping eval)."
+},
+{
+  id:7, topic:"Golden / test set design", trap:"Trivial-testset trap", diff:"Senior",
+  q:"Your RAG eval set is 50 easy, well-phrased questions and the system scores 95% — but production is full of complaints. What's wrong with the eval, and how do you fix it?",
+  opts:[
+    "Nothing; 95% on the test set means the system is 95% good in production.",
+    "The test set isn't representative: it lacks the hard, messy, adversarial, and edge-case queries real users send. Build a golden set that mirrors REAL query distribution (including failures, ambiguous, multi-part, out-of-scope) so scores reflect reality.",
+    "Add more easy questions until the count reaches 500.",
+    "Delete the test set; production complaints are the only signal that matters."
+  ],
+  correct:1,
+  exp:"A test set of easy, clean questions measures the easy case, not reality — so a 95% here can coexist with widespread production failures. The fix is a REPRESENTATIVE golden set: sample real queries (including messy phrasing, multi-part, ambiguous, out-of-scope, and known-failure cases) so the eval distribution matches what users actually send and the score predicts production behavior.",
+  why:[
+    "Test-set score only generalizes if the test set matches the real distribution — here it clearly doesn't.",
+    "✅ Correct. Non-representative eval; rebuild the golden set to mirror real query distribution incl. hard/edge/adversarial/out-of-scope cases.",
+    "More EASY questions just inflates the score further from reality — you need HARDER, representative ones.",
+    "Production complaints are valuable signal, but you still need a curated eval set to test changes BEFORE shipping (no offline gate = flying blind)."
+  ],
+  deep:"Golden-set design principles: (1) sample from REAL production queries (or realistic ones), not hand-crafted easy ones; (2) include the hard distribution — ambiguous, terse, multi-part/compound, adversarial, out-of-scope (should decline), and known past failures; (3) cover key topics/segments; (4) keep it versioned and grow it from production (mine complaints/thumbs-down into new test cases). A good eval set is a leading indicator of production quality; a trivial one gives false confidence — exactly the 95%-yet-complaints gap.",
+  learn:"Go deeper → Lesson 08, G1 + Lesson 17 (test sets)."
+},
+{
+  id:8, topic:"Quality drift detection", trap:"Set-and-forget trap", diff:"Senior",
+  q:"Your RAG system was great at launch. Three months later, users complain more — but nothing in your code changed and no errors are thrown. What's likely happening and how do you catch it?",
+  opts:[
+    "Impossible — if the code didn't change, quality can't change.",
+    "Silent quality DRIFT: the model provider updated the model, the query distribution shifted, or the underlying data/domain changed. Catch it with CONTINUOUS evaluation — sample production traffic and re-run faithfulness/relevancy + monitor metrics over time with alerts.",
+    "It must be a caching bug; clear all caches.",
+    "Users are just complaining more for no reason; ignore it."
+  ],
+  correct:1,
+  exp:"Quality can degrade with zero code changes: a silent provider model update, a shift in what users ask (query distribution drift), or changes in the underlying data/domain. Because no errors fire, you only catch it with CONTINUOUS evaluation — sample production traffic, re-run faithfulness/relevancy (and track retrieval metrics), trend them over time, and alert on regressions.",
+  why:[
+    "Quality absolutely can change without code changes — provider updates, data drift, and query-distribution shift all do it silently.",
+    "✅ Correct. Silent drift (provider update / query or data shift); catch via continuous sampled eval + metric trending + alerts.",
+    "Caching is one possibility but the general, likely cause is drift; the fix is continuous monitoring, not a blind cache clear.",
+    "Dismissing user complaints ignores a real signal — rising complaints often ARE the drift symptom."
+  ],
+  deep:"Drift types to monitor: MODEL drift (the API model changed under you — pin versions where possible and re-baseline when it changes), DATA drift (the knowledge base or its distribution changed), and QUERY drift (users ask new/different things). Detection: continuously sample production (question, context, answer) triples, run reference-free metrics, and trend faithfulness/relevancy/retrieval scores with alert thresholds; also watch proxies (thumbs-down rate, escalation rate, no-answer rate). Evaluation is not a launch gate — it's a continuous production system.",
+  learn:"Go deeper → Lesson 08, G3 (drift detection) + Lesson 17."
+},
+{
+  id:9, topic:"Grounding to reduce hallucination", trap:"Model-blame trap", diff:"Intermediate",
+  q:"Even with correct retrieved context, your bot sometimes adds facts NOT in the context (e.g., invents a phone number). Retrieval is fine. What's the most effective set of REDUCTION techniques?",
+  opts:[
+    "Switch to a bigger model; big models never hallucinate.",
+    "Grounding prompt ('answer ONLY from the context; if not present, say you don't know'), require CITATIONS to the source chunk, lower temperature for factual tasks, and add a post-hoc faithfulness check that regenerates/declines on failure.",
+    "Raise temperature so the model is more careful.",
+    "Remove the context so the model has less to misread."
+  ],
+  correct:1,
+  exp:"When retrieval is fine but the model still fabricates, attack GENERATION grounding: an explicit instruction to answer only from the provided context and say 'I don't know' otherwise, require citations to the specific chunk (which pushes context-grounded phrasing and enables verification), lower temperature for factual tasks, and add a post-generation faithfulness check that regenerates or declines when a claim isn't supported.",
+  why:[
+    "A bigger model reduces but never ELIMINATES hallucination — it's not a guaranteed fix, and here the issue is grounding discipline.",
+    "✅ Correct. Grounding instruction + citations + low temperature + post-hoc faithfulness check (regenerate/decline). Layered reduction.",
+    "Higher temperature INCREASES randomness/fabrication — the opposite of what you want for factual grounding.",
+    "Removing context turns a grounded task into open-ended recall — guaranteeing MORE fabrication, not less."
+  ],
+  deep:"Hallucination reduction stack (layered, since none is complete): (1) GROUNDING PROMPT — 'use ONLY the context; if the answer isn't there, say you don't know'; (2) CITATIONS — force each claim to reference a chunk (grounds phrasing + enables human/auto verification); (3) LOW TEMPERATURE for factual tasks; (4) CONTEXT PLACEMENT — put context before the question, clearly delimited; (5) POST-HOC FAITHFULNESS CHECK — decompose+entail, and on failure regenerate with stricter instructions or fall back to 'I don't know.' RAG reduces hallucination but the model can still ignore context — that's why you layer detection + reduction.",
+  learn:"Go deeper → Lesson 05, E4 + Lesson 08, G1."
+},
+{
+  id:10, topic:"No-single-correct-answer eval", trap:"Force-exact-match trap", diff:"Senior",
+  q:"You're evaluating an open-ended summarization feature where many phrasings are equally valid. Exact-match/BLEU against one reference scores good summaries as 'wrong.' What's the right evaluation approach?",
+  opts:[
+    "Force exact string match against one reference; anything else is a failure.",
+    "Use rubric-based LLM-as-judge (score coherence/coverage/faithfulness), reference-free metrics, and/or PAIRWISE human/LLM comparison — since there's no single correct string, don't force exact match.",
+    "Use ROUGE/BLEU only; they perfectly capture summary quality.",
+    "Skip evaluation; open-ended tasks can't be measured at all."
+  ],
+  correct:1,
+  exp:"When many outputs are valid, string-overlap metrics (exact match, BLEU, and even ROUGE) penalize valid paraphrases and reward surface copying. The right approach: rubric-based LLM-as-judge (score on defined criteria like coverage, coherence, faithfulness), reference-free metrics (faithfulness/relevancy), and/or pairwise comparison (is A better than B?) — all of which handle the 'many valid answers' reality.",
+  why:[
+    "Exact match against one reference fails the moment a valid answer is phrased differently — wrong for open-ended tasks.",
+    "✅ Correct. Rubric LLM-as-judge + reference-free metrics + pairwise comparison for tasks with no single correct answer.",
+    "ROUGE/BLEU measure n-gram overlap, which penalizes paraphrase and doesn't capture meaning/quality (recall Topic 07: humans preferred the lower-ROUGE summary).",
+    "Open-ended tasks CAN be measured — just with the right (semantic/rubric/pairwise) methods, not exact match."
+  ],
+  deep:"Metric choice by answer-space: closed/extractive (one right answer) → exact match / F1 / precision-recall are fine. Open-ended (many valid) → rubric LLM-as-judge (define the rubric!), reference-free metrics, or PAIRWISE comparison (more consistent than absolute scoring for both humans and LLM judges). Remember Topic 07's lesson: ROUGE-L rewarded copying while humans preferred a paraphrase — so when a lexical metric disagrees with consistent human preference, trust the humans. Choose the metric to fit the task, not the other way around.",
+  learn:"Go deeper → Lesson 08, G2 + Topic 07 (metrics vs humans)."
+},
+{
+  id:11, topic:"Context precision vs recall trade-off", trap:"Max-recall trap", diff:"Senior",
+  q:"To 'never miss relevant info,' you set top-K to 50. Recall is high, but answer quality drops and costs rise. What's the trade-off you hit, and the better approach?",
+  opts:[
+    "There's no trade-off; more retrieved chunks always help.",
+    "High-K maximizes recall but tanks context PRECISION (lots of irrelevant chunks) — flooding the prompt with noise, raising cost, and triggering lost-in-the-middle. Retrieve a wider set then RERANK down to a few high-precision chunks.",
+    "Set top-K to 1 so precision is always perfect.",
+    "Recall and precision aren't relevant to RAG at all."
+  ],
+  correct:1,
+  exp:"Cranking K up maximizes recall but destroys precision — you feed the LLM many irrelevant chunks (noise), which dilutes the signal, wastes tokens/cost, and buries the key fact in the low-attention middle. The better approach is retrieve-then-rerank: fetch a wide candidate set (good recall) then rerank down to a few high-precision chunks the LLM actually sees.",
+  why:[
+    "There IS a trade-off — more chunks means more noise, cost, and lost-in-the-middle, not monotonic improvement.",
+    "✅ Correct. High-K → high recall but low precision (noise/cost/lost-in-the-middle); fix with wide retrieve → rerank → few precise chunks.",
+    "top-K=1 risks MISSING the relevant chunk (low recall) — the opposite failure; you want balanced, reranked precision.",
+    "Precision/recall are central to RAG retrieval evaluation — very relevant."
+  ],
+  deep:"The precision/recall dial: higher K → higher recall, lower precision; lower K → higher precision, higher miss risk. For RAG you want high recall in the CANDIDATE set (don't miss the key chunk) but high precision in what you FEED the model (avoid noise + lost-in-the-middle). The standard resolution: retrieve wide (high recall), then rerank with a cross-encoder and pass only the top few (high precision). Measure both context recall AND context precision — optimizing one alone degrades the answer.",
+  learn:"Go deeper → Lesson 08, G1/G2 + Lesson 05, E2 (rerank)."
+},
+{
+  id:12, topic:"Evaluating an agentic RAG system", trap:"Answer-only trap", diff:"Senior-trap",
+  q:"Your AGENTIC RAG bot (it decides when to retrieve, may re-query, calls tools) sometimes returns a correct answer but via a wasteful or wrong PATH. Outcome-only eval scores it fine. What extra evaluation do you need vs a simple RAG chain?",
+  opts:[
+    "None — a correct final answer means the system is correct.",
+    "TRAJECTORY/step-level evaluation on top of answer quality: did it retrieve when it should have (and skip when not), pick the right tools, re-query sensibly, and not loop wastefully — because agentic systems can be 'right for the wrong (or costly) reasons.'",
+    "Only measure faithfulness; the path doesn't matter.",
+    "Only measure latency; correctness is guaranteed by retrieval."
+  ],
+  correct:1,
+  exp:"An agentic RAG system makes DECISIONS (whether/what to retrieve, which tool, whether to re-query), so two runs can reach the same answer via very different-quality paths. Beyond answer-quality metrics (faithfulness/relevancy), you need TRAJECTORY evaluation: did it retrieve appropriately, choose the right tools in the right order, re-query sensibly, and avoid wasteful loops — catching 'correct answer, bad/expensive process.'",
+  why:[
+    "A correct final answer can hide an unsafe/wasteful process that will fail on the next input — outcome-only eval misses it.",
+    "✅ Correct. Add trajectory/step-level eval (retrieval decisions, tool choice/order, re-query, loop efficiency) on top of answer metrics.",
+    "Faithfulness is necessary but insufficient for agents — it says nothing about whether the DECISION path was correct/efficient.",
+    "Latency alone ignores both answer quality and process correctness."
+  ],
+  deep:"Simple RAG eval = retrieval metrics + generation metrics. AGENTIC RAG eval adds the AGENT dimension (from the agents topic): tool-use precision/recall (right tools, none missing/extra), correct retrieval decisions (retrieved when needed, skipped when not), sensible re-querying, and loop efficiency (no runaway iterations). A run can be answer_correct=true yet tool_recall<1 (skipped a needed retrieval and got lucky) or wasteful (10 tool calls for a 1-call task). Score the trajectory via LLM-as-judge over traces or rule-based checks against expected paths — outcome-only eval is blind to this.",
+  learn:"Go deeper → Lesson 06, F3 (agent evaluation) + Lesson 08, G1."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Evaluation was your weak spot — not anymore.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

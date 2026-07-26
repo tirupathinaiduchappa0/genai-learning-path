@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Session 1 — Foundations: What is MCP & Why It Exists</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#818cf8; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --border:#334155; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  a{color:var(--accent);text-decoration:none}
+  .layout{display:flex;min-height:100vh}
+  /* Sidebar TOC */
+  nav.toc{width:290px;flex-shrink:0;background:#0b1424;border-right:1px solid var(--border);padding:22px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.toc h4{color:var(--accent);text-transform:uppercase;font-size:.78rem;letter-spacing:1px;margin:0 0 6px}
+  nav.toc .badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(52,211,153,.15);color:var(--green);margin-bottom:14px}
+  nav.toc a{display:block;color:var(--muted);padding:7px 10px;border-radius:6px;font-size:.9rem;border-left:2px solid transparent}
+  nav.toc a:hover{background:var(--panel);color:var(--text);border-left-color:var(--accent)}
+  .content{flex:1;max-width:900px;margin:0 auto;padding:36px 40px 80px}
+  header.top{background:linear-gradient(135deg,#065f46,#0ea5e9);padding:34px;border-radius:14px;margin-bottom:10px}
+  header.top h1{margin:0;font-size:1.9rem}
+  header.top p{margin:6px 0 0;color:#e0f2fe}
+  h2{color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:48px;scroll-margin-top:20px}
+  h3{color:var(--accent2);margin-top:26px}
+  .time{display:inline-block;font-size:.78rem;color:var(--accent);background:var(--panel);padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+  .analogy{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .analogy .t{font-weight:700;color:var(--amber);margin-bottom:4px}
+  .example{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .example .t{font-weight:700;color:var(--green);margin-bottom:4px}
+  .keyterm{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .keyterm .t{font-weight:700;color:var(--accent2)}
+  .diagram{background:#0b1424;border:1px solid var(--border);border-radius:12px;padding:20px;margin:22px 0;text-align:center;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--panel);border-radius:10px;overflow:hidden}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:.95rem}
+  th{background:var(--panel2);color:var(--accent);font-size:.85rem;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;color:#7dd3fc;font-size:.9em}
+  .recap{background:linear-gradient(135deg,#1e3a8a33,#0ea5e922);border:1px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:30px}
+  .recap h3{color:var(--accent);margin-top:0}
+  .recap li{margin:6px 0}
+  .pager{display:flex;justify-content:space-between;margin-top:40px;gap:10px}
+  .pager a{background:var(--panel);border:1px solid var(--border);padding:12px 18px;border-radius:8px;flex:1;text-align:center}
+  .pager a:hover{border-color:var(--accent)}
+  ul li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <span class="badge">SESSION 1 · Beginner</span>
+    <h4>On this page</h4>
+    <a href="#s11">1.1 The problem before MCP</a>
+    <a href="#s12">1.2 LLMs &amp; Agents (primer)</a>
+    <a href="#s13">1.3 What is MCP</a>
+    <a href="#s14">1.4 Host, Client, Server</a>
+    <a href="#s15">1.5 Tools, Resources, Prompts</a>
+    <a href="#s16">1.6 A tool call, step by step</a>
+    <a href="#s17">1.7 MCP vs Connectors</a>
+    <a href="#s18">1.8 Real world: Ask Rufus</a>
+    <a href="#s19">1.9 Recap &amp; takeaways</a>
+    <hr style="border-color:#334155;margin:16px 0"/>
+    <a href="KT-Session-Index.html">← Back to Index</a>
+    <a href="KT-Session-2-Our-MCP-Server.html">Session 2 →</a>
+  </nav>
+
+  <div class="content">
+    <header class="top">
+      <h1>Session 1 — Foundations</h1>
+      <p>What is MCP, why it exists, and the vocabulary you need before we open any code.</p>
+    </header>
+
+    <p style="color:var(--muted);font-size:1.05rem">
+      Goal of this session: by the end, anyone — even with zero AI background — should understand
+      what MCP is, what tools and agents are, and <em>why</em> the whole industry started using this.
+      We build the vocabulary here so Sessions 2 and 3 make complete sense.
+    </p>
+
+    <h2 id="s11">1.1 The problem before MCP <span class="time"></span></h2>
+    <p>
+      AI assistants are only useful if they can reach real data and systems — your ERP, your database,
+      Jira, files, and so on. Before MCP, every AI app had to be connected to every data source with its
+      own <b>custom, hand-written glue code</b>. If you had 4 AI apps and 5 data sources, you needed up to
+      <b>4 × 5 = 20</b> separate integrations. Add one new tool and you rewrite it everywhere.
+    </p>
+    <div class="analogy">
+      <div class="t">🔌 Analogy: chargers before USB-C</div>
+      Remember when every phone, camera, and laptop had a <em>different</em> charger? Travelling meant a bag
+      full of cables. USB-C fixed that with <b>one standard plug</b>. MCP is the "USB-C moment" for AI —
+      one standard way to plug any AI app into any tool or data source.
+    </div>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  subgraph Before["❌ Before MCP — N × M custom integrations"]
+    A1[AI App 1]---S1[(ERP)]
+    A1---S2[(Database)]
+    A2[AI App 2]---S1
+    A2---S3[(Jira)]
+    A3[AI App 3]---S2
+    A3---S3
+  end
+      </pre>
+    </div>
+    <p>This "N×M" explosion is expensive, slow, and breaks constantly. MCP replaces it with a single standard.</p>
+
+    <p>
+      With MCP, each data source is wrapped <b>once</b> in an MCP server, and every AI app talks to it through
+      the <b>same standard protocol</b>. The tangled <b>N × M</b> web becomes a clean <b>N + M</b>: add a new
+      app and it instantly works with every existing server; add a new server and every app can use it — no
+      custom glue, nothing to rewrite.
+    </p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  subgraph After["✅ After MCP — one standard protocol (N + M)"]
+    B1[AI App 1]--- MCP{{MCP Protocol}}
+    B2[AI App 2]--- MCP
+    B3[AI App 3]--- MCP
+    MCP --- T1[(ERP)]
+    MCP --- T2[(Database)]
+    MCP --- T3[(Jira)]
+  end
+      </pre>
+    </div>
+    <div class="example">
+      <div class="t">✅ The payoff</div>
+      Before: 3 apps × 3 sources = up to <b>9</b> custom integrations. After: 3 + 3 = <b>6</b> standard
+      connections — and the gap widens fast as you add more. Build a tool <em>once</em>, every app reuses it.
+    </div>
+
+    <h2 id="s12">1.2 LLMs &amp; Agents — a quick primer <span class="time"></span></h2>
+    <p>
+      An <b>LLM (Large Language Model)</b> — like GPT or Claude — is an AI trained on huge amounts of text.
+      It's brilliant at understanding language and generating answers. But on its own it has two limits:
+    </p>
+    <ul>
+      <li>It only <b>knows what it was trained on</b> — it has no live access to your PO #2705 or today's stock.</li>
+      <li>It can only <b>produce text</b> — it can't, by itself, fetch data or change anything.</li>
+    </ul>
+    <div class="keyterm">
+      <div class="t">Key term — Agent</div>
+      An <b>agent</b> is an LLM given a set of <b>tools</b> plus <b>instructions</b>. Now it can decide,
+      "to answer this, I should call this tool," fetch the real data, and respond. The LLM is the brain;
+      tools are its hands; the instructions are its rulebook.
+    </div>
+    <div class="example">
+      <div class="t">✅ Example</div>
+      Ask a plain LLM "What's the status of PO 2705?" → it can only say "I don't have access to that."
+      Ask an <em>agent</em> with a PO tool → it calls the tool, gets "Printed", and answers correctly.
+    </div>
+
+    <h2 id="s13">1.3 What is MCP <span class="time"></span></h2>
+    <p>
+      <b>MCP = Model Context Protocol.</b> It's an <b>open standard</b> (introduced by Anthropic in late 2024,
+      now adopted broadly) that defines a common way for AI apps to discover and use tools and data.
+      Instead of custom glue per app, everyone speaks the same protocol.
+    </p>
+    <div class="keyterm">
+      <div class="t">Plain-English definition</div>
+      MCP is a <b>universal language + plug</b> that lets any AI application talk to any set of tools or data
+      sources, without custom integration each time.
+    </div>
+    <p><b>Why it's trending:</b></p>
+    <ul>
+      <li><b>Write once, reuse everywhere</b> — build a tool once; any MCP-compatible AI app can use it.</li>
+      <li><b>Standard = less breakage</b> — no bespoke code to maintain per app.</li>
+      <li><b>AI-native</b> — designed specifically for how LLMs/agents discover and call capabilities.</li>
+      <li><b>Ecosystem</b> — ChatGPT, Claude, IDEs, and enterprise platforms all support it.</li>
+    </ul>
+
+    <h2 id="s14">1.4 The building blocks: Host, Client, Server <span class="time"></span></h2>
+    <p>MCP has three roles. Keep the restaurant analogy in mind:</p>
+    <div class="analogy">
+      <div class="t">🍽️ Analogy: a restaurant</div>
+      <b>Host</b> = the dining room where you (the customer) sit and talk. <b>Client</b> = the waiter who
+      carries your order back and forth in a language the kitchen understands. <b>Server</b> = the kitchen
+      that actually prepares the dish (does the real work).
+    </div>
+    <table>
+      <tr><th>Role</th><th>What it is</th><th>Examples</th></tr>
+      <tr><td><b>Host</b></td><td>The AI app the user talks to</td><td>ChatGPT, Claude Desktop, our GenAI platform, an IDE</td></tr>
+      <tr><td><b>Client</b></td><td>The connector inside the host that speaks MCP to a server</td><td>The MCP client library embedded in the host</td></tr>
+      <tr><td><b>Server</b></td><td>Exposes tools/data over MCP and does the work</td><td><b>Our SXe MCP server</b>, a GitHub server, a filesystem server</td></tr>
+    </table>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  U([👤 User]) --> H[MCP Host<br/>AI app]
+  H --> C[MCP Client<br/>connector]
+  C <-->|MCP protocol| SV[MCP Server<br/>exposes tools]
+  SV --> API[(Real system:<br/>ERP / DB / Jira)]
+      </pre>
+    </div>
+    <p>One host can connect to <b>many</b> servers at once (an ERP server, a Jira server, a files server) — all through the same standard.</p>
+
+    <h2 id="s15">1.5 Tools, Resources &amp; Prompts <span class="time"></span></h2>
+    <p>An MCP server can expose three kinds of things. In our work we focus almost entirely on <b>tools</b>.</p>
+    <table>
+      <tr><th>Capability</th><th>What it is</th><th>Everyday example</th></tr>
+      <tr><td><b>Tool</b> ⭐</td><td>An <b>action</b> the AI can call — a function that does something and returns a result</td><td>"get PO details", "acknowledge PO", "search products"</td></tr>
+      <tr><td>Resource</td><td>A piece of <b>data</b> the AI can read (like a file or record)</td><td>a document, a config file</td></tr>
+      <tr><td>Prompt</td><td>A reusable <b>prompt template</b> the server offers</td><td>"summarize this order" template</td></tr>
+    </table>
+    <div class="keyterm">
+      <div class="t">What makes a good tool</div>
+      Every tool has: a <b>name</b>, a clear <b>description</b> (this is how the LLM decides when to use it),
+      its <b>inputs</b> (parameters), and its <b>output</b>. The description is basically the tool's "job ad" —
+      the LLM reads it to know when to call it.
+    </div>
+    <div class="example">
+      <div class="t">✅ Example — one of our tools</div>
+      <code>get_pos_for_acknowledgment</code> — description: "list POs eligible for acknowledgment";
+      input: company + filters; output: a list of POs. The LLM reads that description and calls it when a
+      user asks "which POs can I acknowledge?"
+    </div>
+
+    <h2 id="s16">1.6 A tool call, step by step <span class="time"></span></h2>
+    <p>Here's what actually happens when a user asks a question that needs live data:</p>
+    <div class="diagram">
+      <pre class="mermaid">
+sequenceDiagram
+  participant U as User
+  participant H as Host + LLM
+  participant C as MCP Client
+  participant S as MCP Server
+  participant API as ERP API
+  U->>H: "What POs can I acknowledge?"
+  H->>H: LLM reads tool descriptions, picks the right tool
+  H->>C: call get_pos_for_acknowledgment
+  C->>S: MCP request
+  S->>API: call poearetrieve endpoint
+  API-->>S: list of eligible POs
+  S-->>C: tool result
+  C-->>H: result
+  H-->>U: "You have 3 POs to acknowledge: ..."
+      </pre>
+    </div>
+    <p>The user never sees any of the middle steps — they just ask a question and get a real answer.</p>
+
+    <h2 id="s17">1.7 MCP vs "Connectors" and other buzzwords <span class="time"></span></h2>
+    <p>You'll hear many terms. Here's how they relate:</p>
+    <table>
+      <tr><th>Term</th><th>What it means</th><th>Relation to MCP</th></tr>
+      <tr><td>Connector</td><td>A ready-made link between an AI app and a service</td><td>Many connectors are now built on MCP under the hood</td></tr>
+      <tr><td>Plugin / Custom GPT</td><td>Older ways to extend ChatGPT with actions</td><td>Predecessors; MCP is the newer open standard</td></tr>
+      <tr><td>Function calling</td><td>The LLM's ability to output "call this function"</td><td>The underlying mechanism; MCP standardizes how those functions are served</td></tr>
+      <tr><td>MCP server</td><td>A standard program exposing tools/data</td><td>The thing we build</td></tr>
+    </table>
+    <div class="keyterm">
+      <div class="t">Simple way to say it</div>
+      "Function calling" is the LLM raising its hand to use a tool. "MCP" is the standard way those tools are
+      offered and connected. "Connectors" are pre-packaged MCP links you can just switch on.
+    </div>
+
+    <h2 id="s18">1.8 Real-world: Amazon's "Ask Rufus" (and how WE mirror it) <span class="time"></span></h2>
+    <p>
+      Amazon's shopping assistant <b>"Ask Rufus"</b> lets you ask questions like "is this jacket waterproof?"
+      or "where's my order?" and it answers by <b>calling APIs behind the scenes</b> — you never navigate to a
+      product spec page or an orders screen. The assistant does the fetching for you.
+    </p>
+    <div class="analogy">
+      <div class="t">🛒 The parallel to our work</div>
+      Our ERP agents work the same way. Instead of a buyer navigating POEA/POET screens, they ask
+      "acknowledge PO 2705" and the agent calls the ERP endpoints (through the API gateway) and returns the
+      answer or performs the action. <b>Ask Rufus for e-commerce ≈ our agents for the ERP.</b>
+    </div>
+    <p><b>How other organizations use MCP:</b></p>
+    <ul>
+      <li><b>Developer tools</b> — IDEs use MCP servers to read code, run tests, query docs.</li>
+      <li><b>Data/BI assistants</b> — "how many orders last week?" answered by a database MCP server.</li>
+      <li><b>Ops &amp; ticketing</b> — Jira/ServiceNow MCP servers to create or update tickets by chat.</li>
+      <li><b>Enterprise ERP (us)</b> — conversational inquiry and actions over SX.e.</li>
+    </ul>
+
+    <div class="recap" id="s19">
+      <h3>🎯 1.9 Recap — the 5 things to remember</h3>
+      <ol>
+        <li><b>Problem MCP solves:</b> replaces messy N×M custom integrations with one standard ("USB-C for AI").</li>
+        <li><b>LLM vs Agent:</b> an LLM only talks; an agent (LLM + tools + instructions) can act.</li>
+        <li><b>Host / Client / Server:</b> dining room / waiter / kitchen.</li>
+        <li><b>Tool:</b> one action the AI can call; its description tells the LLM when to use it.</li>
+        <li><b>Real world:</b> Amazon "Ask Rufus" answers by calling APIs — exactly what our ERP agents do.</li>
+      </ol>
+    </div>
+
+    <div class="pager">
+      <a href="KT-Session-Index.html">← Back to Index</a>
+      <a href="KT-Session-2-Our-MCP-Server.html">Next: Session 2 — Our MCP Server →</a>
+    </div>
+  </div>
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+</body>
+</html>

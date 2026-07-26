@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LangGraph Internals — Scenario MCQs (15)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#2563eb; --accent2:#1d4ed8;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#7c3aed; --deep:#0e7490; --deep-bg:#cffafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#60a5fa; --accent2:#93c5fd;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#c4b5fd; --deep:#22d3ee; --deep-bg:#164e63; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🕸️ LangGraph Internals — Scenario MCQs</h1>
+  <p>Topic 04 · 15 real-world questions · state, nodes, edges, conditional routing, reducers, checkpointing, streaming, HITL, subgraphs · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 15</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in real LangGraph engineering (your DocSage graph). ⚠ = debatable. Deep-dive: SeniorDS_RealTime Lesson 07 + LangGraph lessons.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Why LangGraph vs chains", trap:"Framework-choice trap", diff:"Intermediate",
+  q:"You have a workflow that needs loops (retry until a quality check passes), conditional branching, and persistent state across steps. A teammate wants to build it with plain LCEL chains. Why is LangGraph the better fit?",
+  opts:[
+    "LangGraph is faster at inference than LCEL chains.",
+    "LangGraph models workflows as a graph with explicit state, conditional edges, and CYCLES — so loops, branching, and persistence are first-class; LCEL chains are essentially linear DAGs and can't naturally loop back.",
+    "LCEL cannot call LLMs, only LangGraph can.",
+    "LangGraph removes the need to write any Python."
+  ],
+  correct:1,
+  exp:"LCEL chains are great for linear/DAG pipelines (A→B→C) but can't naturally express CYCLES — 'loop back and retry until the grader passes.' LangGraph is built around a stateful graph with nodes, conditional edges, and cycles as first-class concepts, plus a shared state object and checkpointing. When you need loops, branching, and persistent multi-step state, that's LangGraph's sweet spot.",
+  why:[
+    "It's not about raw speed; it's about expressing cyclic, stateful, branching control flow.",
+    "✅ Correct. Graph + explicit state + conditional edges + cycles make loops/branching/persistence first-class; LCEL is linear/DAG.",
+    "LCEL absolutely can call LLMs — that's its primary use; this is false.",
+    "You still write Python (node functions, state schema); LangGraph structures the control flow, it doesn't eliminate code."
+  ],
+  deep:"Mental model: LCEL = compose steps into a pipeline (pipe operator, linear/DAG). LangGraph = a state machine / directed graph where nodes read+write a shared state, edges (including CONDITIONAL edges) decide the next node, and cycles let you loop. Use a chain when the flow is fixed and linear; use LangGraph when you need agentic loops, retries, human-in-the-loop pauses, or persistence across turns. Your DocSage retrieve→grade→(fail)→rewrite→retrieve loop is exactly the cyclic pattern LCEL can't express cleanly.",
+  learn:"Go deeper → LangGraph lessons (why LangGraph) + Lesson 06 (chain vs agent)."
+},
+{
+  id:2, topic:"State reducers", trap:"Overwrite trap", diff:"Senior",
+  q:"Your graph's 'messages' list keeps getting REPLACED with only the latest node's output instead of accumulating the full conversation. Your state is defined as `messages: list`. What is the fix?",
+  code:"class State(TypedDict):\n    messages: list          # <-- problem\n\n# vs\n\nclass State(TypedDict):\n    messages: Annotated[list, add_messages]",
+  opts:[
+    "Return the whole updated list from every node manually.",
+    "Declare the field with an accumulating reducer — Annotated[list, add_messages] — so returned values are APPENDED/merged instead of overwriting the field.",
+    "Disable the checkpointer; it's overwriting the state.",
+    "Lower the temperature so the model stops dropping messages."
+  ],
+  correct:1,
+  exp:"By default, when a node returns a value for a state key, LangGraph OVERWRITES that key. To accumulate, annotate the field with a reducer: `Annotated[list, add_messages]` (or operator.add). The reducer tells LangGraph how to MERGE each node's partial update into existing state — add_messages appends messages (with ID-based de-dup) instead of replacing the list.",
+  why:[
+    "Manually returning the whole list every node is fragile boilerplate and easy to get wrong — the reducer is the intended mechanism.",
+    "✅ Correct. Annotated[list, add_messages] makes updates append/merge instead of overwrite.",
+    "The checkpointer persists state across runs; it's not what's overwriting within a run — the missing reducer is.",
+    "Temperature is unrelated to how state updates merge."
+  ],
+  deep:"Every state key can have a reducer defining merge semantics; default = overwrite (last write wins). add_messages = append messages with smart de-dup by message ID (so re-emitting a message updates rather than duplicates); operator.add = plain list/number concatenation/addition; custom reducers for anything else. This is a classic subtle bug: nodes 'work' individually but state silently collapses to the last write. Know the trio: State schema + reducers (merge within a run) + checkpointer (persist across runs).",
+  learn:"Go deeper → Lesson 07, section F4 + LangGraph reducers lesson."
+},
+{
+  id:3, topic:"Conditional edges", trap:"Routing-mechanism trap", diff:"Intermediate",
+  q:"After your 'grade documents' node, you want to route to 'generate' if the docs are relevant, or 'rewrite_query' if not. How do you implement this branching in LangGraph?",
+  opts:[
+    "Put an if/else inside the grade node and have it call the next node's function directly.",
+    "Use add_conditional_edges: a routing function reads the state (e.g., the grade result) and returns the name of the next node ('generate' or 'rewrite_query').",
+    "Create two separate graphs and run whichever you need.",
+    "LangGraph doesn't support branching; you must always go to the next node in order."
+  ],
+  correct:1,
+  exp:"Branching is done with add_conditional_edges: you attach a routing function to a node; after the node runs, the function inspects the state (e.g., grade == 'relevant') and RETURNS the name of the next node. LangGraph then transitions there. This keeps routing declarative and part of the graph structure, not hidden inside node bodies calling each other.",
+  why:[
+    "Nodes shouldn't call other nodes directly — that bypasses the graph's control flow, breaks checkpointing/visualization, and tangles concerns. Routing belongs in edges.",
+    "✅ Correct. add_conditional_edges + a routing function that returns the next node's name based on state.",
+    "Two separate graphs can't share the evolving state/loop; branching within one graph is the point.",
+    "LangGraph fully supports conditional branching — that's a core feature."
+  ],
+  deep:"add_conditional_edges(source_node, routing_fn, path_map) — routing_fn(state) returns a key, path_map maps keys to destination node names (or you return node names directly). Nodes stay pure (read state → return partial update); EDGES own the control flow. This separation is what makes the graph inspectable (you can draw it), checkpointable, and testable. tools_condition is a prebuilt routing function for the common 'did the LLM request a tool?' branch. Your DocSage grade→generate/rewrite branch is a conditional edge.",
+  learn:"Go deeper → LangGraph routing lesson + Lesson 01 (Agentic RAG routing)."
+},
+{
+  id:4, topic:"Checkpointer / persistence", trap:"Memory-magic trap", diff:"Senior",
+  q:"Your chatbot resets its memory every time the process restarts. You're using InMemorySaver as the checkpointer. What's happening and what's the production fix?",
+  opts:[
+    "The thread_id changes on restart; hard-code a single thread_id for everyone.",
+    "InMemorySaver stores checkpoints in RAM, so they're lost on restart and not shared across instances; use a durable checkpointer (SqliteSaver for single-instance, PostgresSaver for multi-instance production).",
+    "Checkpointers only work with OpenAI models; switch providers.",
+    "Increase the model's context window so it remembers across restarts."
+  ],
+  correct:1,
+  exp:"InMemorySaver keeps checkpoints in a Python dict in process memory — perfect for dev/tests, but everything vanishes on restart and nothing is shared across multiple server instances. For production chat persistence, use a durable checkpointer: SqliteSaver (a real file on disk, good for single-instance) or PostgresSaver (a real DB with proper multi-instance concurrency).",
+  why:[
+    "Hard-coding ONE thread_id for everyone would merge all users' conversations together — a privacy disaster, not a fix. thread_id should be per-conversation.",
+    "✅ Correct. InMemorySaver = RAM (volatile, per-process); use SqliteSaver (single-instance) or PostgresSaver (multi-instance) for durability.",
+    "Checkpointers are provider-agnostic; this has nothing to do with OpenAI.",
+    "Context window is per-call and doesn't persist anything across restarts — that's the checkpointer's job."
+  ],
+  deep:"A checkpointer snapshots graph state after each step, keyed by thread_id; the same thread_id resumes accumulated state — that's how conversational memory, time-travel, HITL pauses, and crash recovery all work. Durability tiers: InMemorySaver (dev/test), SqliteSaver (durable file, single writer), PostgresSaver (durable + multi-instance concurrency for prod behind a load balancer). Choose by deployment. Your DocSage MemorySaver = InMemorySaver-class; to survive restarts across many workers, you'd move to Postgres.",
+  learn:"Go deeper → Lesson 07, section F4 (checkpointers deep dive)."
+},
+{
+  id:5, topic:"thread_id / multi-user", trap:"Shared-state trap", diff:"Senior",
+  q:"Two different users chat with your deployed LangGraph agent at the same time, and one user starts seeing the OTHER user's conversation history. What did you most likely get wrong?",
+  opts:[
+    "You used the same thread_id (or none) for all users, so they share one checkpointed conversation.",
+    "The LLM is leaking data between requests; report it to the provider.",
+    "You need a bigger checkpointer database.",
+    "Temperature is too high, causing the model to invent the other user's messages."
+  ],
+  correct:0,
+  exp:"thread_id is the isolation key for checkpointed state. If you pass the same thread_id (or forget to pass one and rely on a default) for all users, they all resume the SAME conversation — so User A sees User B's history. The fix: pass a unique thread_id per conversation/user (e.g., a session ID) in the config so each user's state is isolated.",
+  why:[
+    "✅ Correct. Same/default thread_id for everyone = shared conversation state = cross-user leakage. Use a unique per-user/session thread_id.",
+    "This isn't the model leaking data — it's your checkpointer keying, a configuration bug on your side.",
+    "A bigger DB doesn't fix isolation; the issue is the KEY, not capacity.",
+    "Temperature can't produce another real user's actual messages — that's persisted state bleeding through a shared thread_id."
+  ],
+  deep:"config={'configurable': {'thread_id': <session_id>}} is passed on every invoke; the checkpointer stores/loads state under that key. Treat thread_id as your multi-tenancy boundary — one per conversation, derived from an authenticated session, never global. This is both a correctness and a SECURITY/privacy issue (cross-user data leakage). Related: for long conversations under one thread_id, add summarization/trimming so the growing state doesn't blow the context window.",
+  learn:"Go deeper → Lesson 07, section F4 (thread_id as multi-tenancy key)."
+},
+{
+  id:6, topic:"tools_condition / ReAct", trap:"Manual-routing trap", diff:"Intermediate",
+  q:"In your agent graph, after the LLM node you need to route to a ToolNode if the LLM requested a tool call, or to END if it produced a final answer. What's the idiomatic LangGraph way?",
+  opts:[
+    "Parse the raw LLM string yourself with regex to detect tool calls, then branch.",
+    "Use the prebuilt tools_condition as the routing function on a conditional edge — it checks whether the last AI message contains tool calls and routes to the tool node or END accordingly.",
+    "Always route to the ToolNode; it will figure out if no tool is needed.",
+    "Put the tool execution logic directly inside the LLM node."
+  ],
+  correct:1,
+  exp:"LangGraph ships tools_condition, a prebuilt routing function for exactly this: it inspects the last AI message — if it contains tool_calls, route to the tool node; otherwise route to END (or your finish path). You wire it via add_conditional_edges from the agent node. This is the standard ReAct loop: agent → (tools_condition) → tools → back to agent → ... → END.",
+  why:[
+    "Hand-parsing LLM output with regex is brittle and unnecessary — structured tool_calls are already on the AI message; tools_condition reads them properly.",
+    "✅ Correct. tools_condition inspects the AI message for tool_calls and routes to ToolNode or END. Prebuilt and idiomatic.",
+    "Always routing to ToolNode wastes a step when no tool was requested and muddles the loop.",
+    "Executing tools inside the LLM node conflates responsibilities and breaks the clean agent/tool separation and checkpointing."
+  ],
+  deep:"The canonical ReAct graph: add_node('agent', llm_with_tools); add_node('tools', ToolNode(tools)); add_conditional_edges('agent', tools_condition); add_edge('tools', 'agent'). Loop: agent decides → if tool_calls, ToolNode executes and returns ToolMessages → back to agent to reason on results → repeat until the agent answers with no tool call → END. ToolNode handles executing the requested tools and appending ToolMessages to state (via add_messages). Add a recursion_limit so the loop can't run forever.",
+  learn:"Go deeper → Lesson 06 (ReAct) + LangGraph tools lesson."
+},
+{
+  id:7, topic:"Parallel nodes / fan-out", trap:"Concurrent-write trap", diff:"Senior",
+  q:"You fan out to three nodes that run in parallel (summarize, extract_entities, classify), each writing to the SAME state key 'results'. You get an error or lost writes. Why, and how do you fix it?",
+  opts:[
+    "Parallel nodes are impossible in LangGraph; run them sequentially.",
+    "Concurrent writes to a key without an accumulating reducer conflict; give 'results' a reducer (e.g., operator.add / a merge reducer) so parallel branches' outputs are combined, not overwritten.",
+    "Add a global lock around the state so only one node writes at a time.",
+    "Reduce it to one node that does all three tasks in a single prompt."
+  ],
+  correct:1,
+  exp:"When multiple branches write the same state key in the same super-step, LangGraph needs to know HOW to merge them — otherwise it's a conflict/last-write-wins. Define a reducer on that key (e.g., operator.add to concatenate lists, or a custom merge) so each parallel branch's contribution is combined deterministically. Reducers are exactly the mechanism for safe concurrent state updates.",
+  why:[
+    "Parallel/fan-out execution IS supported (that's the whole point of the pattern); the issue is merge semantics, not feasibility.",
+    "✅ Correct. Give the shared key an accumulating/merge reducer so parallel writes combine instead of conflicting.",
+    "You don't hand-roll global locks in LangGraph; the framework merges via reducers — that's the idiomatic, correct mechanism.",
+    "Collapsing to one node throws away the parallelism benefit; the right fix is a reducer, keeping the fan-out."
+  ],
+  deep:"LangGraph executes in super-steps; nodes with no dependency between them run in parallel, then their state updates are merged. For a key written by multiple parallel nodes, the reducer defines the merge (append results, sum counts, union sets). Without a reducer, concurrent writes to one key are ambiguous. This is the parallelization workflow pattern (fan-out → fan-in): branch to independent nodes, each writes to a reduced key, a downstream node reads the combined result. Design the state schema's reducers up front when you plan to fan out.",
+  learn:"Go deeper → LangGraph workflows (parallelization) + Lesson 07 (reducers)."
+},
+{
+  id:8, topic:"Streaming modes", trap:"Wrong-stream trap", diff:"Senior",
+  q:"You want your UI to show (a) token-by-token generation from the LLM AND (b) a 'step' indicator as each node runs. Which LangGraph streaming approach fits?",
+  opts:[
+    "There is only one stream mode; you get whatever it gives.",
+    "Use the appropriate stream modes: stream_mode='messages' for token-level LLM output, and stream_mode='updates' (or 'values') to observe each node's state changes as steps complete — you can combine modes.",
+    "Poll the checkpointer every 100ms to detect changes.",
+    "Streaming isn't supported in LangGraph; return the final result only."
+  ],
+  correct:1,
+  exp:"LangGraph supports multiple stream modes for different needs: 'messages' streams LLM tokens as they're generated (for the typewriter effect); 'updates' streams the state delta after each node (great for a step/progress indicator); 'values' streams the full state after each step. You pick — or combine — modes based on what the UI needs.",
+  why:[
+    "There are several stream modes, not one — choosing the right one is the point.",
+    "✅ Correct. 'messages' for token streaming, 'updates'/'values' for per-node/step visibility; modes can be combined.",
+    "Polling the checkpointer is a hack; native streaming is the intended, efficient mechanism.",
+    "Streaming is a core LangGraph feature (values/updates/messages/events)."
+  ],
+  deep:"Stream modes: 'values' (full state after each step), 'updates' (only the delta each node produced — lighter, ideal for progress UIs), 'messages' (LLM tokens + metadata for token-by-token rendering), and 'events'/astream_events (fine-grained event stream for advanced tracing). For a chat UI: 'messages' drives the streaming answer while 'updates' drives a 'Retrieving… Grading… Generating…' status. Your DocSage step-by-step streaming uses this. Streaming also improves perceived latency — users see progress instead of a spinner.",
+  learn:"Go deeper → LangGraph streaming lesson + Lesson 08 (latency/UX)."
+},
+{
+  id:9, topic:"Human-in-the-loop / interrupt", trap:"After-the-fact trap", diff:"Senior",
+  q:"Before your graph executes a 'send_email_to_customer' node, you need a human to approve the draft. How does LangGraph support this natively?",
+  opts:[
+    "Send the email, then let a human review it in the sent folder.",
+    "Use interrupt (or interrupt_before/after on the node) with a checkpointer: the graph PAUSES at that node, persists state, waits for human input/approval, then resumes from the checkpoint.",
+    "Add a time.sleep(60) before the node hoping a human intervenes.",
+    "Run the graph twice and compare outputs."
+  ],
+  correct:1,
+  exp:"LangGraph's human-in-the-loop is built on checkpointing: interrupt (or interrupt_before/interrupt_after configured on a node) pauses the graph at a checkpoint, persists the current state, and returns control so a human can review/approve/edit. When you resume (same thread_id), it continues from exactly where it paused — the email only sends after approval.",
+  why:[
+    "Reviewing AFTER sending defeats the purpose — the action already happened. HITL must gate BEFORE the side effect.",
+    "✅ Correct. interrupt + checkpointer pauses at the node, persists state, waits for human approval, then resumes.",
+    "A sleep is not an approval mechanism — it just delays an unconditional send.",
+    "Running twice doesn't insert a human decision gate before the irreversible action."
+  ],
+  deep:"HITL requires a checkpointer (it's how the paused state survives until a human responds — possibly minutes/hours later). Patterns: interrupt_before a sensitive node (approve before it runs), interrupt_after (inspect output before continuing), or dynamic interrupt() inside a node to surface a decision. On resume you can also EDIT the state (fix the draft) before continuing. Gate by reversibility/blast-radius: auto-run low-risk nodes, interrupt high-stakes ones (send money, email customers, delete data). This is the safety backstop in defense-in-depth.",
+  learn:"Go deeper → Lesson 07, F4 (HITL) + Lesson 02-agents (HITL)."
+},
+{
+  id:10, topic:"Recursion limit", trap:"Infinite-loop trap", diff:"Intermediate",
+  q:"Your cyclic graph (agent ↔ tools) throws a 'recursion limit reached' error on some queries. What does this mean and how should you respond?",
+  opts:[
+    "It's a bug in LangGraph; downgrade the version.",
+    "The graph exceeded the max number of super-steps (a safety cap against infinite loops). Investigate WHY it loops (often vague tool descriptions / no clear success criteria), fix that, and set recursion_limit appropriately — don't just raise it blindly.",
+    "Raise recursion_limit to a very large number and move on.",
+    "Remove all cycles from the graph so it can never loop."
+  ],
+  correct:1,
+  exp:"recursion_limit caps the number of super-steps to prevent infinite loops — hitting it means your agent looped more than allowed. The right response is to diagnose the ROOT CAUSE (usually the agent can't tell it succeeded — vague tool descriptions, unclear success criteria, or a bad routing condition), fix that, and set recursion_limit to a sensible bound. Blindly cranking it up just lets it burn more tokens before failing.",
+  why:[
+    "It's a deliberate safety feature, not a bug — downgrading won't help.",
+    "✅ Correct. It's the loop safety cap; find WHY it loops (unclear success criteria/routing) and fix it, then set a sane limit.",
+    "Raising it to a huge number masks the real problem and increases cost/latency of the runaway loop.",
+    "Removing cycles kills legitimate agentic loops/retries — the fix is bounding + diagnosing, not eliminating loops."
+  ],
+  deep:"recursion_limit is LangGraph's version of a max-iteration guard for cyclic graphs. Hitting it is a SYMPTOM — trace the run to see the loop: is the agent re-calling the same tool with slight variations (vague descriptions), is a conditional edge never reaching END (routing bug), or is a grader never satisfied (too-strict threshold)? Fix the cause, then set recursion_limit as a backstop with a deliberate terminal behavior (return best answer / graceful failure). Combine with per-request token/time budgets.",
+  learn:"Go deeper → Lesson 06, F5 (runaway loops & debugging)."
+},
+{
+  id:11, topic:"Node contract", trap:"Side-effect-in-node trap", diff:"Senior",
+  q:"What should a LangGraph node function return, and why does this contract matter?",
+  opts:[
+    "It should mutate the state object in place and return None.",
+    "It should return a dict of the state keys it wants to UPDATE (a partial update); LangGraph merges that into state via the keys' reducers — keeping nodes pure and updates traceable/checkpointable.",
+    "It must return the entire new state object, fully rebuilt every time.",
+    "It should return the next node's name to control routing."
+  ],
+  correct:1,
+  exp:"A node reads state and returns a PARTIAL update — a dict of just the keys it changed. LangGraph merges that into the graph state using each key's reducer. This keeps nodes pure (no hidden in-place mutation), makes every update explicit and checkpointable, and lets reducers handle merging (append vs overwrite). Routing is NOT the node's job — that's edges.",
+  why:[
+    "In-place mutation returning None breaks the update/merge/checkpoint model and causes subtle state bugs.",
+    "✅ Correct. Return a partial dict of updated keys; LangGraph merges via reducers. Pure, explicit, checkpointable.",
+    "You don't rebuild the whole state — you return only the delta; the framework merges it.",
+    "Returning the next node's name is what a conditional-edge ROUTING function does, not a node."
+  ],
+  deep:"Clean separation: NODES compute and return partial state updates (pure functions of state → dict); EDGES (including conditional routing functions) decide the next node; REDUCERS merge updates into state; the CHECKPOINTER persists it. Returning a partial dict (not mutating in place, not rebuilding all) is what makes runs deterministic, replayable, and debuggable. If you need to both update state AND influence routing, update state in the node and let a conditional edge read that state to route — don't smuggle routing into the node's return.",
+  learn:"Go deeper → Lesson 07, F4 + LangGraph state/nodes lesson."
+},
+{
+  id:12, topic:"Subgraphs / modularity", trap:"Monolith-graph trap", diff:"Senior",
+  q:"Your single graph has grown to 30 nodes and is hard to test and reuse. A self-contained 'document-processing' sub-flow (load → chunk → embed → index) appears in two places. What's the LangGraph-idiomatic fix?",
+  opts:[
+    "Copy-paste the 4 nodes wherever needed; duplication is fine.",
+    "Extract the sub-flow into a SUBGRAPH (its own compiled graph) and embed it as a node in the parent graph — enabling reuse, isolated testing, and cleaner composition.",
+    "Merge all 30 nodes into one giant node to reduce complexity.",
+    "Split it into 30 separate graphs and orchestrate with shell scripts."
+  ],
+  correct:1,
+  exp:"LangGraph supports SUBGRAPHS: compile a self-contained flow as its own graph and use it as a node inside a parent graph. This gives you modularity — reuse the document-processing subgraph in multiple parents, test it in isolation, and keep the parent graph readable. It's the composition mechanism for large workflows.",
+  why:[
+    "Copy-paste duplication means bugs must be fixed in N places and the flows drift apart — the problem you're trying to solve.",
+    "✅ Correct. Extract the reusable sub-flow as a subgraph and embed it as a node — reuse + isolated testing + cleaner composition.",
+    "One giant node destroys the graph's structure, checkpointing granularity, and testability.",
+    "30 separate graphs + shell orchestration abandons LangGraph's state/checkpointing and adds fragile external glue."
+  ],
+  deep:"Subgraphs let a compiled graph act as a node in another graph. Key consideration: STATE mapping between parent and subgraph — either share overlapping state keys (the subgraph reads/writes the same schema) or transform state at the boundary. Benefits: reuse (one document-processing subgraph, many callers), isolated unit testing of the sub-flow, and readability (parent graph shows high-level steps). This mirrors good software design — compose small, tested units rather than one monolith. Multi-agent systems often model each agent as a subgraph.",
+  learn:"Go deeper → LangGraph subgraphs + Lesson 06 (multi-agent as subgraphs)."
+},
+{
+  id:13, topic:"State schema types", trap:"Schema-choice trap", diff:"Intermediate",
+  q:"You're defining your graph's state. When would you choose a Pydantic model over a plain TypedDict for the state schema?",
+  opts:[
+    "Never; TypedDict and Pydantic are identical in every way.",
+    "Use Pydantic when you want runtime VALIDATION of state values (types, ranges, required fields); TypedDict is a lightweight, static type hint with no runtime validation.",
+    "Use Pydantic only because it's faster at runtime than TypedDict.",
+    "Always use a plain dict with no schema; schemas slow things down."
+  ],
+  correct:1,
+  exp:"TypedDict gives you static typing/editor hints but does NO runtime checking — a wrong-typed value slips through. Pydantic models validate at runtime (types, constraints, required fields), catching bad state early with clear errors. Choose Pydantic when you want that validation/safety; TypedDict when you want a lightweight schema and will handle validation elsewhere.",
+  why:[
+    "They're not identical — the key difference is runtime validation (Pydantic) vs static-only hints (TypedDict).",
+    "✅ Correct. Pydantic = runtime validation of state; TypedDict = lightweight static typing, no runtime checks.",
+    "Pydantic adds validation OVERHEAD; it's not chosen for speed — it's chosen for safety.",
+    "A schemaless dict loses typing, reducers-by-annotation clarity, and validation — not recommended for non-trivial graphs."
+  ],
+  deep:"LangGraph accepts TypedDict, dataclass, or Pydantic BaseModel as the state schema. TypedDict: minimal, fast, static hints, reducers via Annotated — the common default. Pydantic: runtime validation, coercion, defaults, and clear error messages — good when state comes from untrusted input or you want strong guarantees at node boundaries, at a small performance cost. dataclass sits in between. Reducers work with Annotated fields in all cases. Pick based on how much you need to trust/validate the state flowing through.",
+  learn:"Go deeper → LangGraph state schema lesson (TypedDict vs dataclass vs Pydantic)."
+},
+{
+  id:14, topic:"Time travel / replay", trap:"Debugging-blind trap", diff:"Senior",
+  q:"A specific multi-step run produced a wrong result in production. With a checkpointer enabled, what powerful debugging capability does LangGraph give you?",
+  opts:[
+    "None; you must re-run from scratch and hope to reproduce it.",
+    "Time travel: inspect the checkpointed state at each past step (get_state_history), and even resume/fork from a specific earlier checkpoint to replay with a change — so you can see exactly where the state went wrong.",
+    "It automatically emails you the root cause.",
+    "It rewrites the graph to avoid the bug next time."
+  ],
+  correct:1,
+  exp:"Because a checkpointer snapshots state at every step, LangGraph lets you TIME TRAVEL: retrieve the full state history for a thread (get_state_history), inspect the state before/after each node, and even resume or fork from a chosen checkpoint to replay with modifications. This turns 'it broke somewhere' into 'here's the exact step where the state went wrong' — invaluable for debugging multi-step runs.",
+  why:[
+    "With a checkpointer you do NOT have to re-run blind — the whole point is the persisted step-by-step history.",
+    "✅ Correct. Time travel: inspect per-step state history and resume/fork from any past checkpoint to replay.",
+    "It doesn't auto-diagnose — but it gives you the trace to diagnose it yourself.",
+    "It doesn't self-modify the graph; it gives you visibility and replay, you fix the code."
+  ],
+  deep:"get_state(config) returns the current snapshot; get_state_history(config) returns all checkpoints for a thread. You can pass a checkpoint_id to resume from a specific point, and even update_state to fork with a modified state and replay — great for 'what if this node had returned X?' debugging. This complements tracing (LangSmith): tracing shows what happened; time-travel lets you re-enter the run at any step. It also underpins HITL (pause = a checkpoint you resume from). Requires a checkpointer to be enabled.",
+  learn:"Go deeper → Lesson 07, F4 + Lesson 06, F5 (debugging via traces)."
+},
+{
+  id:15, topic:"Full vs simple graph (DocSage)", trap:"Over/under-build trap", diff:"Senior",
+  q:"Your DocSage builds a FULL graph (with tools, grading, rewrite, validation) when documents/tools are present, but a SIMPLE graph (just LLM → respond) when there are no tools/knowledge bases. Why is this conditional graph construction a good design?",
+  opts:[
+    "It isn't; you should always run the full graph for consistency.",
+    "Match the graph's complexity to the request: a plain chat with no knowledge base doesn't need retrieval/grading/rewrite nodes — running them adds latency, cost, and failure surface for no benefit.",
+    "Simple graphs are required because LangGraph can't handle tools and chat in one graph.",
+    "It's purely cosmetic and has no runtime impact."
+  ],
+  correct:1,
+  exp:"Building the right graph for the situation avoids paying for machinery you don't need. If there are no documents/tools, retrieval, grading, and rewrite nodes are pure overhead — extra LLM calls, latency, cost, and more places to fail — for a request that's just plain chat. Constructing a simple graph in that case (and the full agentic graph when tools/KBs exist) matches complexity to need.",
+  why:[
+    "Always running the full graph wastes resources and adds failure modes when there's nothing to retrieve or grade.",
+    "✅ Correct. Match graph complexity to the request — skip retrieval/grading/rewrite when there's no knowledge base to use.",
+    "LangGraph CAN handle tools + chat together; the point is efficiency, not a limitation.",
+    "It has real runtime impact: fewer nodes = less latency/cost/failure surface, not cosmetics."
+  ],
+  deep:"This is the same 'match architecture to problem complexity' principle from the agents topic, applied at graph-construction time. DocSage's fingerprint-based graph caching decides: tools/KBs present → compile the full agentic graph (agent → tools → grade → generate → validate, with rewrite loop); none present → a minimal LLM→respond graph. Benefits: lower latency/cost for simple turns, fewer failure modes, and you don't invoke grading/validation on content that doesn't exist. It's a concrete, senior design decision you can speak to from your own project.",
+  learn:"Go deeper → your DocSage graph_builder + Lesson 06 (match complexity)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 You know LangGraph cold.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

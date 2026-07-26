@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Production LLM Ops — Scenario MCQs (10)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#4f46e5; --accent2:#4338ca;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#818cf8; --accent2:#a5b4fc;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚀 Production LLM Ops — Scenario MCQs</h1>
+  <p>Topic 10 · 10 real-world questions · streaming, caching, cost/latency, observability, fallbacks, memory, guardrails at scale · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 10</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in real LLMOps (your DocSage streaming/memory/fallback). ⚠ = debatable. Deep-dive: SeniorDS_RealTime Lesson 08 + DeloitteHashedIn cloud/devops.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Streaming responses", trap:"Wait-for-full trap", diff:"Intermediate",
+  q:"Your chatbot generates 400-token answers and users complain it 'feels frozen for 8 seconds' before anything appears. Total generation time is fine. What's the fix, and why does it help?",
+  opts:[
+    "Generate faster by switching to a much larger, more capable model.",
+    "STREAM tokens to the client as they're generated (SSE/WebSocket) — the user sees text appear immediately, drastically improving PERCEIVED latency even though total time is unchanged.",
+    "Reduce max_tokens so the answer is shorter and finishes sooner.",
+    "Cache the answer so the second identical request is instant."
+  ],
+  correct:1,
+  exp:"The problem is perceived latency: waiting for the FULL response before showing anything feels frozen. Streaming sends tokens as they're produced (via Server-Sent Events or WebSocket), so the user sees the answer start typing almost immediately. Total generation time is the same, but time-to-first-token drops to a fraction of a second — the experience feels dramatically faster.",
+  why:[
+    "A bigger model is usually SLOWER, not faster, and doesn't address the 'nothing appears until done' UX issue.",
+    "✅ Correct. Stream tokens (SSE/WebSocket) → immediate first token → far better PERCEIVED latency at the same total time.",
+    "Shortening the answer degrades quality and only partially helps; streaming fixes the UX without cutting content.",
+    "Caching helps only repeated identical queries — it does nothing for the first/novel request's perceived latency."
+  ],
+  deep:"Two latency numbers matter: time-to-first-token (TTFT — when the user sees SOMETHING) and total time. Streaming attacks TTFT, which dominates perceived speed. Mechanism: the LLM API streams token chunks; your server forwards them over SSE/WebSocket; the UI appends as they arrive. In LangGraph, stream_mode='messages' streams LLM tokens (and 'updates' streams per-node progress for a status indicator). Your DocSage step-by-step streaming does exactly this. Also stream long tool/step progress ('Retrieving… Grading…') so multi-step agents don't feel frozen.",
+  learn:"Go deeper → Lesson 08, G3 (latency) + Lesson 04-MCQ (LangGraph streaming)."
+},
+{
+  id:2, topic:"Semantic caching", trap:"Exact-match-cache trap", diff:"Senior",
+  q:"You add an exact-string response cache to cut LLM cost, but hit-rate is near 0% because users phrase the same question differently ('reset password' vs 'how do I change my password'). What's the better caching approach?",
+  opts:[
+    "Exact-string caching is the only correct cache; the low hit-rate is unavoidable.",
+    "SEMANTIC caching: embed the query and match against cached queries by similarity above a threshold — so paraphrases of a previously-answered question hit the cache.",
+    "Cache every response forever regardless of query.",
+    "Disable caching; it never helps for LLM apps."
+  ],
+  correct:1,
+  exp:"Exact-string caching fails because natural language has infinite phrasings of the same intent. Semantic caching embeds the incoming query and does a similarity search against cached (query, response) pairs; if a cached query is similar enough (above a threshold), you return its cached response — so 'reset password' and 'how do I change my password' share a cache entry.",
+  why:[
+    "Exact caching's near-0% hit-rate is exactly the problem — semantic caching is the fix, not an inevitability.",
+    "✅ Correct. Semantic cache: embed query → similarity match cached queries above a threshold → serve cached response for paraphrases.",
+    "Caching 'forever regardless of query' ignores staleness and correctness (answers change; some queries shouldn't be cached).",
+    "Caching absolutely helps LLM apps — semantic caching can cut cost/latency significantly for repetitive query patterns."
+  ],
+  deep:"Semantic cache = a small vector store of past queries → responses. On each request: embed the query, similarity-search the cache; if top match ≥ threshold, return the cached response (a HIT), else call the LLM and store the new pair. Tune the threshold carefully: too loose → wrong cached answers for merely-similar-but-different questions (a correctness risk); too tight → low hit-rate. Add TTL/invalidation for answers that can go stale, and DON'T cache personalized/user-specific or time-sensitive responses. Tools: GPTCache, or roll your own with your vector DB.",
+  learn:"Go deeper → Lesson 08, G3 (cost) + Lesson 03 (similarity/threshold)."
+},
+{
+  id:3, topic:"Cost/latency: model tiering", trap:"One-big-model trap", diff:"Senior",
+  q:"Your agent calls a frontier model (GPT-4-class) for EVERY step — including trivial routing decisions like 'is this a greeting or a support question?'. Cost and latency are high. What's the highest-leverage optimization?",
+  opts:[
+    "Use the frontier model everywhere for consistency; splitting models is risky.",
+    "Model TIERING: use a small/fast/cheap model for routing and simple steps, and reserve the frontier model only for genuinely hard reasoning — matching model capability to step difficulty.",
+    "Lower the frontier model's temperature to make it cheaper.",
+    "Increase max_tokens so it finishes in fewer calls."
+  ],
+  correct:1,
+  exp:"Calling a frontier model for a trivial 'greeting vs support' classification is massive overkill on cost and latency. Model tiering routes each step to the cheapest model that can handle it: a small fast model (or Groq's fast inference) for routing/classification/simple steps, and the expensive frontier model only where deep reasoning is actually needed. Matching model to step difficulty is the biggest lever.",
+  why:[
+    "'Frontier everywhere' is the exact anti-pattern driving the cost/latency — capability should match step difficulty.",
+    "✅ Correct. Model tiering: cheap/fast model for routing/simple steps, frontier model only for hard reasoning.",
+    "Temperature doesn't change per-token PRICE; it's not a cost lever.",
+    "max_tokens caps output length; it doesn't reduce the cost of using a frontier model on trivial steps."
+  ],
+  deep:"Cost/latency toolkit (biggest first): (1) MODEL TIERING — a router (small model) decides, cheap model handles simple steps, frontier for hard ones; (2) fewer STEPS — clear tool descriptions/success criteria cut redundant iterations; (3) SEMANTIC caching; (4) shrink CONTEXT (compress instructions, field-filter tool outputs) since input re-sends every step; (5) parallelize independent calls; (6) stream for perceived latency. Measure per-step token/cost with tracing FIRST, then attack the biggest contributor — usually 'frontier model on every trivial step.' Groq is a fast, cheap inference option for the small-model tier.",
+  learn:"Go deeper → Lesson 08, G3 + Lesson 02-MCQ (Q16 cost) + Lesson 09, H5."
+},
+{
+  id:4, topic:"Observability / tracing", trap:"Debug-blind trap", diff:"Senior",
+  q:"A user reports your agent gave a wrong answer 'sometime yesterday.' You have basic app logs but can't reconstruct what the agent did. What production capability was missing?",
+  opts:[
+    "Nothing — wrong answers are inherent to LLMs and can't be debugged.",
+    "LLM tracing/observability (e.g., LangSmith): capture per-request the full trajectory — prompts, retrieved context, tool calls + args, model responses, latency and token/cost per step — so you can reconstruct and diagnose any past request.",
+    "More CPU so the agent runs faster next time.",
+    "A bigger model so it makes fewer mistakes."
+  ],
+  correct:1,
+  exp:"Without LLM-specific tracing you're debugging blind — plain app logs don't capture prompts, retrieved context, tool calls, or per-step model I/O. Observability tooling (LangSmith or equivalent) records the FULL trajectory of every request with correlation IDs, so you can pull up that exact 'yesterday' request and see precisely where it went wrong (bad retrieval? wrong tool? reasoning error?).",
+  why:[
+    "Wrong answers ARE debuggable — with the trace you can localize the failing component (as in the agent-debugging topic).",
+    "✅ Correct. LLM tracing captures the full per-request trajectory (prompts/context/tool calls/responses/latency/cost) for reconstruction.",
+    "More CPU doesn't help you diagnose a past wrong answer.",
+    "A bigger model reduces some errors but gives you no VISIBILITY into what happened — you'd still be blind."
+  ],
+  deep:"LLM observability captures what generic logging misses: every prompt (and which prompt VERSION), retrieved chunks, each tool call + arguments + result, model responses, and latency/token/cost per step — all tied by a request/trace ID. This is what turns 'it broke' into 'step 4's reasoning hallucinated a multiplier' (the debugging discipline from the agents topic). Tools: LangSmith (native for LangChain/LangGraph), plus OpenTelemetry for distributed tracing. Pair with metrics (error rate, p95 latency, cost) and alerting. Tracing isn't optional infra for LLM apps — it's the debugger.",
+  learn:"Go deeper → Lesson 08, G3 (monitoring) + Lesson 06, F5 (debugging via traces)."
+},
+{
+  id:5, topic:"Provider fallback / resilience", trap:"Single-provider trap", diff:"Senior",
+  q:"Your app depends entirely on one LLM provider. During a provider outage, your whole product goes down for hours. How do you make it resilient?",
+  opts:[
+    "Accept the downtime; provider outages are out of your control.",
+    "Build multi-provider FALLBACK behind an abstraction: on failure/timeout, retry then fail over to an alternate provider/model (e.g., primary → secondary), so an outage degrades rather than kills the service.",
+    "Cache every response so the app works during outages.",
+    "Retry the same provider 100 times until it comes back."
+  ],
+  correct:1,
+  exp:"Single-provider dependency is a single point of failure. Resilience comes from a provider abstraction layer with FALLBACK: try the primary; on error/timeout, retry with backoff, then fail over to a secondary provider/model. The app stays up (possibly at slightly reduced quality) during an outage instead of going fully down. Design so switching providers is a config change, not a rewrite.",
+  why:[
+    "Accepting hours of downtime for a critical product is a resilience failure you CAN design around.",
+    "✅ Correct. Multi-provider fallback behind an abstraction (primary → secondary, retry+failover) turns an outage into graceful degradation.",
+    "Caching helps only for previously-seen queries; novel requests during an outage still fail.",
+    "Hammering one down provider 100 times just wastes time and can worsen its recovery — fail OVER, don't retry forever."
+  ],
+  deep:"Resilience patterns for LLM apps: (1) an LLM GATEWAY/abstraction so provider/model is swappable; (2) retry transient errors with exponential backoff, then FAIL OVER to a secondary (e.g., OpenAI → Anthropic, or a self-hosted open model like LLaMA); (3) circuit breaker to stop hammering a down provider; (4) timeouts + graceful degradation (return a 'try again shortly' rather than hang). Fallback models can differ in quality — decide acceptable degradation. This also enables cost/latency routing (tiering) through the same abstraction. Your GPT/Claude/Groq/LLaMA spread makes multi-provider fallback natural.",
+  learn:"Go deeper → Lesson 08 (production ops) + Lesson 09, H3 (retry/backoff)."
+},
+{
+  id:6, topic:"Conversation memory at scale", trap:"Grow-forever trap", diff:"Senior",
+  q:"Your chatbot appends every turn to the message history and re-sends it each request. Long conversations get slow, expensive, and eventually exceed the context window (errors). What's the production approach?",
+  opts:[
+    "Keep sending the full history; truncating loses information.",
+    "Manage the context window: keep recent turns verbatim, SUMMARIZE or trim older turns (and/or store long-term facts in a vector store to retrieve on demand), so context stays bounded.",
+    "Switch to a model with an infinite context window.",
+    "Start a brand-new conversation every 3 messages."
+  ],
+  correct:1,
+  exp:"Unbounded history growth is unsustainable — cost/latency rise with every turn and eventually you blow the context window. The production approach bounds the context: keep the most recent turns verbatim, SUMMARIZE or drop older turns (rolling summary), and optionally store durable facts in a vector store (long-term memory) to retrieve only what's relevant. Context stays bounded while continuity is preserved.",
+  why:[
+    "Full history doesn't scale and eventually errors out at the context limit — bounded context is required.",
+    "✅ Correct. Recent turns verbatim + summarize/trim older + optional long-term vector memory = bounded, continuous context.",
+    "No model has infinite context; even huge windows cost more and hit lost-in-the-middle — bounding is still needed.",
+    "Resetting every 3 messages destroys continuity — the user loses context mid-conversation."
+  ],
+  deep:"Two-tier memory: SHORT-TERM (recent messages in the prompt, managed by trimming/summarization — e.g., LangGraph's SummarizationMiddleware or a rolling summary node) and LONG-TERM (facts/preferences stored in a vector store, retrieved on demand). Techniques: sliding window of last N turns, summarize-older-into-a-running-summary, or hybrid. This keeps token cost/latency flat regardless of conversation length and avoids context-window errors. It builds on the checkpointer (which persists state per thread_id) — the checkpointer stores it, memory management decides what to SEND. Your DocSage MemorySaver + streaming is the base; add summarization for long chats.",
+  learn:"Go deeper → Lesson 07, F4 (memory) + Lesson 02-MCQ (lost-in-the-middle)."
+},
+{
+  id:7, topic:"Guardrails at scale", trap:"Prompt-only-safety trap", diff:"Senior",
+  q:"Your production LLM app occasionally emits unsafe or off-policy content and once leaked a snippet of its system prompt. Relying on 'be safe' instructions isn't enough. What's the production-grade approach?",
+  opts:[
+    "Add more 'be safe' lines to the system prompt; that's sufficient.",
+    "Add dedicated INPUT and OUTPUT guardrails as separate layers: validate/scan inputs (injection detection, PII), and validate/scan outputs (policy/PII/leak checks, schema validation) before returning — defense in depth, not prompt-only.",
+    "Turn temperature to 0 to guarantee safe output.",
+    "Trust the model; frontier models are safe by default."
+  ],
+  correct:1,
+  exp:"Prompt-only safety is a single weak layer — models violate instructions and can be injected. Production safety uses dedicated guardrail LAYERS around the model: INPUT guardrails (injection detection, PII detection, input validation) before the call, and OUTPUT guardrails (policy/toxicity checks, PII/secret leak scanning, schema validation) before returning. On failure: block, regenerate, or route to a human. Defense in depth, independent of prompt wording.",
+  why:[
+    "More 'be safe' text is still prompt-only — easily overridden by injection and not a reliable control.",
+    "✅ Correct. Separate input + output guardrail layers (validation/scanning) around the model = production-grade defense in depth.",
+    "temperature=0 controls randomness, not safety — a deterministic model can still emit unsafe/off-policy content.",
+    "'Safe by default' is false — unsafe outputs and prompt leakage happen; you must engineer guardrails."
+  ],
+  deep:"Guardrail architecture: a layer BEFORE the model (validate/sanitize input, detect injection, redact PII) and a layer AFTER (moderate content, scan for PII/secret/system-prompt leakage, validate structured output, check for injection compliance). For high-stakes/side-effecting outputs, add human-in-the-loop. Frameworks: Guardrails AI, NeMo Guardrails, Llama Guard (a safety classifier). Combine with least-privilege tools so even a bad output can't trigger a dangerous action. Keep secrets OUT of the prompt where a leak would be catastrophic. This is OWASP-LLM-aligned defense in depth.",
+  learn:"Go deeper → Lesson 08, G4 (guardrails) + Lesson 07-MCQ (injection)."
+},
+{
+  id:8, topic:"Cost monitoring / budgets", trap:"Bill-shock trap", diff:"Intermediate",
+  q:"Your LLM bill unexpectedly tripled last month and nobody noticed until finance flagged it. What monitoring should have been in place?",
+  opts:[
+    "None — LLM costs are unpredictable, so monitoring is pointless.",
+    "Track token/cost per request, per user, and per feature; set budget alerts/thresholds; and watch for anomalies (a runaway loop, a user sending huge contexts) so cost spikes trigger alerts, not surprise invoices.",
+    "Only check the provider dashboard once a quarter.",
+    "Cap the number of USERS so total cost can't grow."
+  ],
+  correct:1,
+  exp:"LLM cost scales with usage in ways traditional API costs don't (tokens per request vary wildly), so it needs active monitoring: track token/cost per request, per user, and per feature; set budget thresholds with alerts; and detect anomalies (an agent stuck in a loop, a user pasting huge documents). Then a spike pages someone in real time instead of surfacing as a shock invoice.",
+  why:[
+    "LLM cost is very much MONITORABLE and attributable — 'unpredictable so pointless' is the mindset that caused the surprise.",
+    "✅ Correct. Per-request/user/feature cost tracking + budget alerts + anomaly detection catches spikes early.",
+    "Quarterly dashboard checks are far too coarse — a runaway can burn thousands in days.",
+    "Capping users is blunt and hurts growth; the fix is cost visibility + per-user rate/token limits, not fewer users."
+  ],
+  deep:"Cost observability: instrument every LLM call with tokens (prompt + completion) and $ (via provider pricing), tagged by user/feature/endpoint; aggregate into dashboards; set alert thresholds (per-day, per-user). Common spike causes: agent loop runaways (cap iterations), users sending huge contexts (cap/trim input), a prompt change that ballooned tokens, or a traffic surge. Controls: per-user token/cost budgets + rate limiting (Lesson 09), model tiering (cheaper models for simple steps), and caching. Cost is a first-class production metric alongside latency and error rate.",
+  learn:"Go deeper → Lesson 08, G3 (cost monitoring) + Lesson 09 (rate limiting)."
+},
+{
+  id:9, topic:"Deployment / rollout safety", trap:"Big-bang-deploy trap", diff:"Senior",
+  q:"You change the prompt and swap the model, then deploy to 100% of users at once. Quality quietly drops and you scramble to roll back. What deployment practice prevents this?",
+  opts:[
+    "Always deploy to everyone at once; gradual rollout is over-engineering.",
+    "Canary / staged rollout: release to a small % of traffic first, monitor quality/cost/latency metrics (and run the eval suite), then ramp up — with easy rollback if metrics regress.",
+    "Deploy on Friday evening so fewer users notice issues.",
+    "Skip evaluation; production traffic is the real test."
+  ],
+  correct:1,
+  exp:"Changing the prompt AND the model at 100% is a big-bang deploy with no safety net — a regression hits everyone before you notice. Canary/staged rollout releases to a small slice of traffic first, monitors quality/cost/latency (and runs your eval suite pre-deploy), then ramps up only if metrics hold — with instant rollback if they regress. It contains the blast radius of a bad change.",
+  why:[
+    "Big-bang deploys maximize blast radius — exactly what caused the scramble.",
+    "✅ Correct. Canary/staged rollout + metric monitoring + eval suite + easy rollback contains and catches regressions.",
+    "Deploying when fewer people watch doesn't reduce RISK — it just delays detection (and burns your weekend).",
+    "'Production is the test' with no eval gate means users are your QA — you catch regressions only after they've done damage."
+  ],
+  deep:"Safe LLM rollout: (1) run the change through your OFFLINE eval suite (golden set) before deploy — catch regressions pre-production; (2) CANARY to a small % of live traffic, watch quality (sampled faithfulness/relevancy), cost, and latency; (3) ramp gradually; (4) keep rollback trivial (feature flag / versioned prompt). Change ONE thing at a time where possible (prompt OR model) so you can attribute regressions. This ties prompt VERSIONING (Topic 07) + continuous EVAL (Topic 08) + observability into a controlled release process — the difference between confident and cross-your-fingers deploys.",
+  learn:"Go deeper → Lesson 08 (eval/monitoring) + Lesson 07-MCQ (prompt versioning)."
+},
+{
+  id:10, topic:"Non-determinism in production", trap:"Assume-stable trap", diff:"Senior",
+  q:"Your regression tests assert the LLM returns an EXACT expected string. They pass locally but flake constantly in CI, and a 'stable' feature behaves differently week to week. What's going on and the correct handling?",
+  opts:[
+    "The tests are correct; the CI environment is broken.",
+    "LLM outputs are non-deterministic (sampling; and providers can silently update models), so exact-match assertions are the wrong test — assert on SEMANTIC properties (schema valid, contains required facts, passes an LLM-judge rubric) and PIN the model version for stability.",
+    "Set temperature to 0 and exact-match will be perfectly stable forever.",
+    "Remove all tests for LLM features; they can't be tested."
+  ],
+  correct:1,
+  exp:"LLM outputs vary due to sampling, and providers can silently update the underlying model — so exact-string assertions are brittle and the 'stable feature drifting' is a silent model update. Test on SEMANTIC properties instead: does the output validate against the schema? Contain the required facts? Pass an LLM-as-judge rubric? Stay within a similarity band? And PIN the model version to reduce provider-driven drift.",
+  why:[
+    "The tests, not CI, are the issue — exact-match on a non-deterministic system is the wrong assertion.",
+    "✅ Correct. Non-determinism + silent model updates break exact-match; assert semantic properties + pin the model version.",
+    "temperature=0 reduces randomness but is NOT perfectly deterministic across hardware/batching/model updates — exact-match still flakes.",
+    "LLM features ARE testable — just with semantic/property-based assertions and eval sets, not brittle string equality."
+  ],
+  deep:"Two sources of non-determinism: sampling (temperature/top_p — even temp=0 isn't guaranteed identical across hardware/batching/provider versions) and PROVIDER model updates (the API model changes under you). Robust testing: assert PROPERTIES not exact strings — schema validity, presence of required facts/keywords, an LLM-judge rubric score above a threshold, or embedding-similarity within a band. Pin model VERSIONS where the provider allows (for reproducibility/audit), and re-baseline evals when the model changes. This connects determinism (Topic 05/09) + drift detection (Topic 08) + eval — LLM features need semantic, tolerance-based tests.",
+  learn:"Go deeper → Lesson 08 (drift/eval) + Lesson 09, H5 (determinism) + DeloitteHashedIn testing."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 You can run LLM apps in production, not just build them.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

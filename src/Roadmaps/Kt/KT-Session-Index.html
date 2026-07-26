@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCP Knowledge Transfer — Master Index</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#818cf8; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --border:#334155; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);padding:40px 32px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+  header h1{margin:0;font-size:2.1rem;letter-spacing:.5px}
+  header p{margin:8px 0 0;color:#e0f2fe;font-size:1.05rem}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px}
+  h2{color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:44px}
+  h3{color:var(--accent2);margin-top:28px}
+  a{color:var(--accent)}
+  .lead{font-size:1.1rem;color:var(--muted);background:var(--panel);border-left:4px solid var(--accent);padding:16px 20px;border-radius:8px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:20px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;display:block}
+  .card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(56,189,248,.15);border-color:var(--accent)}
+  .card .badge{display:inline-block;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px}
+  .b-green{background:rgba(52,211,153,.15);color:var(--green)}
+  .b-amber{background:rgba(251,191,36,.15);color:var(--amber)}
+  .b-red{background:rgba(248,113,113,.15);color:var(--red)}
+  .card h3{margin:6px 0 8px;color:var(--text)}
+  .card p{margin:0;color:var(--muted);font-size:.95rem}
+  .card .time{margin-top:12px;font-size:.85rem;color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin-top:16px;background:var(--panel);border-radius:10px;overflow:hidden}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--panel2);color:var(--accent);font-size:.9rem;text-transform:uppercase;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+  .glossary dt{font-weight:700;color:var(--accent2);margin-top:14px}
+  .glossary dd{margin:2px 0 0 0;color:var(--muted)}
+  .callout{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .callout .t{font-weight:700;color:var(--amber);margin-bottom:4px}
+  .faq{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:6px 20px;margin-top:12px}
+  .faq details{border-bottom:1px solid var(--border);padding:12px 0}
+  .faq details:last-child{border-bottom:none}
+  .faq summary{cursor:pointer;font-weight:600;color:var(--text)}
+  .faq summary::marker{color:var(--accent)}
+  .faq p{color:var(--muted);margin:8px 0 0}
+  .roadmap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .step{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;min-width:180px;text-align:center}
+  .step .n{display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:var(--accent);color:#08131f;font-weight:700;margin-bottom:6px}
+  .arrow{color:var(--accent);font-size:1.4rem}
+  footer{text-align:center;color:var(--muted);padding:30px;border-top:1px solid var(--border);margin-top:40px;font-size:.9rem}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;color:#7dd3fc;font-size:.9em}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧩 MCP Server — Knowledge Transfer</h1>
+  <p>Model Context Protocol · Tools · Agents · The SXe MCP Server</p>
+</header>
+
+<div class="wrap">
+  <p class="lead">
+    Welcome! This is the master index for a 3-part deep-dive on the MCP server we build and maintain.
+    It takes you from <b>"what is MCP?"</b> all the way to <b>"how we build, test, and ship tools and agents every sprint."</b>
+    No prior knowledge assumed — every concept comes with a plain-English definition, a real-world analogy, and a concrete example.
+  </p>
+
+  <h2>📚 The 3 Sessions</h2>
+  <div class="cards">
+    <a class="card" href="KT-Session-1-Foundations.html">
+      <span class="badge b-green">SESSION 1 · Beginner</span>
+      <h3>Foundations — What is MCP & Why It Exists</h3>
+      <p>LLMs, agents, the Model Context Protocol, host/client/server, tools, and how the industry (and Amazon's "Ask Rufus") uses it.</p>
+    </a>
+    <a class="card" href="KT-Session-2-Our-MCP-Server.html">
+      <span class="badge b-amber">SESSION 2 · Intermediate</span>
+      <h3>Our SXe MCP Server — Tools & Agents</h3>
+      <p>Our architecture, tech stack, the anatomy of a tool, what an agent is, read vs write agents, and the 3 ways to build an MCP server.</p>
+    </a>
+    <a class="card" href="KT-Session-3-Building-and-Advanced.html">
+      <span class="badge b-red">SESSION 3 · Advanced</span>
+      <h3>Building It for Real + Advanced Topics</h3>
+      <p>The real dev lifecycle (Jira → tool → inspector → agent → commit), best practices, pitfalls, security, and the token-optimization POC.</p>
+    </a>
+  </div>
+
+  <h2>🗺️ Learning Roadmap</h2>
+  <div class="roadmap">
+    <div class="step"><span class="n">1</span><br/>Concepts<br/><small>What & Why</small></div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">2</span><br/>Our System<br/><small>How it's built</small></div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">3</span><br/>Hands-on<br/><small>How we ship it</small></div>
+  </div>
+
+  <h2>🧠 Mental Model (keep this in mind the whole time)</h2>
+  <div class="callout">
+    <div class="t">One sentence to remember</div>
+    An <b>LLM</b> is a smart brain that can only talk. A <b>tool</b> gives it hands to fetch real data or take an action.
+    An <b>agent</b> is the rulebook that tells the brain which hands to use and when. <b>MCP</b> is the universal plug that
+    lets any brain use any set of hands — safely and in a standard way.
+  </div>
+
+  <h2>📖 Glossary (quick reference)</h2>
+  <dl class="glossary">
+    <dt>LLM (Large Language Model)</dt><dd>An AI trained to understand and generate text (e.g., GPT, Claude). It has no live data on its own.</dd>
+    <dt>Agent</dt><dd>An LLM plus instructions and tools, so it can decide actions and call tools to complete a task.</dd>
+    <dt>Tool</dt><dd>A single action the AI can call — usually a function that hits one API/endpoint and returns data.</dd>
+    <dt>MCP (Model Context Protocol)</dt><dd>An open standard for connecting AI apps to tools and data — "USB-C for AI."</dd>
+    <dt>MCP Host</dt><dd>The AI application the user talks to (ChatGPT, Claude Desktop, our GenAI platform).</dd>
+    <dt>MCP Client</dt><dd>The connector inside the host that speaks the MCP protocol to a server.</dd>
+    <dt>MCP Server</dt><dd>The program that exposes tools/data over MCP (our SXe MCP server is one).</dd>
+    <dt>Tool Call</dt><dd>The moment the LLM decides to run a tool and the server executes it.</dd>
+    <dt>SXe / ERP</dt><dd>Infor Distribution SX.e — the ERP whose APIs our tools call.</dd>
+    <dt>IBC Context</dt><dd>The "screen context" (company, product, vendor, PO the user is viewing) passed to the agent.</dd>
+    <dt>Orchestrator</dt><dd>The layer that routes a user question to the right agent.</dd>
+    <dt>Token</dt><dd>A chunk of text the LLM processes; more tokens = more cost and slower responses.</dd>
+  </dl>
+
+  <h2>⚖️ MCP vs Traditional Approaches</h2>
+  <table>
+    <tr><th>Aspect</th><th>Custom REST integration</th><th>RPA (screen bots)</th><th>MCP tool</th></tr>
+    <tr><td>How it connects</td><td>Hand-coded per app + per source</td><td>Clicks the UI like a human</td><td>Standard protocol, reusable</td></tr>
+    <tr><td>Breaks when UI changes?</td><td>No (uses APIs)</td><td>Yes (fragile)</td><td>No (uses APIs)</td></tr>
+    <tr><td>AI-native?</td><td>No</td><td>No</td><td>Yes — built for LLMs/agents</td></tr>
+    <tr><td>Reuse across AI apps</td><td>Low</td><td>Low</td><td>High — any MCP host can use it</td></tr>
+    <tr><td>Governance/validation</td><td>Custom</td><td>Weak</td><td>Reuses existing API business rules</td></tr>
+  </table>
+
+  <h2>❓ FAQ</h2>
+  <div class="faq">
+    <details><summary>Does MCP replace our ERP screens?</summary><p>No. It gives a conversational way to get answers and take actions by calling the same APIs the screens use. The UI stays.</p></details>
+    <details><summary>Is it secure? Can it change data?</summary><p>Yes to both, carefully. Reads are safe; writes (like PO acknowledgment) go through a confirmation gate and reuse the ERP's own validations. Auth and company context are enforced, never hardcoded.</p></details>
+    <details><summary>Is this the same as Amazon's "Ask Rufus"?</summary><p>Conceptually yes — Rufus answers by calling APIs behind the scenes instead of making you navigate screens. Our agents do the same for the ERP.</p></details>
+    <details><summary>Do we have to expose a database directly?</summary><p>No. We expose existing ERP endpoints as tools. Database-as-MCP and external servers (Jira, etc.) are other valid patterns covered in Session 2.</p></details>
+    <details><summary>What's a "tool" vs an "agent"?</summary><p>A tool is one action (hands). An agent is the instructions deciding which tools to use and when (the brain's rulebook).</p></details>
+  </div>
+
+  <h2>✅ How to use these docs</h2>
+  <p>Watch/read in order: <b>Session 1 → 2 → 3</b>. Each doc has its own table of contents, glossary callouts, diagrams, and a recap.
+  Come back to this index anytime for the glossary, comparison table, and FAQ.</p>
+</div>
+
+<footer>
+  MCP Knowledge Transfer · Internal enablement · Sessions are recorded — use this index as the companion wiki.
+</footer>
+</body>
+</html>

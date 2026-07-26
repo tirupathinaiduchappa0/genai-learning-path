@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAG & Advanced RAG Patterns — Scenario MCQs (18)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#0d9488; --accent2:#0f766e;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#7c3aed; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#2dd4bf; --accent2:#5eead4;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#c4b5fd; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 RAG &amp; Advanced RAG Patterns — Scenario MCQs</h1>
+  <p>Topic 01 · 18 real-world questions · Agentic / Corrective / Adaptive RAG, chunking, retrieval, grading, hallucination · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 18</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Scenario-grounded, production-grade RAG questions. Items marked ⚠ are genuinely debatable — reason them through. Deep-dive theory: SeniorDS_RealTime lessons 03/04/05/08.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Chunking strategy", trap:"Bigger-is-better trap", diff:"Intermediate",
+  q:"Your DocSage-style bot ingests 40-page policy PDFs. You set chunk size to 3000 tokens with 0 overlap to 'keep more context per chunk.' Retrieval finds the right chunk, but answers are vague and often miss the specific clause the user asked about. What is the core problem?",
+  opts:[
+    "The embedding model truncates inputs beyond 512 tokens, so most of each chunk is never embedded.",
+    "Large chunks dilute the embedding: one vector must represent many topics, so it matches broadly but imprecisely, and the LLM must find the needle in a large haystack.",
+    "Zero overlap causes sentences to be split across chunks, losing the specific clause entirely.",
+    "3000 tokens exceeds the LLM context window, so the chunk is silently truncated before generation."
+  ],
+  correct:1,
+  exp:"A 3000-token chunk covers many sub-topics, so its single embedding is an 'average' that matches queries broadly but not precisely — and even when retrieved, the specific clause is buried in a wall of text the LLM must wade through. Smaller, focused chunks (with modest overlap) give sharper embeddings and tighter context.",
+  why:[
+    "Some embedding models DO have token limits, but that's a separate config issue — the described symptom (vague answers from a correctly-retrieved chunk) is the dilution problem, not truncation.",
+    "✅ Correct. Big chunk = averaged/imprecise vector + needle-in-haystack for the LLM. Reduce chunk size; add small overlap.",
+    "Zero overlap CAN split a clause at a boundary, but here the right chunk IS retrieved — the issue is that the answer within it is diluted, not missing.",
+    "3000 tokens is well within modern context windows; nothing is truncated at generation."
+  ],
+  deep:"Chunk size is a precision/recall dial. Small chunks → sharp, focused embeddings (high precision) but risk losing surrounding context; large chunks → more context but blurry 'averaged' embeddings (low precision) and wasted LLM attention on irrelevant text. Practical sweet spot for prose: ~200–500 tokens with 10–20% overlap, tuned against a retrieval eval. For structured docs, prefer structure-aware or semantic chunking over a fixed size.",
+  learn:"Go deeper → Lesson 04 (RAG: Chunking), sections D2–D3."
+},
+{
+  id:2, topic:"Chunking strategy selection", trap:"One-size-fits-all trap", diff:"Intermediate",
+  q:"Your RAG app ingests a mix of Markdown wikis, Python source files, and legal contracts. You apply the same fixed-size 500-char splitter to everything. Retrieval quality is inconsistent across sources. What is the right fix?",
+  opts:[
+    "Increase the fixed chunk size to 1500 chars so no single split breaks important content.",
+    "Embed whole documents instead of chunks so structure is never broken.",
+    "Route each document to a structure-aware chunker by type: Markdown by headings, code by function/class, contracts by clause/section.",
+    "Switch the embedding model to one with a larger context window so chunking matters less."
+  ],
+  correct:2,
+  exp:"Heterogeneous content has heterogeneous structure. A fixed char splitter butchers code mid-function and contracts mid-clause. A dispatcher that picks a structure-aware chunker per document type (headings for Markdown, function/class for code, clause for contracts) keeps each chunk semantically whole and dramatically improves retrieval consistency.",
+  why:[
+    "A bigger fixed size still ignores structure — it just breaks bigger pieces in the wrong places.",
+    "Whole-document embeddings destroy retrieval precision (one averaged vector per doc) — the opposite of what you want.",
+    "✅ Correct. Route by type to a structure-aware chunker (strategy pattern) — the standard fix for mixed corpora.",
+    "A bigger embedding context doesn't fix bad split boundaries; you still store poorly-formed chunks."
+  ],
+  deep:"This is the strategy pattern applied to ingestion: one interface, multiple chunkers, selected at runtime by file/MIME type or content heuristics. The cost is more code + reliable type detection; the payoff is that a code query hits a whole function and a contract query hits a whole clause. Many production RAG systems layer this: structural split first (headings/sections), then semantic or size-bounded splitting within each section.",
+  learn:"Go deeper → Lesson 04, section D5 (dynamic multi-strategy chunking)."
+},
+{
+  id:3, topic:"Retrieval diversity", trap:"More-K trap", diff:"Intermediate",
+  q:"A user asks 'What are ALL the ways I can contact support?' Your top-5 retrieval returns 5 chunks, but 4 are near-duplicate 'call us' paragraphs and the email/chat options are missed. Increasing K to 10 barely helps. What is the correct fix?",
+  opts:[
+    "Raise the similarity threshold so only the most relevant chunks pass.",
+    "Add MMR (Maximal Marginal Relevance) or diversity-aware re-ranking so top-K balances relevance against redundancy.",
+    "Lower the temperature so the LLM stops repeating the 'call us' option.",
+    "Re-embed the corpus with a larger model to separate the duplicate paragraphs."
+  ],
+  correct:1,
+  exp:"Pure similarity ranking has no notion of diversity, so near-duplicates dominate the top-K and crowd out the other valid contact methods — raising K just adds more duplicates. MMR (or a diversity-aware reranker) explicitly penalises redundancy with already-selected chunks, surfacing the email/chat options the answer needs.",
+  why:[
+    "A higher threshold removes low-similarity chunks; the duplicates are HIGH-similarity, so they'd still pass — doesn't fix redundancy.",
+    "✅ Correct. MMR balances relevance vs redundancy so the top-K isn't 4 copies of the same paragraph.",
+    "Temperature affects generation phrasing, not which chunks are retrieved — the missing options never reach the LLM.",
+    "A bigger embedding model won't help; near-identical paragraphs are legitimately similar, so they'll still cluster together."
+  ],
+  deep:"MMR scores each candidate as λ·relevance(query, doc) − (1−λ)·max similarity(doc, already-selected). λ near 1 = pure relevance; lower λ = more diversity. For 'list all X' queries diversity matters a lot; for 'what is X' single-fact queries it matters less. This is distinct from reranking for accuracy — you often rerank for relevance first, THEN apply MMR for diversity.",
+  learn:"Go deeper → Lesson 05, section E1 (retrieval techniques) + E2 (reranking)."
+},
+{
+  id:4, topic:"Hybrid search", trap:"Dense-only trap", diff:"Senior-trap",
+  q:"Your semantic (dense) RAG works great for natural-language questions but fails when users search by exact product codes like 'SKU-4471-B' or error codes like 'ERR_0x80'. What is the most robust fix?",
+  opts:[
+    "Fine-tune the embedding model on your product catalog so it memorises every SKU.",
+    "Add hybrid search: combine dense (semantic) retrieval with sparse/lexical (BM25) retrieval and fuse the scores.",
+    "Lower the cosine threshold so more chunks pass, increasing the chance of matching the code.",
+    "Pre-process queries to strip special characters so the embedding is cleaner."
+  ],
+  correct:1,
+  exp:"Dense embeddings capture meaning, not exact tokens, so rare identifiers (SKUs, error codes) that the model never learned map to near-random vectors. Sparse/lexical retrieval (BM25) matches exact tokens perfectly. Hybrid search runs both and fuses the results — you get semantic recall AND exact-match precision. It's the single highest-ROI retrieval upgrade.",
+  why:[
+    "Fine-tuning on every SKU is brittle and unmaintainable (catalog changes daily) — and dense retrieval still won't reliably match unseen codes.",
+    "✅ Correct. Hybrid (dense + BM25, fused via weighted sum or Reciprocal Rank Fusion) handles both meaning and exact tokens.",
+    "A lower threshold adds noise; it doesn't make an exact code embed closer to its chunk.",
+    "Stripping special characters would DESTROY the exact code you're trying to match — the opposite of helpful."
+  ],
+  deep:"Bi-encoder embeddings generalise semantics but degrade on out-of-vocabulary exact strings. BM25 scores by term frequency × inverse document frequency, so a rare exact token like 'SKU-4471-B' gets a very high, precise score. Fusion options: weighted sum of normalized scores, or Reciprocal Rank Fusion (RRF) which combines rank positions and is robust without score calibration. Most production vector DBs (Weaviate, Qdrant, pgvector, Elastic) now offer hybrid search natively.",
+  learn:"Go deeper → Lesson 05, section E1 + Lesson 03, section C5 (semantic vs lexical)."
+},
+{
+  id:5, topic:"Corrective RAG (CRAG)", trap:"Pattern-identity trap", diff:"Senior",
+  q:"You list 'Corrective RAG' on your resume. In your DocSage graph, after retrieval a grading node scores the retrieved chunks; if they're judged irrelevant, the system reformulates the query and falls back to a web search (Tavily) instead of answering from bad context. Which statement BEST describes what Corrective RAG adds over vanilla RAG?",
+  opts:[
+    "It fine-tunes the retriever on user feedback so retrieval improves over time.",
+    "It evaluates retrieval quality at runtime and takes corrective action (re-query / web fallback / discard) when retrieved context is judged insufficient.",
+    "It corrects the LLM's grammar and formatting in the final answer before returning it.",
+    "It caches corrected answers so repeated questions skip retrieval entirely."
+  ],
+  correct:1,
+  exp:"Corrective RAG adds a self-assessment step: after retrieval, a grader judges whether the retrieved chunks are actually relevant/sufficient. If not, it takes a corrective path — reformulate the query, pull from an external source (web search), or discard bad context rather than letting the LLM hallucinate on top of it. It's RAG that knows when its own retrieval failed.",
+  why:[
+    "That describes retriever fine-tuning / learning-to-retrieve, a different technique — CRAG's correction happens at inference, not via training.",
+    "✅ Correct. CRAG = grade retrieval quality at runtime → corrective action (re-query, web fallback, or discard).",
+    "CRAG is about retrieval quality, not output grammar/formatting.",
+    "Caching is an optimization unrelated to the 'corrective' mechanism."
+  ],
+  deep:"CRAG typically classifies retrieval as Correct / Ambiguous / Incorrect via a lightweight grader (an LLM-as-judge or a trained evaluator). Correct → proceed; Incorrect → trigger web search / knowledge refinement; Ambiguous → combine both. This directly prevents the #1 RAG failure: confidently answering from irrelevant context. In your DocSage, the grade node + Tavily fallback IS this pattern — be ready to draw that flow on a whiteboard.",
+  learn:"Go deeper → Lesson 08, section G1 (RAG eval) + your DocSage grade_node."
+},
+{
+  id:6, topic:"Adaptive RAG", trap:"Pattern-confusion trap", diff:"Senior",
+  q:"An interviewer asks how Adaptive RAG differs from Corrective RAG. Which description is correct for ADAPTIVE RAG specifically?",
+  opts:[
+    "It grades retrieved chunks and re-queries when they are irrelevant.",
+    "It routes each query to a different strategy based on the query's complexity/type — e.g., no retrieval for simple questions, single-shot RAG for factual ones, multi-step retrieval for complex ones.",
+    "It adapts the chunk size dynamically at ingestion time based on document length.",
+    "It continuously fine-tunes the LLM on new documents as they are ingested."
+  ],
+  correct:1,
+  exp:"Adaptive RAG is about CHOOSING the retrieval strategy per query. A router (often an LLM classifier) decides: is this a simple query needing no retrieval, a straightforward factual query needing one retrieval pass, or a complex multi-part query needing iterative/multi-step retrieval? It adapts the pipeline to the query rather than treating every query the same.",
+  why:[
+    "That's CORRECTIVE RAG (grade + re-query on bad retrieval) — the exact pattern this question is contrasting against.",
+    "✅ Correct. Adaptive RAG routes by query complexity/type to the appropriate strategy (no-retrieval / single-shot / multi-step).",
+    "Adaptive chunk sizing at ingestion is a chunking tactic, not what Adaptive RAG refers to.",
+    "Continuous fine-tuning on ingestion is neither adaptive nor corrective RAG."
+  ],
+  deep:"Clean mental split: CORRECTIVE reacts AFTER retrieval (was it good? fix if not). ADAPTIVE decides BEFORE retrieval (what strategy does this query even need?). AGENTIC lets the LLM autonomously decide the whole loop (whether/what/when to retrieve, which tool). They compose: an agentic system can use adaptive routing up front and corrective grading after. Interviewers love making you distinguish these three — nail the 'before vs after vs autonomous' framing.",
+  learn:"Go deeper → Lesson 06 (agent patterns) + Lesson 08 (eval)."
+},
+{
+  id:7, topic:"Agentic RAG", trap:"Always-retrieve trap", diff:"Senior",
+  q:"Your DocSage agent calls retrieval on EVERY message, including 'hi', 'thanks', and 'can you rephrase that?'. This wastes tokens and sometimes injects irrelevant context that derails the answer. What is the agentic-RAG fix?",
+  opts:[
+    "Add a regex that blocks retrieval for messages under 5 words.",
+    "Let the LLM (as the agent) decide whether retrieval is needed for each turn via tool-calling — retrieve only when the query actually requires knowledge.",
+    "Always retrieve but set top-K to 1 for short messages to reduce cost.",
+    "Cache the last retrieval and reuse it for the next 3 turns regardless of the query."
+  ],
+  correct:1,
+  exp:"The defining feature of AGENTIC RAG is that retrieval is a TOOL the LLM chooses to call, not a hard-coded step. The agent reasons: does this turn need external knowledge? 'Thanks' → no tool call, just respond. 'What's the refund window?' → call the retriever. This eliminates wasteful and context-polluting retrievals.",
+  why:[
+    "A word-count regex is brittle — 'What is our SLA?' is short but needs retrieval; 'thanks so much for the detailed help' is long but doesn't.",
+    "✅ Correct. Make retrieval a tool the agent invokes conditionally — the essence of agentic RAG.",
+    "top-K=1 still retrieves (and can still inject irrelevant context) for messages that need nothing.",
+    "Blindly reusing stale retrieval for unrelated turns injects wrong context — worse, not better."
+  ],
+  deep:"In LangGraph terms: the agent node is bound to a retriever tool; tools_condition (or the agent's own decision) routes to the tool node only when the model emits a tool call. This is the difference between a fixed chain (always retrieve → generate) and an agent (decide → maybe retrieve → decide again). It also naturally enables multi-step retrieval: the agent can retrieve, inspect, and retrieve again with a refined query — which is how agentic RAG handles complex queries a single-shot chain can't.",
+  learn:"Go deeper → Lesson 06 (chain vs agent) + your DocSage agent_node."
+},
+{
+  id:8, topic:"Document grading", trap:"Silent-garbage trap", diff:"Intermediate",
+  q:"Without a grading step, your RAG bot confidently answers even when retrieval returns off-topic chunks (e.g., a shipping doc for a refund question). You add a 'document grading' node. What is its PRIMARY job and what should happen when it fails a chunk?",
+  opts:[
+    "Rank chunks by cosine score; drop the lowest-scoring one to save tokens.",
+    "Judge whether each retrieved chunk is actually RELEVANT to the question; if none pass, trigger a corrective path (re-query / web fallback / 'I don't know') instead of generating.",
+    "Check the grammar and formatting of chunks and rewrite malformed ones.",
+    "Deduplicate chunks that come from the same source document."
+  ],
+  correct:1,
+  exp:"Grading is a relevance gate between retrieval and generation. It asks, per chunk, 'is this actually relevant to the question?' — catching the case where retrieval returned something semantically close but topically wrong. If nothing passes, you do NOT generate on garbage; you take a corrective action (rewrite the query, fall back to web search, or honestly say you don't know).",
+  why:[
+    "Cosine ranking is retrieval-internal and doesn't catch 'similar but off-topic' — that's exactly what grading adds on top.",
+    "✅ Correct. Grade relevance; on total failure, take a corrective path rather than hallucinating on irrelevant context.",
+    "Grading judges relevance, not grammar/formatting.",
+    "Dedup is a diversity concern (MMR), a different node."
+  ],
+  deep:"Grading is usually a fast LLM-as-judge call ('Is this document relevant to the question? yes/no') per chunk, or a small trained classifier. It's the mechanism behind Corrective RAG. The key design decision is what to do on failure: re-query with a rewritten question, escalate to web search, or return a safe 'I don't have that information' — never silently pass low-relevance context to the generator, because a fluent LLM will confidently build a wrong answer on it.",
+  learn:"Go deeper → Lesson 08, section G1 + your DocSage grade_node."
+},
+{
+  id:9, topic:"Hallucination validation", trap:"Faithfulness-placement trap", diff:"Senior",
+  q:"Your resume says you do 'hallucination validation.' In the graph, WHERE and HOW should the hallucination/faithfulness check run for it to be meaningful?",
+  opts:[
+    "Before retrieval, to predict whether the query is likely to cause hallucination.",
+    "After generation, checking whether each claim in the answer is actually supported (entailed) by the retrieved context; if unsupported, regenerate or decline.",
+    "During embedding, to filter out chunks that contain speculative language.",
+    "Inside the LLM call, by setting temperature to 0 which guarantees no hallucination."
+  ],
+  correct:1,
+  exp:"Faithfulness/hallucination validation is a POST-generation check: decompose the answer into claims and verify each is grounded in the retrieved context (via LLM-as-judge or an NLI entailment model). If a claim isn't supported, you regenerate with stricter grounding, drop the claim, or decline. It only makes sense after there's an answer to check against context.",
+  why:[
+    "You can't validate hallucination before the answer exists; pre-retrieval prediction isn't a grounding check.",
+    "✅ Correct. Post-generation, verify each claim is entailed by the retrieved context; act on unsupported claims.",
+    "Embedding-time filtering of 'speculative language' doesn't validate the final answer's grounding.",
+    "temperature=0 REDUCES randomness but does NOT guarantee faithfulness — a deterministic model can still confidently state ungrounded claims."
+  ],
+  deep:"Faithfulness ≠ answer relevancy. Faithfulness asks 'is every claim supported by the context?' (catches hallucination). Answer relevancy asks 'does the answer address the question?' (catches off-topic but grounded answers). RAGAS computes both. A robust guardrail: generate → faithfulness check → if it fails, either regenerate with a 'use ONLY the context' instruction, or fall back to 'I don't know.' Pair with citations so a human can verify fast.",
+  learn:"Go deeper → Lesson 05, section E4 + Lesson 08, section G1."
+},
+{
+  id:10, topic:"Faithfulness vs relevancy", trap:"Metric-conflation trap", diff:"Senior-trap",
+  q:"A RAG answer scores HIGH on faithfulness but users still complain it 'doesn't answer the question.' How is this possible?",
+  opts:[
+    "Faithfulness is broken; a high score always means a good answer.",
+    "The answer is fully grounded in the retrieved context (faithful) but doesn't actually address what the user asked (low answer-relevancy) — e.g., it accurately summarises the wrong section.",
+    "High faithfulness means the retrieval failed, so the answer must be wrong.",
+    "The two metrics are the same; the complaint must be about latency, not quality."
+  ],
+  correct:1,
+  exp:"Faithfulness and answer-relevancy measure different things. An answer can be 100% grounded in the context (nothing hallucinated) yet completely miss the user's actual question — for instance, faithfully summarising the shipping policy when the user asked about refunds. You need BOTH metrics: faithful AND relevant.",
+  why:[
+    "A high faithfulness score only means 'grounded,' not 'answers the question' — it's not broken, it's measuring a different axis.",
+    "✅ Correct. Faithful-but-irrelevant: grounded in context yet not addressing the question. Both metrics are needed.",
+    "High faithfulness doesn't imply retrieval failed; retrieval may have found real-but-wrong-topic content.",
+    "They are distinct metrics; the complaint is about relevancy, not latency."
+  ],
+  deep:"Think of it as a 2×2: (faithful?, relevant?). Faithful + relevant = good. Faithful + irrelevant = accurately answers the wrong thing (this question). Unfaithful + relevant = on-topic but hallucinated. Unfaithful + irrelevant = worst case. RAGAS reports faithfulness, answer_relevancy, and context metrics separately precisely so you can locate which axis failed. Reporting a single 'quality score' hides exactly this failure mode.",
+  learn:"Go deeper → Lesson 08, section G1 (RAG eval metrics)."
+},
+{
+  id:11, topic:"Reranking", trap:"Latency-vs-accuracy trap", diff:"Senior",
+  q:"Your RAG retrieves the right documents in the top-20 by embedding similarity, but the single best chunk is often ranked 8th–12th, so with top-3 to the LLM it gets missed. What is the standard fix, and its main cost?",
+  opts:[
+    "Send all 20 chunks to the LLM every time; more context always helps.",
+    "Add a cross-encoder reranker: retrieve top-20 with the fast bi-encoder, rerank those 20 with a cross-encoder, pass the top-3. Cost: extra latency per query.",
+    "Lower the embedding dimension so similarity scores spread out more.",
+    "Increase top-K to 20 permanently and let the LLM sort out relevance."
+  ],
+  correct:1,
+  exp:"This is the classic two-stage retrieve-then-rerank pattern. The bi-encoder is fast but approximate, so the truly best chunk can sit at rank 8–12. A cross-encoder scores each (query, chunk) pair jointly and re-orders the top-20 far more accurately, promoting the best chunk into the top-3 you actually send. The trade-off is added latency (an extra scoring pass over the candidates).",
+  why:[
+    "Stuffing 20 chunks wastes context, adds cost/latency, risks 'lost in the middle,' and dilutes the signal — more context isn't always better.",
+    "✅ Correct. Retrieve wide (top-20) with bi-encoder → rerank with cross-encoder → send top-3. Cost = extra latency.",
+    "Changing embedding dimension doesn't fix ranking quality of an approximate first-stage retriever.",
+    "Permanently sending top-20 is option A restated — same problems."
+  ],
+  deep:"Bi-encoder: embeds query and doc separately, compares vectors — O(1) at query time after indexing, but no cross-token interaction, so it's approximate. Cross-encoder: feeds [query, SEP, doc] together, attends across both — far more accurate but O(K) model calls, so you only run it on the K candidates the bi-encoder already found. Keep K modest (20–100) to bound latency. Managed options: Cohere Rerank, bge-reranker, ms-marco-MiniLM. Rerank for relevance first, then MMR for diversity if needed.",
+  learn:"Go deeper → Lesson 05, section E2 (reranking & cross-encoders)."
+},
+{
+  id:12, topic:"Query rewriting / self-correction", trap:"Blame-the-user trap", diff:"Intermediate",
+  q:"Users type terse or messy queries like 'refund intl?' and retrieval returns nothing useful. Your grading node flags the context as irrelevant. What is the best next step in a self-correcting RAG loop?",
+  opts:[
+    "Return 'no results found' immediately so the user rephrases.",
+    "Rewrite/expand the query with an LLM ('Do international orders qualify for refunds?'), then retrieve again with the improved query before deciding to answer or fall back.",
+    "Lower the similarity threshold until something is returned.",
+    "Send the raw terse query directly to the LLM without any context."
+  ],
+  correct:1,
+  exp:"A self-correcting RAG loop responds to poor retrieval by improving the QUERY, not by giving up. An LLM rewrite expands abbreviations and clarifies intent ('refund intl?' → 'Do international orders qualify for refunds and are the terms different?'), producing an embedding that actually matches the right chunks. You retrieve again with the rewritten query, then decide.",
+  why:[
+    "Immediately bailing pushes the work back on the user and wastes the system's ability to self-correct.",
+    "✅ Correct. LLM query rewrite/expansion → re-retrieve → then answer or fall back. This is the self-correction loop.",
+    "A lower threshold returns whatever is least-bad, often irrelevant — masking the problem, not fixing it.",
+    "Answering with no context on a knowledge question invites hallucination."
+  ],
+  deep:"Query transformation is a family: rewriting (fix/clarify), expansion (add synonyms/terms), decomposition (split compound queries), and HyDE (generate a hypothetical answer, embed THAT to retrieve). In a LangGraph flow this is a rewrite node the graph loops back to after a failed grade — retrieve → grade → (fail) → rewrite → retrieve → grade → ... with a max-iteration cap so it can't loop forever. Your DocSage rewrite_node is exactly this.",
+  learn:"Go deeper → Lesson 05, section E1 + your DocSage rewrite_node."
+},
+{
+  id:13, topic:"Embedding consistency", trap:"Silent-mismatch trap", diff:"Senior-trap",
+  q:"You upgrade your embedding model from all-MiniLM to a newer BGE model to 'improve quality,' redeploy, and now retrieval returns near-random results — but no errors are thrown. What happened?",
+  opts:[
+    "The new model outputs a different vector dimension, so the vector DB silently rejects all queries.",
+    "The existing index was built with the OLD model; querying it with the NEW model compares vectors from two different embedding spaces, which is meaningless. You must re-embed and rebuild the index.",
+    "BGE requires GPU inference, so on CPU it returns zero vectors.",
+    "The new model needs a different similarity metric, so cosine no longer works at all."
+  ],
+  correct:1,
+  exp:"Embeddings from different models live in different vector spaces — their dimensions mean different things. If your stored index was built with all-MiniLM and you query with BGE, you're computing similarity between incompatible spaces, so results are effectively random. The iron rule: index and query with the SAME model. Changing the model requires re-embedding the entire corpus and rebuilding the index.",
+  why:[
+    "A dimension mismatch would usually throw an error (shape mismatch), not silently return random-but-valid results — and BGE/MiniLM can even share dims yet still be incompatible spaces.",
+    "✅ Correct. Old index + new query model = mismatched embedding spaces → meaningless similarity. Re-embed + rebuild.",
+    "CPU inference is slower, not zero-vectors; that's not the cause.",
+    "The similarity metric isn't the issue; the vectors themselves are from incompatible spaces."
+  ],
+  deep:"An embedding model learns a specific geometry: 'dimension 200 means X' is model-specific. Two models can even produce the SAME dimensionality and still be totally incompatible. This bug is silent and dangerous — no exception, retrieval metrics on a NEW eval look fine, but production users get garbage. Guardrail: store the embedding-model name/version as index metadata and refuse queries whose model doesn't match. Any model change = full re-index (a migration, not a config tweak).",
+  learn:"Go deeper → Lesson 03, section C3 (embeddings & the same-model rule)."
+},
+{
+  id:14, topic:"HyDE", trap:"Vocabulary-gap trap", diff:"Senior",
+  q:"Users ask casual questions ('why is my bill so high?') but your knowledge base is written in formal language ('billing discrepancies arise from prorated charges...'). Dense retrieval underperforms because the query and documents use different vocabulary. Which advanced technique directly targets this gap?",
+  opts:[
+    "Increase top-K to 50 so more documents are considered.",
+    "HyDE (Hypothetical Document Embeddings): have the LLM generate a hypothetical ANSWER to the query, embed that, and use it to retrieve — because the hypothetical answer 'speaks the document's language.'",
+    "Switch from cosine similarity to Euclidean distance.",
+    "Lower the chunk size so documents contain fewer formal terms."
+  ],
+  correct:1,
+  exp:"The problem is a vocabulary/style mismatch between short casual queries and formal documents. HyDE bridges it: the LLM first drafts a hypothetical answer (which naturally uses domain/formal phrasing), then you embed that richer, document-like text and retrieve with it. The hypothetical answer sits much closer to the real documents in embedding space than the terse casual query did.",
+  why:[
+    "More documents (higher K) just adds noise; it doesn't close the vocabulary gap between query and corpus.",
+    "✅ Correct. HyDE generates a hypothetical answer, embeds it, and retrieves — aligning query language with document language.",
+    "Changing the distance metric doesn't change the semantic gap between casual and formal phrasing.",
+    "Smaller chunks don't make a casual query match formal text any better."
+  ],
+  deep:"HyDE works because a generated answer, even if factually imperfect, is lexically and semantically shaped like the real documents, so its embedding lands near them. It's a form of query transformation. Trade-off: an extra LLM call per query (latency/cost) and a risk that a badly hypothesised answer retrieves the wrong region — so it's best when there's a real query-document style gap, not universally. Alternatives for the same gap: multi-query expansion, or fine-tuning the embedding model on your domain.",
+  learn:"Go deeper → Lesson 05, section E1 (retrieval techniques)."
+},
+{
+  id:15, topic:"Aggregation limits", trap:"Wrong-tool trap", diff:"Senior",
+  q:"A user asks your case-law RAG: 'How many contracts in the knowledge base mention arbitration clauses, and list them all?' Single-shot RAG returns a partial, wrong count. What is the fundamental issue and the right approach?",
+  opts:[
+    "The embedding model is too small; a bigger model would count them correctly.",
+    "Top-K RAG retrieves a fixed handful of chunks and makes one LLM call — it structurally cannot enumerate/count across an entire corpus. Use metadata filtering + a map-reduce (or agentic multi-step) pipeline instead.",
+    "The cosine threshold is too high, excluding most arbitration documents.",
+    "Increase top-K to 100 and the LLM will count accurately."
+  ],
+  correct:1,
+  exp:"'Count all / list all X across the corpus' is an aggregation/exhaustive task. Standard top-K RAG samples a few chunks and does one pass — it can't see every document, so any count is guesswork. The right architecture is metadata-filtered retrieval (or a structured query) to gather ALL matching docs, then map-reduce summarization, or an agentic loop that iterates until coverage is complete.",
+  why:[
+    "Model size doesn't fix a structural sampling limit — a bigger model still only sees the retrieved handful.",
+    "✅ Correct. Fixed-K + single call ≠ aggregation. Use metadata filter + map-reduce or an agentic multi-step approach.",
+    "The threshold isn't the core issue; even perfect relevance on top-K can't enumerate an entire corpus.",
+    "top-K=100 is still a fixed cap and blows the context window; it's a bigger sample, not a complete one."
+  ],
+  deep:"RAG is a RETRIEVAL tool, optimised for 'find the most relevant few chunks to answer a question,' not 'scan everything.' Aggregation/analytics ('how many,' 'list all,' 'trend over time') needs either a structured store (SQL/metadata DB) queried directly, or a map-reduce pattern: retrieve in batches, extract per batch (map), combine (reduce). Recognising 'this is an aggregation query, not a lookup' is itself a senior signal — you pick the right tool instead of forcing RAG.",
+  learn:"Go deeper → Lesson 04, section D1 (RAG architecture & limits)."
+},
+{
+  id:16, topic:"Knowledge freshness / re-indexing", trap:"Stale-index trap", diff:"Intermediate",
+  q:"Your company updates its refund policy. Support agents update the source document, but the RAG bot keeps citing the OLD policy for days. What is the root cause and the correct production fix?",
+  opts:[
+    "The LLM memorised the old policy during pretraining; you must fine-tune it on the new policy.",
+    "The vector index still holds the old document's chunks/embeddings; you need an ingestion pipeline that re-chunks, re-embeds, and upserts (or deletes+re-adds) changed documents when the source updates.",
+    "The cosine threshold drifted; recalibrate it to prefer newer documents.",
+    "Conversation memory is caching the old answer; clear the session."
+  ],
+  correct:1,
+  exp:"RAG answers from what's IN the index, not from the live source document. If the index still contains the old policy's chunks, that's what gets retrieved — for as long as nobody re-ingests. The fix is an ingestion/sync pipeline that detects source changes and re-chunks + re-embeds + upserts (or deletes the old chunks and adds new ones), ideally keyed by document ID/version.",
+  why:[
+    "The old policy isn't 'memorised'; it's stored as vectors in your index. Fine-tuning is the wrong (and huge) hammer.",
+    "✅ Correct. Stale index → re-ingest changed docs (re-chunk, re-embed, upsert/replace by doc ID). Automate on source change.",
+    "Thresholds don't track document recency; this doesn't address stale content.",
+    "Session memory could cache one conversation, but 'for days across users' points squarely at a stale index."
+  ],
+  deep:"Index freshness is an operational concern most RAG demos ignore. Production options: (1) event-driven — a webhook/CDC on the source triggers re-ingestion of just the changed doc; (2) scheduled re-crawl with change detection (hashes/timestamps) so you only re-embed what changed; (3) store doc_id + version in chunk metadata so you can delete-then-insert cleanly and avoid orphaned old chunks. Also add the source's last-updated date to metadata so you can surface/verify freshness.",
+  learn:"Go deeper → Lesson 04 (ingestion) + Lesson 03, section C2 (CRUD in vector DBs)."
+},
+{
+  id:17, topic:"RAG vs fine-tuning", trap:"Wrong-lever trap", diff:"Senior-trap",
+  q:"A client wants their bot to (a) always answer in their strict brand voice/format AND (b) reflect their product catalog, which changes weekly. What is the correct approach?",
+  opts:[
+    "Fine-tune the model on both the brand voice and the full product catalog; retrain weekly.",
+    "Use RAG for the weekly-changing catalog (knowledge) and fine-tuning or a strong system prompt for the brand voice/format (behavior) — they solve different problems.",
+    "Use RAG for both; retrieve brand-voice examples and catalog data together.",
+    "Use fine-tuning for both; RAG can't enforce format."
+  ],
+  correct:1,
+  exp:"RAG and fine-tuning solve DIFFERENT problems. RAG injects fresh/changing KNOWLEDGE at inference (perfect for a weekly-changing catalog). Fine-tuning (or a strong system prompt) shapes BEHAVIOR — consistent voice, tone, format. Retraining weekly just to update the catalog is wasteful and slow; RAG handles that instantly. Combine them: fine-tune/prompt the voice, RAG the catalog.",
+  why:[
+    "Fine-tuning on a weekly-changing catalog means retraining constantly — expensive, slow, and the model is always slightly stale between retrains.",
+    "✅ Correct. RAG for changing knowledge (catalog), fine-tuning/system-prompt for stable behavior (brand voice). Different levers.",
+    "RAG alone struggles to reliably ENFORCE a strict output format/voice; that's a behavior problem better handled by tuning/prompting.",
+    "Fine-tuning alone can't keep up with weekly catalog changes without constant retraining."
+  ],
+  deep:"The canonical rule: RAG = what the model KNOWS (facts, fresh/private data, at inference time); fine-tuning = HOW the model behaves (style, format, tone, a narrow skill, baked into weights). Try prompting first, then RAG, then fine-tuning (in cost/effort order). For behavior, a well-crafted system prompt with few-shot examples often gets you 90% of the way before you reach for fine-tuning. Most real production systems combine RAG + prompt engineering, and only fine-tune when prompting can't reliably enforce the behavior.",
+  learn:"Go deeper → Lesson 09, section H4 (fine-tuning vs RAG)."
+},
+{
+  id:18, topic:"Lost in the middle", trap:"Context-ordering trap", diff:"Senior",
+  q:"You pass 15 retrieved chunks to the LLM. The answer is often correct when the key fact is in the FIRST or LAST chunk, but wrong when it's in the MIDDLE. What is happening and how do you mitigate it?",
+  opts:[
+    "The LLM has a bug; file a report with the provider.",
+    "The 'lost in the middle' effect: LLMs attend most strongly to the start and end of long contexts. Mitigate by retrieving fewer, higher-precision chunks (rerank to top-3–5) and/or ordering the most relevant chunks at the start/end.",
+    "The middle chunks are corrupted during retrieval; validate their encoding.",
+    "Cosine similarity fails for middle-ranked chunks; switch to dot product."
+  ],
+  correct:1,
+  exp:"This is the well-documented 'lost in the middle' phenomenon: model attention over a long context is U-shaped — strongest at the beginning and end, weakest in the middle. Stuffing 15 chunks buries the key fact in the low-attention zone. Fix: send FEWER, higher-precision chunks (rerank down to 3–5) so there's no low-attention middle, and/or deliberately place the most relevant chunks at the edges.",
+  why:[
+    "It's a known model behavior, not a provider bug — every long-context LLM shows some version of it.",
+    "✅ Correct. Lost-in-the-middle: attention is U-shaped. Fewer/reranked chunks + edge-ordering the key content mitigates it.",
+    "The middle chunks aren't corrupted; they're just in the low-attention region.",
+    "The similarity metric is unrelated to where a chunk lands in the prompt."
+  ],
+  deep:"Lost-in-the-middle is why 'just use a bigger context window and dump everything' is a false economy — retrieval quality and context CURATION still matter even with 100k+ token windows. Practical mitigations: (1) rerank and send only the top few chunks; (2) order by relevance with the best at the top and second-best at the bottom; (3) for many-document tasks, use map-reduce instead of one giant prompt. It's also a strong argument for precision-focused retrieval over recall-dumping.",
+  learn:"Go deeper → Lesson 02 (attention) + Lesson 05 (retrieval/reranking)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// Deterministic per-question shuffle so the correct answer isn't always in the same
+// position (a real assessment spreads answers across A/B/C/D). Seeded by q.id, so the
+// order is STABLE across reloads/retries. data-i always stores the ORIGINAL index,
+// so correctness tracking is unaffected by display order.
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);      // display order (original indices)
+  const correctDisplayPos = perm.indexOf(q.correct);  // where the correct answer now shows
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Solid RAG fundamentals.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

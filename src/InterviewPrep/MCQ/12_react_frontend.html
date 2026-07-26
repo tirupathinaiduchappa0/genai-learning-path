@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>React.js & Frontend — Scenario MCQs (8)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#0e7490; --accent2:#155e75;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#7c3aed; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#22d3ee; --accent2:#67e8f9;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#c4b5fd; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚛️ React.js &amp; Frontend — Scenario MCQs</h1>
+  <p>Topic 12 · 8 real-world questions · Hooks, state, useEffect, Redux Toolkit, rendering, data fetching · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 8</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in your React.js (Hooks, Redux Toolkit, TypeScript, Axios) work. Lowest priority for a GenAI role, but curveball-proofing. ⚠ = debatable.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"State immutability", trap:"Mutate-state trap", diff:"Intermediate",
+  q:"You update a todo list by doing `todos.push(newTodo); setTodos(todos)`, but the UI doesn't re-render. Why, and what's the fix?",
+  code:"// BUG: mutates the same array reference\ntodos.push(newTodo); setTodos(todos);\n// FIX: new array reference\nsetTodos([...todos, newTodo]);",
+  opts:[
+    "React is broken; call setTodos twice to force it.",
+    "React detects state changes by REFERENCE, not deep equality. push() mutates the same array (same reference), so React sees 'no change' and skips re-render. Fix: create a NEW array — setTodos([...todos, newTodo]).",
+    "You must call forceUpdate() after every state change.",
+    "Arrays can't be used as React state; use an object."
+  ],
+  correct:1,
+  exp:"React decides whether to re-render by comparing the state value's REFERENCE (Object.is), not by deep-inspecting contents. push() mutates the existing array in place, so the reference is unchanged and React thinks nothing changed. The fix is to produce a NEW reference: setTodos([...todos, newTodo]) (or the updater form). Treat state as immutable.",
+  why:[
+    "React isn't broken; calling setTodos twice with the same mutated reference still won't trigger a render.",
+    "✅ Correct. React compares by reference; mutating in place keeps the same reference → no re-render. Return a new array/object.",
+    "forceUpdate is an escape hatch (and unavailable in function components) — the real fix is immutable updates.",
+    "Arrays are perfectly valid state; the issue is mutation, not the type."
+  ],
+  deep:"React's reconciliation uses shallow reference comparison for state/props. Immutability rules: never mutate state directly — for arrays use spread/map/filter (return new arrays), for objects use {...obj, key: val}. The updater form setTodos(prev => [...prev, newTodo]) is safest when the new state depends on the old (avoids stale-closure bugs). This mirrors Redux's immutability requirement (and why Redux Toolkit uses Immer to let you 'mutate' a draft safely). Mutating state is one of the most common React bugs.",
+  learn:"Related → Q5 (Redux Toolkit/Immer), Q4 (stale closures)."
+},
+{
+  id:2, topic:"useEffect dependencies", trap:"Missing-deps trap", diff:"Senior",
+  q:"A component fetches data in useEffect. It either fetches only once (ignoring prop changes) or fires an infinite fetch loop, depending on the dependency array. What's the correct understanding?",
+  code:"useEffect(() => { fetchUser(userId); }, [userId]);\n// [] -> runs once (won't refetch when userId changes)\n// no array -> runs EVERY render (can loop)\n// [userId] -> re-runs only when userId changes  ✅",
+  opts:[
+    "useEffect always runs once; the dependency array does nothing.",
+    "The dependency array controls WHEN the effect re-runs: [] = once on mount, [userId] = whenever userId changes, and NO array = after every render (which can cause infinite loops if the effect updates state).",
+    "You should never use a dependency array; it's deprecated.",
+    "Infinite loops are unavoidable with data fetching in useEffect."
+  ],
+  correct:1,
+  exp:"The dependency array tells React when to re-run the effect: `[]` runs once on mount (so it won't refetch when userId changes — the 'fetch once' bug); omitting the array runs the effect after EVERY render (and if the effect sets state, that triggers another render → infinite loop); `[userId]` correctly re-runs only when userId changes. Match the deps to the values the effect actually uses.",
+  why:[
+    "The dependency array is central to useEffect — it very much controls re-runs.",
+    "✅ Correct. [] = once, [dep] = on dep change, no array = every render (loop risk). List the values the effect depends on.",
+    "The dependency array is not deprecated — it's fundamental to correct effect behavior.",
+    "Infinite loops are avoidable — they come from missing/incorrect deps or setting state unconditionally in the effect."
+  ],
+  deep:"useEffect runs after render; its dependency array is the list of reactive values it 'depends on' — React re-runs it when any change (by reference). Common bugs: (1) missing deps → stale data (effect uses a value it doesn't list); (2) no array + setState inside → infinite loop; (3) an object/array/function dep recreated every render → effect always re-runs (fix with useMemo/useCallback or move it). The lint rule react-hooks/exhaustive-deps catches most of these. Also return a CLEANUP function for subscriptions/timers/aborting fetches to avoid leaks and race conditions.",
+  learn:"Related → Q6 (data fetching race conditions / cleanup)."
+},
+{
+  id:3, topic:"Keys in lists", trap:"Index-as-key trap", diff:"Intermediate",
+  q:"You render a reorderable/filterable list with `key={index}`. After reordering or deleting items, the UI shows wrong data in the wrong rows (e.g., input values attach to the wrong item). Why?",
+  code:"// BUG: items.map((item, i) => <Row key={i} ... />)\n// FIX: items.map(item => <Row key={item.id} ... />)",
+  opts:[
+    "Keys are purely decorative; this is a coincidence.",
+    "Using the array INDEX as key means the key→item mapping shifts when the list reorders/filters, so React reuses the wrong DOM/component state for an item. Use a STABLE unique id (key={item.id}).",
+    "You should remove keys entirely to fix it.",
+    "React lists can't be reordered; that's the real problem."
+  ],
+  correct:1,
+  exp:"React uses keys to identify which items changed/moved/were removed across renders. With `key={index}`, the key belongs to the POSITION, not the item — so after reorder/delete, index 0 now points to a different item, and React reuses the previous component/DOM state (like input values) for the wrong item. Use a STABLE, unique id (key={item.id}) that follows the item, not its position.",
+  why:[
+    "Keys are functional, not decorative — they drive reconciliation identity.",
+    "✅ Correct. Index keys tie identity to position; on reorder/delete React reuses wrong state. Use a stable unique id.",
+    "Removing keys causes warnings and worse reconciliation — the fix is a STABLE id, not no key.",
+    "React lists reorder fine — the bug is index-as-key, not reordering itself."
+  ],
+  deep:"Keys let React's diffing match old and new elements: a stable key means 'this is the SAME item, it just moved' (preserve its state); a changing/position key means 'this position now has a different item' (state gets mismatched). Index-as-key is only safe for static, never-reordered, append-only lists. For dynamic lists always use a stable domain id. Symptoms of the bug: checkboxes/inputs 'sticking' to the wrong row, animations glitching, or wrong data after sort/filter/delete.",
+  learn:"Related → Q1 (reconciliation by reference)."
+},
+{
+  id:4, topic:"Stale closures", trap:"Stale-state trap", diff:"Senior",
+  q:"A setInterval started in useEffect([]) reads a `count` state but always sees its INITIAL value (0), never the updated count. Why, and the fix?",
+  code:"// BUG: closure captured count=0 at mount\nsetInterval(() => setCount(count + 1), 1000);\n// FIX: updater form reads latest state\nsetInterval(() => setCount(c => c + 1), 1000);",
+  opts:[
+    "React caches state to save memory; disable caching.",
+    "Stale closure: the interval callback captured `count` from the render where the effect ran (0) and never sees later values. Fix with the functional updater setCount(c => c + 1) (or add proper deps / a ref).",
+    "setInterval doesn't work in React at all.",
+    "count is undefined; initialize it to null."
+  ],
+  correct:1,
+  exp:"The effect ran once (empty deps), and its callback CLOSED OVER the `count` value from that render (0). Since the interval function is never recreated, it keeps reading the stale captured 0. The clean fix is the functional updater form setCount(c => c + 1), which receives the LATEST state from React rather than the captured variable (alternatively, use a ref or correct dependencies).",
+  why:[
+    "It's not a memory-caching feature — it's JavaScript closure semantics capturing the value at effect-setup time.",
+    "✅ Correct. Stale closure captured the initial count; setCount(c => c + 1) reads the latest state. (Or use a ref / deps.)",
+    "setInterval works fine in React; the issue is the captured stale variable.",
+    "count isn't undefined — it's the correctly-initialized 0, just captured stale."
+  ],
+  deep:"Stale closures are the subtlest React-hooks bug: any callback created in a render captures that render's variables. If the callback outlives the render (interval, event listener, async callback) and reads state directly, it sees stale values. Fixes: (1) functional updater setState(prev => ...) — always gets the latest; (2) useRef to hold a mutable latest value; (3) list the value in deps so the effect/callback is recreated (and clean up the old interval). This is conceptually the same 'captured-at-definition-time' issue as Python's late-binding closures — closures capture variables, and you must read the current value deliberately.",
+  learn:"Related → Q2 (useEffect deps/cleanup) + Q1 (immutable updates)."
+},
+{
+  id:5, topic:"Redux Toolkit", trap:"Boilerplate/mutation trap", diff:"Senior",
+  q:"Your resume lists Redux Toolkit. In a createSlice reducer you write `state.items.push(newItem)` — direct mutation. In classic Redux that's forbidden. Why does it work in Redux Toolkit?",
+  code:"const slice = createSlice({\n  name: 'cart', initialState: { items: [] },\n  reducers: { add: (state, action) => { state.items.push(action.payload); } }\n});",
+  opts:[
+    "Redux Toolkit disables immutability; state can be mutated freely everywhere.",
+    "createSlice uses Immer under the hood: you write 'mutating' code against a DRAFT, and Immer produces a new immutable state from it — so it's still immutable updates, just with simpler syntax.",
+    "It's a bug that happens to work; you should still spread manually.",
+    "Redux Toolkit doesn't use reducers, so mutation rules don't apply."
+  ],
+  correct:1,
+  exp:"Redux Toolkit's createSlice wraps reducers with IMMER. The `state` you 'mutate' is a Proxy DRAFT; Immer records your mutations and produces a brand-new immutable state object. So state is still updated immutably (Redux's requirement) — Immer just lets you write concise push/assign syntax instead of manual spreads. It only works inside createSlice/createReducer, not in arbitrary code.",
+  why:[
+    "RTK does NOT disable immutability — it enforces it via Immer; you can't mutate state anywhere freely.",
+    "✅ Correct. createSlice uses Immer: 'mutations' on a draft produce a new immutable state — concise syntax, still immutable.",
+    "It's intentional (Immer), not an accidental bug; manual spreads are optional inside slices.",
+    "RTK is built on reducers (createSlice generates them) — reducers are central, not absent."
+  ],
+  deep:"Redux Toolkit is the standard way to write Redux, reducing boilerplate: createSlice auto-generates action creators + reducers, configureStore sets up the store with good defaults (thunk, devtools), and Immer enables draft-mutation syntax. Immer's trick: it gives you a Proxy draft, tracks changes, and returns a new object sharing unchanged parts (structural sharing). This ties to Q1's immutability: Redux still needs new references for change detection — Immer just makes producing them ergonomic. Also know createAsyncThunk / RTK Query for data fetching + caching.",
+  learn:"Related → Q1 (immutability + reference equality)."
+},
+{
+  id:6, topic:"Data fetching race conditions", trap:"Out-of-order trap", diff:"Senior",
+  q:"A search box fetches results on each keystroke via useEffect. Typing fast, you sometimes see results for an EARLIER query overwrite the latest one. What's the issue and fix?",
+  code:"useEffect(() => {\n  let active = true;\n  fetchResults(query).then(r => { if (active) setResults(r); });\n  return () => { active = false; };   // ignore stale responses\n}, [query]);",
+  opts:[
+    "The API is returning wrong data; there's nothing to fix client-side.",
+    "A race condition: async responses can arrive out of order, so a slow earlier request resolves AFTER a newer one and overwrites it. Fix by ignoring stale responses via a cleanup flag or AbortController (cancel the previous request).",
+    "Add a fixed 2-second delay before every fetch.",
+    "Store results in a global variable instead of state."
+  ],
+  correct:1,
+  exp:"Multiple in-flight requests can resolve OUT OF ORDER — a slower request for 'ca' can return after the faster 'cat' request and overwrite the correct results. Fix: in the useEffect cleanup, invalidate stale responses — set an `active` flag to false (ignore the response if the effect re-ran) or use AbortController to CANCEL the previous request when a new keystroke fires.",
+  why:[
+    "It's a client-side ordering problem, not a wrong-data API problem — you must handle out-of-order responses.",
+    "✅ Correct. Out-of-order async responses race; ignore stale ones via a cleanup flag or cancel with AbortController.",
+    "A fixed delay doesn't prevent races (responses can still reorder) and hurts UX.",
+    "A global variable doesn't fix ordering and breaks React's render model."
+  ],
+  deep:"This is the classic useEffect data-fetching race. The cleanup function runs before the next effect (and on unmount), so the `active` flag pattern ensures only the LATEST effect's response is applied. Better: AbortController — abort the previous fetch so it never resolves (saves bandwidth too). Also add debouncing to reduce request volume on fast typing. Libraries like RTK Query / React Query handle request dedup, cancellation, caching, and race safety for you — often the right production choice over hand-rolled useEffect fetching. Ties to Q2 (cleanup functions) and Q4 (stale values).",
+  learn:"Related → Q2 (useEffect cleanup) + Q4 (stale closures)."
+},
+{
+  id:7, topic:"Re-render performance", trap:"Premature-memo trap", diff:"Senior",
+  q:"A large list re-renders slowly because a parent re-renders often, re-rendering all children. When is React.memo / useMemo / useCallback the right fix, and what's the caveat?",
+  opts:[
+    "Wrap EVERYTHING in React.memo/useMemo/useCallback always; more memoization is always better.",
+    "Memoize when a real, measured re-render cost exists: React.memo skips re-render if props are unchanged (by shallow compare), and useCallback/useMemo keep prop references stable so memo works — but over-memoizing adds overhead/complexity, so profile first.",
+    "Memoization is deprecated; use class components instead.",
+    "The only fix is to reduce the list size."
+  ],
+  correct:1,
+  exp:"React.memo makes a child skip re-rendering when its props are shallow-equal to last time. But it only helps if the props are actually stable — so you often need useCallback (stable function props) and useMemo (stable object/array props) alongside it. The caveat: memoization has its own cost and complexity, and misapplied it can even hurt — so MEASURE (profile) and memoize the real hotspots, not everything.",
+  why:[
+    "Blanket memoization adds overhead and complexity; 'more is always better' is false — it can slow things down.",
+    "✅ Correct. Memoize measured hotspots: React.memo (skip on unchanged props) + useCallback/useMemo (stable prop refs). Profile first.",
+    "Memoization isn't deprecated, and class components aren't the fix — hooks + memo are current.",
+    "Reducing list size is one option (or virtualization), but memoization/stable props is the general re-render fix."
+  ],
+  deep:"Re-render optimization toolkit: React.memo (component-level shallow-prop skip), useMemo (memoize expensive computed values / stable object&array props), useCallback (stable function references so memoized children don't re-render). Key: React.memo is useless if you pass a NEW function/object each render — hence useCallback/useMemo to stabilize references (ties to Q4's reference identity). For very long lists, VIRTUALIZATION (react-window/react-virtualized — render only visible rows) beats memoization. Golden rule: profile with React DevTools Profiler, optimize the measured hotspot; premature memoization is a real anti-pattern.",
+  learn:"Related → Q1/Q4 (reference equality) + list virtualization."
+},
+{
+  id:8, topic:"Controlled inputs / TypeScript", trap:"Uncontrolled trap", diff:"Intermediate",
+  q:"Your form input is `<input value={name} />` with no onChange. Users can't type into it, and the console warns about a controlled input without an onChange handler. Why?",
+  code:"// BUG: value bound, no onChange -> read-only\n<input value={name} />\n// FIX: controlled input\n<input value={name} onChange={e => setName(e.target.value)} />",
+  opts:[
+    "React inputs are read-only by design; use a <div contentEditable> instead.",
+    "A CONTROLLED input's value is driven by state; without an onChange to update that state, React keeps forcing value back to the state, so typing has no effect. Add onChange to update state (or use defaultValue for an uncontrolled input).",
+    "You must wrap every input in a <form> or it won't accept input.",
+    "The input needs a `type` attribute to be editable."
+  ],
+  correct:1,
+  exp:"Binding `value={name}` makes it a CONTROLLED input — React makes the DOM value always equal the state. Without an onChange handler to update `name`, every keystroke is immediately overwritten by the unchanged state, so it appears frozen (and React warns). Fix: add onChange to update state (setName), making state and input stay in sync. For an uncontrolled input instead, use defaultValue.",
+  why:[
+    "React inputs aren't read-only by design; contentEditable is unrelated to this bug.",
+    "✅ Correct. value-bound = controlled; without onChange, state never updates so typing is overwritten. Add onChange (or use defaultValue for uncontrolled).",
+    "A <form> wrapper isn't required for inputs to accept typing.",
+    "A missing type isn't the issue (text is the default); the missing onChange is."
+  ],
+  deep:"Controlled vs uncontrolled: CONTROLLED — value comes from state, changes flow through onChange → setState → re-render (single source of truth, easy validation); UNCONTROLLED — the DOM holds the value, you read it via a ref or defaultValue. The 'frozen input' bug is a value without onChange. With TypeScript, type the handler (e: React.ChangeEvent<HTMLInputElement>) for safety. Controlled inputs are standard for forms needing validation/derived UI; uncontrolled or libraries (React Hook Form) reduce re-renders for large forms.",
+  learn:"Related → Q1 (state as single source of truth)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Frontend curveballs handled — nice.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

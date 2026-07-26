@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCP & Agent Architecture Trade-offs — Scenario MCQs (18)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#4f46e5; --accent2:#4338ca;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#7c3aed; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#818cf8; --accent2:#a5b4fc;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#c4b5fd; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.4rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:88px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧩 MCP Server & Agent Architecture Trade-offs — Scenario MCQs</h1>
+  <p>Topic 13 · 18 real-world questions · MCP server topology, attention dilution &amp; multi-agent cost, accuracy-vs-latency framing · straight from real interview exchanges · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 18</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in three real 2026 interview questions on MCP server count, super-agent vs orchestrator, and model accuracy-vs-latency. The senior-level fix in every case: name the trade-off axes, then give a conditional recommendation. ⚠ = debatable.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"MCP server topology", trap:"USB-analogy trap", diff:"Senior",
+  q:"Interviewer: \"You built ONE MCP server exposing HR, Sales, IT, and ERP tools together. Why not one MCP server PER domain?\" You answer: \"An MCP server is like a USB device — it connects anything, acts as a centralized point.\" He says he's 50% satisfied. What's missing from this answer?",
+  opts:[
+    "Nothing — the USB analogy is a complete and sufficient answer to the question.",
+    "The USB analogy explains WHAT an MCP server does (a standard connector), not WHY you'd choose ONE server over MANY. It's missing the actual trade-off: ownership, security boundaries, tool count, and scaling needs — the axes that decide when to split by domain.",
+    "You should have said MCP servers are stateless, so domain count doesn't matter.",
+    "You should have refused to answer since MCP server count is an implementation detail, not an architecture decision."
+  ],
+  correct:1,
+  exp:"The USB analogy correctly describes the PROTOCOL (a standard connector between an LLM app and tools/data) but restates a definition instead of justifying a DESIGN CHOICE. The interviewer wasn't testing 'do you know what MCP is' — he was testing whether you can reason about WHEN a single shared server is right versus when domain-per-server is right. That requires naming concrete axes: different ownership/teams, different security boundaries (PII vs financial data), tool count crossing the ~20-30 threshold, and independent scaling/release needs.",
+  why:[
+    "The analogy is accurate but incomplete for THIS question — it explains the mechanism, not the topology decision.",
+    "✅ Correct. A definition restated as a justification isn't a trade-off analysis — the interviewer wanted the axes: ownership, security boundary, tool count, scaling.",
+    "MCP servers aren't inherently stateless in a way that erases the topology question — session/auth state still lives somewhere per server.",
+    "It absolutely is an architecture decision — blast radius, compliance boundaries, and tool-selection accuracy all depend on it."
+  ],
+  deep:"This is a common senior-interview pattern: let the candidate demonstrate they know a concept exists (MCP as a standard connector), then push for the DECISION FRAMEWORK layered on top. 'What is X' answers signal familiarity; 'when would you choose X over Y, and why' answers signal engineering judgment. The fix for next time: after any analogy or definition, immediately pivot to 'but the actual choice depends on...' and name 2-4 concrete axes before landing on a recommendation.",
+  learn:"📖 Related → Q2 (the real decision framework), Q5 (Golden Lesson 1 — 'it depends' + named axes)."
+},
+{
+  id:2, topic:"MCP server topology", trap:"False-dichotomy trap", diff:"Senior",
+  q:"Given the HR/Sales/IT/ERP scenario, which set of factors should actually decide whether you split into separate MCP servers per domain, rather than treating it as a fixed 'best practice' rule?",
+  opts:[
+    "Always split — more servers is always more scalable and more secure, with no real downside.",
+    "Split when ANY of: different ownership/teams, different security/compliance boundaries (PII vs financial data), combined tool count pushing past ~20-30 (hurting tool-selection accuracy), or domains needing independent scaling/release cadence. Otherwise keep it unified.",
+    "Never split — one MCP server is always simpler to operate, so multi-server designs are premature optimization by definition.",
+    "Split based purely on the number of employees in each department."
+  ],
+  correct:1,
+  exp:"There's no universal rule — it's a trade-off. Splitting into domain-scoped MCP servers is justified when ownership, security boundaries, tool count, or scaling/release needs diverge enough that a shared server creates real friction (coordination overhead, compliance risk, degraded tool selection, blocked deploys). If none of those diverge — small team, shared auth boundary, few tools, fast iteration matters more than isolation — a single server is the right, simpler choice. Splitting 'because you technically can' is itself an anti-pattern.",
+  why:[
+    "Always-split ignores real costs: more infra to run/monitor/secure, plus a gateway/orchestration layer becomes mandatory, plus cross-domain workflows get harder to stitch together.",
+    "✅ Correct. This is exactly the decision framework: split on ownership / security boundary / tool count / scaling divergence; otherwise stay unified.",
+    "Never-split ignores that blast radius, compliance, and tool-selection accuracy are real engineering costs that DO eventually force a split.",
+    "Employee headcount isn't the deciding factor — tool count, security boundary, and ownership are the actual signals."
+  ],
+  deep:"The industry-converging pattern (2026) is neither 'one server for everything' nor 'one server per tool' — it's a GATEWAY/ORCHESTRATOR layer in front of a handful of domain-scoped MCP servers. This gives the agent ONE logical connection point (simple from the agent's perspective) while isolating blast radius, ownership, and scaling behind it. Source: enterprise MCP architecture patterns (markaicode.com, getknit.dev, Kong's MCP architecture guide, 2026). The mental model: 'start simple, split later when a real pain point — an outage, a security review, a scaling limit — forces it. Don't pre-optimize.'",
+  learn:"📖 Related → Q6 (gateway/orchestrator pattern), Q4 (tool-count threshold)."
+},
+{
+  id:3, topic:"MCP server topology", trap:"Blast-radius trap", diff:"Senior",
+  q:"A single monolithic MCP server exposes tools for HR (leave requests, payroll), Sales (CRM, quotes), IT (tickets), and ERP (purchase orders, inventory). A bug in the payroll-lookup tool crashes the server process. What's the real-world consequence, and what's the term for this risk?",
+  opts:[
+    "No consequence — MCP servers isolate each tool in its own process automatically.",
+    "BLAST RADIUS: since all four domains share ONE server process, the HR bug takes down Sales, IT, and ERP tools too — an unrelated domain's failure has an outsized, unintended impact on domains that had nothing to do with the bug.",
+    "The consequence is limited to slightly slower response times for HR tools only.",
+    "This can only happen if the MCP server is deployed without a load balancer."
+  ],
+  correct:1,
+  exp:"BLAST RADIUS describes how far the impact of a single failure spreads. In a monolithic MCP server, all domains share the same process/deployment — a crash or bug anywhere takes the whole thing down, so Sales, IT, and ERP tools become unavailable even though their code had nothing to do with the HR bug. Domain-scoped servers contain the blast radius: an outage in one server doesn't affect the others.",
+  why:[
+    "MCP servers don't auto-isolate tools into separate processes by default — that's an architectural choice you'd have to build in (e.g., separate servers).",
+    "✅ Correct. Blast radius is the precise term: shared process/deployment means one domain's failure takes down unrelated domains.",
+    "A full process crash means unavailability, not just slower responses — the impact is total, not degraded.",
+    "A load balancer distributes traffic across replicas of the SAME server; it doesn't isolate one domain's bug from affecting others within that server's logic."
+  ],
+  deep:"Blast radius is a foundational reliability-engineering concept (borrowed from distributed systems/SRE practice) applied here to MCP topology. It generalizes beyond crashes: a compromised credential, a bad tool call that corrupts shared state, or a memory leak in one domain's tool handler all propagate to every domain sharing that server. Domain-scoped MCP servers are a direct application of the 'bulkhead' pattern from microservices — isolate failure domains so one leak doesn't sink the ship. This is also why compliance reviews often force the split: PII (HR) and financial data (ERP) sharing one auth boundary is itself a blast-radius risk even without a crash.",
+  learn:"📖 Related → Q2 (decision framework), Golden Lesson 3 in the source lesson (MCP server count is a blast-radius/ownership decision)."
+},
+{
+  id:4, topic:"MCP server topology", trap:"Fixed-number trap", diff:"Intermediate",
+  q:"A teammate asks: \"At exactly what tool count should we split our MCP server into multiple domain-scoped servers?\" What's the technically accurate answer?",
+  opts:[
+    "Exactly 10 tools — that's the hard limit documented in the MCP spec.",
+    "There's no hard number, but tool-selection accuracy measurably degrades once an agent has to choose among roughly 20-30+ tools spanning unrelated domains — that's the practical trigger, not a fixed rule.",
+    "Exactly 100 tools — MCP servers are designed to scale linearly with no degradation below that.",
+    "Tool count is irrelevant; only latency determines when to split."
+  ],
+  correct:1,
+  exp:"There's no hard-coded threshold in the MCP protocol itself. The real driver is empirical: once the combined toolset an LLM has to reason over spans roughly 20-30+ tools across unrelated domains, tool-selection accuracy degrades — the model starts confusing similarly-shaped tools (e.g., 'create_ticket' vs 'raise_PO'). That's the PRACTICAL signal to split, not a spec-mandated number.",
+  why:[
+    "There is no such hard limit in the MCP specification — this is a fabricated 'rule.'",
+    "✅ Correct. ~20-30+ tools spanning unrelated domains is the empirically observed point where tool-selection accuracy starts to degrade — a practical trigger, not a fixed rule.",
+    "MCP servers don't scale tool count linearly with no accuracy cost — more unrelated tools measurably hurts selection accuracy.",
+    "Latency is a separate concern from tool-selection accuracy; tool count directly affects the LLM's ability to pick the right tool, independent of response latency."
+  ],
+  deep:"Tool-selection degradation happens because the LLM must reason over ALL exposed tool schemas/descriptions in its context to pick one — more tools means more semantically similar candidates competing for the model's decision, and irrelevant tool definitions dilute the signal for the tools that actually matter to the current query (the same underlying mechanism as attention dilution in Topic 13's Section 2 questions). This is why Anthropic's own guidance treats ~20-30 tools as a rough ceiling for a single agent/server's toolset, not a spec rule — it's an emergent property of how attention and context work, observed empirically across many deployments.",
+  learn:"📖 Related → Q9 (attention dilution mechanism), Q10 (tool-selection degradation in single super-agent)."
+},
+{
+  id:5, topic:"MCP server topology", trap:"Premature-split trap", diff:"Senior",
+  q:"A 3-person startup team is prototyping an internal tool with 8 total tools across HR and IT. A senior engineer suggests splitting into 2 MCP servers 'for best practice.' Is this the right call?",
+  opts:[
+    "Yes — always split by domain regardless of scale, since it's a MCP best practice with no downside.",
+    "No — for a small team, small tool count (well under 20-30), shared auth/security boundary, and a POC/internal-tooling stage, keeping ONE server is the right call. Coordination overhead of multiple servers (gateway, routing, N deployments) isn't justified yet; split later when a real pain point (outage, security review, scaling limit) forces it.",
+    "It depends only on whether the team uses Kubernetes or not.",
+    "Yes, but only if HR and IT report to different VPs."
+  ],
+  correct:1,
+  exp:"Splitting is a trade-off, and this scenario sits clearly on the 'keep it unified' side: 3-person team (no ownership divergence), 8 tools (far below the ~20-30 tool-selection threshold), likely shared security boundary at this stage, and speed of iteration matters more than isolation for a prototype. Splitting here adds a gateway/orchestration layer, N deployments, and coordination overhead with no corresponding pain point to justify it — a classic premature-optimization mistake.",
+  why:[
+    "Blanket 'always split' ignores the real operational cost: more infra to run/monitor/secure, and a mandatory gateway layer, for zero measured benefit at this scale.",
+    "✅ Correct. Small team + small tool count + shared boundary + POC stage = keep it unified. Split later when an actual pain point (outage, security review, scaling limit) appears — don't pre-optimize.",
+    "Infrastructure choice (Kubernetes or not) doesn't determine MCP server topology — ownership, security boundary, tool count, and scaling needs do.",
+    "Org-chart structure (different VPs) can be A signal of ownership divergence, but at 3 people and 8 tools it's not decisive on its own — the practical thresholds (tool count, security boundary) matter more here."
+  ],
+  deep:"This question tests whether a candidate over-corrects after learning 'sometimes you should split' into 'therefore always split.' Golden Lesson 1 from the source material: senior interviews rarely have ONE correct choice — they test whether you can name the axes (ownership, security boundary, tool count, cadence, cost) and place THIS specific scenario on each axis before recommending. Here, every axis points to 'keep it simple.' Recognizing when NOT to apply a pattern is as important a signal as knowing the pattern exists.",
+  learn:"📖 Related → Q2 (decision framework), Q12 (same premature-optimization trap for multi-agent)."
+},
+{
+  id:6, topic:"MCP gateway pattern", trap:"Agent-complexity trap", diff:"Senior",
+  q:"You split into 5 domain-scoped MCP servers (HR, Sales, IT, ERP, Finance). Now the agent needs to know which of 5 servers to call for any given request. How does production architecture typically solve this without making the agent itself track 5 connections?",
+  code:"# Agent's perspective: ONE logical endpoint\nagent -> gateway/orchestrator -> routes to correct domain server\n#                                  (HR / Sales / IT / ERP / Finance)",
+  opts:[
+    "The agent must be given explicit if/else logic to pick the right server for every possible request type.",
+    "A GATEWAY/ORCHESTRATOR layer sits in front of the 5 servers, exposing ONE logical endpoint to the agent. It handles auth and routing, forwarding each call to the correct domain server — the agent doesn't need to know 5 servers exist behind it.",
+    "You duplicate every tool onto all 5 servers so the agent can call any server for anything.",
+    "The agent connects to a random server and retries until one responds successfully."
+  ],
+  correct:1,
+  exp:"The standard production pattern is a gateway/orchestrator layer in front of domain-scoped servers. It gives the agent ONE logical connection point (simple from the agent's side) while auth, routing, and discovery happen behind that gateway — the agent just sees 'the available tools' and the gateway handles which physical server actually serves each tool. This is how you get BOTH isolation (blast radius, ownership, scaling) AND simplicity for the calling agent.",
+  why:[
+    "Hardcoding routing logic into the agent's prompt/reasoning doesn't scale and couples the agent to infrastructure details it shouldn't need to know.",
+    "✅ Correct. A gateway/orchestrator abstracts the N-server topology behind ONE logical endpoint — auth, routing, and discovery live in the gateway, not the agent.",
+    "Duplicating tools across servers defeats the purpose of splitting (ownership/security isolation) and creates consistency nightmares.",
+    "Random retry-until-success is not a routing strategy — it wastes calls, adds latency, and risks calling the wrong domain's tool entirely."
+  ],
+  deep:"This mirrors the API Gateway pattern from microservices architecture, applied to MCP: a single entry point that handles cross-cutting concerns (auth, rate limiting, logging, routing) so downstream services (or here, domain MCP servers) can stay focused and independently deployable. For cross-domain workflows (e.g., 'onboard a new employee' touching HR + IT + ERP), the orchestrator calls each domain server in sequence or parallel depending on dependencies and stitches results together — holding only the compact summary needed to sequence the workflow, not each domain's full internal context.",
+  learn:"📖 Related → Q7 (cross-domain workflow stitching), Q2 (why split in the first place)."
+},
+{
+  id:7, topic:"MCP gateway pattern", trap:"Context-bloat trap", diff:"Senior",
+  q:"A workflow 'onboard new employee' needs to touch HR (create employee record), IT (provision laptop + accounts), and ERP (set up payroll). With domain-scoped MCP servers, how should the orchestrator handle this without re-introducing the attention-dilution problem you split servers to avoid?",
+  opts:[
+    "The orchestrator should load the FULL context/history of all three domain servers into its own context so it has everything.",
+    "The orchestrator calls each domain server (in sequence or parallel, depending on dependencies) and holds only a COMPACT SUMMARY of each result needed to sequence the workflow — not each domain's full internal context/tool history.",
+    "Merge HR, IT, and ERP into one server just for this one workflow, then split them again afterward.",
+    "Skip IT and ERP steps automatically since the HR record creation is the only step that matters."
+  ],
+  correct:1,
+  exp:"The whole point of context-centric decomposition is that each domain server keeps its own focused context (HR's tools/history stay with HR, IT's with IT), while the orchestrator holds only the COMPACT SUMMARY needed to sequence the cross-domain workflow. Loading each domain's full context into the orchestrator would recreate exactly the attention-dilution problem that motivated splitting servers in the first place — just one layer up.",
+  why:[
+    "Loading full context from all three domains into the orchestrator reintroduces attention dilution/context pollution at the orchestrator level — defeating the purpose of domain isolation.",
+    "✅ Correct. Each domain server keeps its own focused context; the orchestrator holds only the compact summary needed to sequence steps — this is context-centric decomposition applied to cross-domain workflows.",
+    "Merging and re-splitting servers per-workflow is operationally absurd — it recreates deployment/ownership churn for every cross-domain task.",
+    "Skipping steps isn't a valid response to a multi-domain workflow requirement — all three steps (HR, IT, ERP) are needed for onboarding to actually complete."
+  ],
+  deep:"This is the same principle from the source material's multi-agent guidance, applied to MCP orchestration: split along CONTEXT boundaries and pass SUMMARIES across those boundaries, not raw context. An order-lookup tool returning 2000+ tokens the main task doesn't need should be isolated and summarized before it reaches the orchestrator's context — same idea here, just at the MCP-server level instead of the sub-agent level. The unifying insight across both MCP topology and multi-agent design: isolate context, pass summaries, avoid recombining everything at a higher layer 'just in case.'",
+  learn:"📖 Related → Q6 (gateway pattern), Q9-Q10 (attention dilution / context pollution)."
+},
+{
+  id:8, topic:"MCP security boundaries", trap:"Shared-auth trap", diff:"Senior",
+  q:"HR tools handle PII (employee records) and ERP tools handle financial data (purchase orders, SOX-relevant transactions). Both currently sit behind the SAME MCP server and the same auth boundary. What's the concrete risk, independent of any bug or crash?",
+  opts:[
+    "No risk — as long as the server has HTTPS enabled, all data behind it is equally protected.",
+    "A single compromised credential or over-broad access grant on that ONE server exposes BOTH PII and financial data at once — the domains can't have differentiated access policies (e.g., stricter PII controls, SOX-style controls for finance) because they share one auth boundary.",
+    "The only risk is slightly higher latency for ERP requests due to HR traffic.",
+    "There's no meaningful difference between PII and financial data from a security-architecture standpoint."
+  ],
+  correct:1,
+  exp:"Sharing an auth boundary means a single compromised credential, an over-permissioned token, or a vulnerability in ANY tool grants access to everything behind that boundary — HR's PII and ERP's financial/SOX-relevant data both become exposed together, even though they have fundamentally different compliance requirements. Domain-scoped servers let you apply differentiated access policies (PII-specific controls on HR, SOX-style controls on finance) and contain a breach to just one domain.",
+  why:[
+    "HTTPS secures transport (data in transit) but says nothing about authorization scope or blast radius of a compromised credential — it's necessary but nowhere near sufficient here.",
+    "✅ Correct. Shared auth boundary = shared exposure. A single compromised credential exposes both PII and financial data together, and you can't apply differentiated compliance controls per domain within one boundary.",
+    "This is a security/compliance issue, not a latency issue — the risk is about who can access what, not how fast.",
+    "PII (HR) and financial/SOX data (ERP) have materially different regulatory requirements (e.g., data-privacy law vs financial-controls law) — treating them identically is itself the risk."
+  ],
+  deep:"This is the blast-radius concept applied specifically to security rather than availability. Compliance frameworks (SOX for financial controls, various PII/privacy regulations) typically require documented, differentiated access controls per data category — a shared auth boundary makes it structurally impossible to satisfy that requirement cleanly, which is often the concrete forcing function ('a security review') that pushes teams from one MCP server to domain-scoped servers, even when tool count and ownership alone hadn't yet crossed the threshold.",
+  learn:"📖 Related → Q3 (blast radius for availability), Q2 (security boundary as a split trigger)."
+},
+{
+  id:9, topic:"Single super-agent vs orchestrator", trap:"Missing-vocabulary trap", diff:"Senior-trap",
+  q:"Interviewer: \"What happens if, instead of an orchestrator + specialized sub-agents, you put EVERYTHING — all tools, all system prompt instructions, all context — into ONE super-agent?\" You answer: \"Context would overlap, everything in one place, it'd get bulky.\" He says you're correct but wants ONE specific term. What's the term he's fishing for?",
+  code:"# Orchestrator + sub-agents (specialized, focused context each)\norchestrator -> [retrieval_agent, grading_agent, generation_agent]\n\n# vs. collapsed into one super-agent (everything shares ONE context)\nsuper_agent  -> ALL tools + ALL instructions + ALL history at once",
+  opts:[
+    "Model collapse — the phenomenon where a model degrades after training on its own outputs repeatedly.",
+    "ATTENTION DILUTION (also called context pollution / context dilution) — attention is a finite, distributed resource; cramming irrelevant tool defs and history from every domain into one context spreads the model's attention thin even on queries touching only one domain, dropping the signal-to-noise ratio.",
+    "Catastrophic forgetting — the phenomenon where a model loses previously learned information during fine-tuning.",
+    "Vanishing gradient — the phenomenon where gradients shrink to near-zero in deep network training."
+  ],
+  correct:1,
+  exp:"The term is ATTENTION DILUTION (Anthropic's engineering blog calls the same phenomenon 'context pollution'). Transformer attention is finite and gets distributed across every token in context. When one super-agent holds the system prompt, tool definitions, and conversation history for HR + Sales + IT + ERP simultaneously, the model's attention must spread across ALL of that material for every response — even a query that only concerns one domain. Relevant tokens get diluted among irrelevant ones, degrading response quality. Critically, this is NOT about running out of context window space — it's about attention itself being a limited, distributed resource.",
+  why:[
+    "Model collapse is a training-time phenomenon (degradation from recursive training on synthetic/self-generated data) — unrelated to a single agent's context composition at inference time.",
+    "✅ Correct. Attention dilution / context pollution: irrelevant tokens compete with relevant ones for finite attention, degrading response quality — distinct from simply running out of context window space.",
+    "Catastrophic forgetting is also a training-time phenomenon (losing prior knowledge during fine-tuning on new data) — not what happens when you cram context into one inference-time agent.",
+    "Vanishing gradients are a training/optimization issue in deep networks — unrelated to inference-time context composition in an agent."
+  ],
+  deep:"Source: Anthropic engineering blog, 'Building multi-agent systems: when and how to use them' (claude.com/blog, Jan 2026) — describes irrelevant information as diluting attention and reducing response quality, calling it 'context pollution.' The key distinguishing insight for an interview: don't say 'it runs out of context space' — that's a different, simpler failure mode (hitting the token limit). Attention dilution happens well BEFORE hitting any token limit, purely because attention has to spread across everything present, relevant or not. This is exactly the mechanism behind Q4's tool-selection degradation and Q10's persona conflicts.",
+  learn:"📖 Related → Q10 (the full list of super-agent failure modes), Q4 (tool-selection degradation), Golden Lesson 2 (vocabulary vs intuition)."
+},
+{
+  id:10, topic:"Single super-agent vs orchestrator", trap:"Incomplete-list trap", diff:"Senior",
+  q:"Beyond attention dilution itself, which of these is NOT one of the concrete failure modes of collapsing HR + Sales + IT + ERP sub-agents into one super-agent?",
+  opts:[
+    "Conflicting personas — HR should be empathetic, IT should be terse/procedural; merging both into one system prompt produces a diluted, inconsistent persona.",
+    "No parallelism — a single agent processes domains sequentially, while an orchestrator can dispatch independent sub-agents to work in parallel when sub-tasks don't depend on each other.",
+    "Guaranteed 10x lower total token cost, since there's only one agent instead of several making separate calls.",
+    "Harder debugging/blame assignment — when the super-agent gives a bad answer, you can't isolate whether HR instructions, ERP instructions, or their interaction caused it."
+  ],
+  correct:2,
+  exp:"This is the ONE that's false — and it's actually backwards from the real trade-off. Multi-agent systems typically consume 3-10x MORE tokens than a single well-prompted agent (duplicated context per agent + coordination messages + summarization on handoff) — so collapsing to one agent trends toward LOWER token cost, not higher, but that's a genuine benefit of the super-agent approach, not a failure mode. The question asks which is NOT a failure mode of the super-agent design, and 'guaranteed 10x lower cost' overstates and mischaracterizes even the real (correct-direction) cost benefit — plus it's framed as a downside-list item when it's actually a legitimate point in FAVOR of single-agent.",
+  why:[
+    "This IS a real failure mode: distinct domains need distinct tones/procedures, and forcing one persona to serve all of them produces mediocre-at-everything results.",
+    "This IS a real failure mode: a single agent is inherently sequential, losing the ability to dispatch independent sub-tasks concurrently that an orchestrator pattern enables.",
+    "✅ Correct — this is NOT a failure mode of the super-agent design. If anything, token cost trends LOWER for single-agent (multi-agent costs 3-10x MORE due to duplicated context + coordination overhead) — this statement doesn't belong in a list of super-agent downsides.",
+    "This IS a real failure mode: a monolithic prompt makes it hard to isolate which domain's instructions (or their interaction) caused a bad response, unlike a focused single-domain sub-agent."
+  ],
+  deep:"This question tests whether a candidate can correctly hold BOTH sides of the trade-off simultaneously: multi-agent avoids attention dilution/persona conflict/no-parallelism/debugging pain, but COSTS 3-10x more tokens due to duplicated context and coordination overhead. A candidate who says 'multi-agent is strictly better' misses the cost side; a candidate who says 'single-agent is strictly better because it's cheaper' misses the quality/isolation side. The senior answer holds both: split only when a genuine constraint (context volume, parallelizable work, real specialization) justifies paying the 3-10x token premium.",
+  learn:"📖 Related → Q11 (when NOT to use multi-agent), Q9 (attention dilution mechanism)."
+},
+{
+  id:11, topic:"When not to use multi-agent", trap:"Multi-agent-is-always-better trap", diff:"Senior",
+  q:"Anthropic's own guidance notes teams often build elaborate multi-agent systems only to find a well-prompted SINGLE agent does just as well, at 3-10x lower token cost. Given this, when should you actually justify splitting into sub-agents?",
+  opts:[
+    "Whenever the codebase has more than one feature area, split by feature to keep things organized.",
+    "Only when a genuine constraint exists: CONTEXT PROTECTION (a subtask generates high-volume context irrelevant to the rest, e.g. an order lookup returning 2000+ tokens the main task doesn't need), PARALLELIZATION (independent subtasks that can run concurrently), or SPECIALIZATION (distinct toolsets/conflicting personas/deep domain expertise a generalist can't sustain).",
+    "Whenever the team has enough engineers to own separate agents, regardless of technical need.",
+    "Never — multi-agent systems should always be avoided because of the token cost premium."
+  ],
+  correct:1,
+  exp:"The honest senior-level answer is NOT 'multi-agent is always better' NOR 'always avoid it' — it's 'split only when a genuine constraint exists.' Three concrete triggers: context protection (isolate high-volume irrelevant context and return a summary instead), parallelization (genuinely independent subtasks that benefit from running concurrently), and specialization (distinct tools, conflicting personas, or domain depth that would overwhelm one generalist agent). Absent these, a single well-prompted agent is often just as capable and meaningfully cheaper.",
+  why:[
+    "Splitting by 'feature area' alone is a problem-type/organizational split, not a context-boundary split — this is exactly the anti-pattern the material warns against (see Q13).",
+    "✅ Correct. Split only for context protection, real parallelization, or genuine specialization — not reflexively, given the 3-10x token cost premium of multi-agent.",
+    "Team staffing capacity is an organizational convenience, not a technical justification for splitting an agent architecture.",
+    "Never using multi-agent ignores real cases (e.g., independent parallel research, or a subtask returning huge irrelevant context) where splitting is the correct engineering choice despite the cost."
+  ],
+  deep:"This is the necessary counterweight to Q9/Q10: knowing WHY super-agents fail (attention dilution, tool-selection degradation, persona conflict) doesn't mean multi-agent is free — it costs 3-10x more tokens from duplicated context per agent plus coordination/handoff messages. A senior candidate demonstrates they can hold both truths and apply a real test before splitting, rather than reflexively defaulting to whichever pattern they last read about. This mirrors the MCP server-count reasoning in Section 1 — same shape of trade-off, different domain.",
+  learn:"📖 Related → Q10 (token cost), Q12 (premature split), Golden Lesson 4."
+},
+{
+  id:12, topic:"Multi-agent boundaries", trap:"Problem-type-split trap", diff:"Senior-trap",
+  q:"A team splits their coding-assistant architecture into 4 sub-agents: Planner, Implementer, Tester, Reviewer — each handling one PHASE of building the SAME feature, passing results to the next in sequence. Teams report these sub-agents spending MORE tokens coordinating than actually working. What's the architectural mistake?",
+  code:"# Anti-pattern: split by PROBLEM TYPE (phases of the SAME feature)\nplanner -> implementer -> tester -> reviewer   # sequential handoffs, same feature\n\n# Better: split by CONTEXT boundary (independent, self-contained units)\nhr_agent | erp_agent | it_agent   # each keeps everything it needs, no handoff chain",
+  opts:[
+    "There's no mistake — 4 specialized sub-agents is inherently better than 1 general agent regardless of how the boundary is drawn.",
+    "Splitting by PROBLEM TYPE (planner/implementer/tester/reviewer for the SAME feature) creates a 'telephone game' where each sequential handoff loses fidelity, and the coordination/summarization overhead between phases can exceed the actual work — this is a classic multi-agent anti-pattern. Split along CONTEXT boundaries instead (e.g., independent, self-contained units of work like HR vs ERP).",
+    "The mistake is only that they used 4 agents instead of exactly 3.",
+    "The mistake is not giving the Reviewer agent write access to fix issues itself."
+  ],
+  correct:1,
+  exp:"The failure mode here is splitting by PROBLEM TYPE rather than CONTEXT. Planner → Implementer → Tester → Reviewer for the SAME feature forces a sequential chain of handoffs, and each handoff is a 'telephone game' — context and nuance get lost or have to be re-summarized at every step. Teams have measured these sub-agents spending MORE tokens on coordination/summarization than on the actual work. The fix is to split along CONTEXT boundaries instead — independent, self-contained units (like HR vs ERP, or two genuinely parallel research paths) where each agent keeps everything it needs and doesn't depend on a chain of prior hand-offs.",
+  why:[
+    "More sub-agents isn't inherently better — the VALUE of splitting depends entirely on whether the boundary is a genuine context boundary or an artificial phase boundary within one unit of work.",
+    "✅ Correct. Problem-type splitting (sequential phases of the same feature) creates a lossy handoff chain — the 'telephone game.' Context-boundary splitting (independent, self-contained units) is the pattern that actually reduces overhead.",
+    "The agent COUNT isn't the issue — the boundary TYPE is. Even 2 agents split by problem-type on the same feature would have this issue; even 6 agents split by genuine context boundaries could work fine.",
+    "Write access is an authorization detail, unrelated to the fundamental architectural mistake of chaining sequential phase-based hand-offs."
+  ],
+  deep:"Good boundaries (per the source material): independent research paths, components with a clean interface contract, and blackbox verification (a dedicated verifier testing another agent's output as a unit). Bad boundaries: sequential phases of the SAME work, tightly coupled components, or anything requiring frequent shared-state sync. The deciding question to ask before drawing a sub-agent boundary: 'does this sub-agent need to know almost everything the other one knows to do its job well?' If yes, it's a problem-type split in disguise and will suffer the telephone-game effect regardless of how the boundary is labeled.",
+  learn:"📖 Related → Q11 (when to split at all), Q14 (verification sub-agent as a GOOD boundary example)."
+},
+{
+  id:13, topic:"Multi-agent boundaries", trap:"Domain-vs-phase confusion trap", diff:"Senior",
+  q:"Why is splitting HR / Sales / IT / ERP into separate agents (or MCP servers) a GOOD context boundary, while splitting Planner / Implementer / Tester / Reviewer for one feature is a BAD one — even though both involve 'splitting into multiple pieces'?",
+  opts:[
+    "There's no real difference — both are equally good or bad; it just depends on team preference.",
+    "HR/Sales/IT/ERP are genuinely independent domains — each needs different tools, different data, and different security context, with little need to share state between them. Planner/Implementer/Tester/Reviewer are sequential phases of the SAME feature — they need to share almost all the same context, so splitting them just forces lossy hand-offs instead of removing real independence.",
+    "HR/Sales/IT/ERP is good because it has exactly 4 pieces, which is the ideal number for multi-agent systems.",
+    "Planner/Implementer/Tester/Reviewer is actually the better split; HR/Sales/IT/ERP is the anti-pattern."
+  ],
+  correct:1,
+  exp:"The distinguishing factor is INDEPENDENCE of context, not the number of pieces or superficial similarity of 'splitting into N parts.' HR/Sales/IT/ERP domains genuinely don't need each other's tools, data, or security context most of the time — splitting removes REAL coupling, letting each domain scale/secure/own itself independently. Planner/Implementer/Tester/Reviewer are different PHASES of ONE piece of work — they inherently need almost all the same context (the feature spec, the code, the requirements) passed between them, so splitting doesn't remove coupling, it just adds hand-off/summarization overhead on top of coupling that was always going to exist.",
+  why:[
+    "There is a real, mechanistic difference: one split removes genuine context coupling, the other doesn't — 'team preference' isn't the deciding factor.",
+    "✅ Correct. The test is whether the pieces are genuinely independent in the context/data/tools they need (good boundary) versus sequential phases needing to share nearly all context (bad boundary, creates a telephone game).",
+    "Agent count (4 in both examples here) is coincidental and not the deciding factor — a 2-agent problem-type split has the same issue, and a 6-agent domain split can still be sound.",
+    "This reverses the actual conclusion from the source material — domain splitting (HR/ERP/etc.) is the GOOD example; phase splitting (planner/implementer/etc.) is the anti-pattern."
+  ],
+  deep:"A useful test to apply live in an interview: for any proposed split, ask 'does agent B need to know almost everything agent A knows to do its job?' If yes, you're looking at a problem-type/phase split masquerading as multi-agent design, and you should expect the telephone-game effect. If no — if each agent can operate with its OWN focused context and only needs a compact SUMMARY from others when workflows genuinely cross boundaries (see Q7) — it's a legitimate context-boundary split. This single test resolves most 'should I split this?' architecture debates.",
+  learn:"📖 Related → Q12 (the telephone-game failure mode), Q7 (cross-domain summary-passing when workflows DO cross boundaries)."
+},
+{
+  id:14, topic:"Verification sub-agents", trap:"Early-victory trap", diff:"Senior",
+  q:"You add a 'verification sub-agent' whose only job is to test another agent's output before it ships. It runs one test, sees it pass, and reports success — but a real bug ships anyway. What failure mode is this, and what should the verification sub-agent have had instead?",
+  opts:[
+    "This is unavoidable; verification sub-agents are fundamentally unreliable and shouldn't be used.",
+    "This is the 'EARLY VICTORY PROBLEM' — declaring success after a shallow/partial check. The verification sub-agent needed EXPLICIT, COMPREHENSIVE success criteria (covering the actual scope of what could go wrong), not just 'run something and see if it passes.'",
+    "The bug means the main orchestrator model was too weak and should be replaced entirely.",
+    "Verification sub-agents should never be given any tools, only read access to logs."
+  ],
+  correct:1,
+  exp:"This is the EARLY VICTORY PROBLEM: a verifier that runs a shallow or narrow check, sees it pass, and declares success without full coverage of what actually needed validating. The fix isn't to abandon verification sub-agents — it's to give them EXPLICIT, COMPREHENSIVE success criteria up front, so 'passing' actually corresponds to the real scope of correctness required, not just the first test that happened to succeed.",
+  why:[
+    "Verification sub-agents are a legitimate, useful pattern — the failure here is a design/criteria problem (shallow checks), not a fundamental flaw in the pattern itself.",
+    "✅ Correct. The early victory problem: incomplete verification criteria let a shallow pass masquerade as full correctness. Fix = explicit, comprehensive success criteria.",
+    "A shipped bug from a shallow check doesn't necessarily indict the main orchestrator model's capability — it indicts the verification agent's CRITERIA, which is a separate, fixable design issue.",
+    "Restricting a verifier to read-only log access doesn't address the root cause (narrow success criteria) and may remove tools it legitimately needs to run comprehensive checks."
+  ],
+  deep:"Verification sub-agents are most useful when: the main orchestrator model is less capable and benefits from a dedicated check, verification needs specialized tools the main agent doesn't have, or you want an explicit checkpoint before a risky action (e.g., shipping code, sending an email, executing a financial transaction). The early-victory problem is the main failure mode to design against — mitigate it by making success criteria explicit and comprehensive UP FRONT (what exactly must be true, across what scope) rather than letting the verifier decide ad hoc what 'testing it' means.",
+  learn:"📖 Related → Q13 (good sub-agent boundaries — blackbox verification is one), Q12 (contrast with the telephone-game anti-pattern)."
+},
+{
+  id:15, topic:"Accuracy vs latency trade-off", trap:"Accuracy-only trap", diff:"Senior-trap",
+  q:"Interviewer's scenario: a customer has 3 years of sales data and wants next-month sales predictions. Model A: 90% accuracy, 30-minute inference. Model B: 99.99% accuracy, 3-day inference. Your first instinct is to recommend Model B purely because \"accuracy is the priority.\" When pushed on why not Model A, what's the axis that actually resolves this decision?",
+  opts:[
+    "There is no other axis — accuracy alone should always decide model selection regardless of context.",
+    "PREDICTION CADENCE / business SLA: if this forecast is only generated monthly, biweekly, or quarterly (not continuously), a 3-day inference time comfortably fits inside that cycle — so the extra accuracy from Model B is essentially 'free' because latency was never the actual bottleneck at that cadence.",
+    "The size of the training dataset in gigabytes, which determines model choice directly.",
+    "Whichever model uses random forest, since that algorithm is always faster in production regardless of measured runtime."
+  ],
+  correct:1,
+  exp:"The resolving axis is PREDICTION CADENCE — how often does the business actually need a fresh prediction? Sales forecasting for 'next month' is typically generated on a monthly, biweekly, or quarterly cycle, not continuously. A 3-day inference time fits comfortably inside a monthly cycle with room to spare, so the latency 'cost' of the more accurate model is essentially irrelevant to THIS use case. This is different from, say, real-time fraud detection, where even 200ms matters because predictions are needed continuously, on-demand.",
+  why:[
+    "Defaulting to 'accuracy alone, always' is the junior mistake this question is specifically testing for — it ignores whether the latency number is even relevant given how the prediction is actually consumed.",
+    "✅ Correct. Match model choice to how OFTEN a fresh prediction is actually needed. A loose SLA (monthly) makes a 3-day runtime a non-issue; a tight SLA (real-time) would flip the recommendation.",
+    "Dataset size in gigabytes isn't the deciding factor here — the business's consumption cadence for the prediction is.",
+    "The underlying algorithm (random forest) doesn't dictate cadence-independent runtime guarantees — the STATED runtimes (30 min vs 3 days) are what must be reasoned about directly."
+  ],
+  deep:"This was the interviewer's strongest praise moment in the real exchange: recognizing that a monthly forecast doesn't need a 30-minute SLA is exactly the kind of judgment that ties a technical metric (inference time) to actual business/operational cadence, rather than treating the metric as inherently good or bad in isolation. The general principle: ALWAYS ask 'how often does this actually need to run?' before optimizing for or worrying about latency. A batch process (hours-days latency) fits infrequent-cadence use cases; only continuous/on-demand use cases force you toward faster-but-possibly-less-accurate models.",
+  learn:"📖 Related → Q17 (batch vs real-time inference framing), Golden Lesson 6."
+},
+{
+  id:16, topic:"Accuracy vs latency trade-off", trap:"Metric-face-value trap", diff:"Senior-trap",
+  q:"A model reports 99.99% accuracy on 3 years of historical sales data for next-month forecasting. A senior candidate should treat this number with suspicion rather than excitement. Why, and what should be checked before trusting it?",
+  opts:[
+    "There's nothing to check — a higher accuracy number is always strictly better and should be trusted at face value.",
+    "With only 3 years of data, 99.99% accuracy is more likely a sign of OVERFITTING to training data than a real generalization gain. It should be validated on a true OUT-OF-TIME holdout set (not just cross-validation on historical data that may share seasonal patterns with training data) before being trusted over the 90% model.",
+    "The number should be checked only for typos, since accuracy metrics can't be miscalculated for other reasons.",
+    "99.99% should be trusted more precisely BECAUSE the dataset is small — smaller datasets make models more reliable."
+  ],
+  correct:1,
+  exp:"A near-perfect accuracy number on a relatively small dataset (3 years) is a red flag, not a win — it more often signals the model has memorized noise/patterns specific to the training data (overfitting) rather than learned a generalizable trend. The correct diligence step: verify the metric on a true OUT-OF-TIME holdout set — data the model has never seen, ideally from a period after training data ends — rather than trusting cross-validation numbers that may still share seasonal/cyclical patterns with the training set. Next month's ACTUAL sales are the real test, not backtested accuracy.",
+  why:[
+    "Blind trust in a high accuracy number is exactly the failure mode this question probes — 'higher is always better' ignores overfitting risk entirely.",
+    "✅ Correct. Small dataset + near-perfect accuracy = overfitting red flag. Validate on a true out-of-time holdout before trusting the number over a more modest, possibly more honest, accuracy figure.",
+    "This isn't a typo-checking exercise — the concern is a genuine statistical failure mode (overfitting), not clerical error.",
+    "Smaller datasets make overfitting MORE likely, not less — this statement is backwards from the actual statistical relationship."
+  ],
+  deep:"Golden Lesson 5 from the source material: never trust a metric without asking how it was validated. Concretely: check whether the reported accuracy comes from k-fold cross-validation on historical data (which can leak seasonal patterns between folds) versus a genuine time-based holdout (train on years 1-2.5, test on the last 6 months, never seen during training). Also worth raising: whether the METRIC itself is appropriate for the task — e.g., MAPE or RMSE might be more informative than a generic 'accuracy' figure for a continuous sales-forecasting target, since 'accuracy' isn't even a standard classification-style metric for regression/forecasting problems, which itself should raise a flag about how the number was computed.",
+  learn:"📖 Related → Q15 (cadence), Q18 (full decision framework including this check)."
+},
+{
+  id:17, topic:"Batch vs real-time inference", trap:"One-size-fits-all trap", diff:"Intermediate",
+  q:"How does the distinction between BATCH inference and REAL-TIME inference change which model (fast/less-accurate vs slow/more-accurate) you should recommend for a given use case?",
+  opts:[
+    "The distinction is purely academic; batch and real-time systems should always use the same model-selection logic.",
+    "BATCH inference runs on a schedule (hours to days) and is cost-efficient at scale, fitting a model with higher latency but stronger accuracy (e.g., monthly sales forecasting). REAL-TIME inference scores events as they arrive (ms to seconds) and is needed when decisions must be immediate (e.g., fraud detection) — that forces you toward a faster, possibly less accurate, model.",
+    "Real-time systems should always use the MOST accurate model available, regardless of latency, because real-time implies high stakes.",
+    "Batch systems can only ever use rule-based logic, never machine learning models."
+  ],
+  correct:1,
+  exp:"Batch and real-time inference have fundamentally different latency budgets, which directly drives model choice. Batch (scheduled, hours-to-days cadence, e.g. monthly sales forecasts) can afford a slower, more accurate model since there's no continuous demand for instant answers. Real-time (scoring events as they arrive, e.g. fraud detection at transaction time) has a tight latency SLA — often milliseconds to seconds — which forces a faster model even if it sacrifices some accuracy, because a highly accurate answer that arrives too late is often useless (the transaction has already gone through).",
+  why:[
+    "The distinction is far from academic — it directly determines the latency budget available, which is the primary constraint on viable model choice.",
+    "✅ Correct. Batch = scheduled, cost-efficient, tolerates slower/more-accurate models. Real-time = immediate, needs a fast model even at some accuracy cost. The sales-forecast scenario is explicitly a BATCH problem, which is why the 3-day model was acceptable.",
+    "Real-time doesn't automatically mean 'always use the most accurate model regardless of latency' — real-time specifically means the LATENCY constraint often dominates, sometimes forcing a less accurate but fast-enough model to be the only viable choice.",
+    "Batch systems commonly use full ML models (including deep, slow-to-run ones) precisely because they don't face a tight latency constraint — rule-based logic isn't a batch-specific limitation."
+  ],
+  deep:"This framing directly resolves the interview's core question: the sales-forecast scenario is explicitly a BATCH problem (predictions generated monthly/biweekly/quarterly, not continuously), so the 3-day Model B is viable specifically BECAUSE it's batch, not despite it. If the SAME two models were being used for real-time fraud scoring on every transaction, the 3-day model would be immediately disqualified regardless of its accuracy advantage — the latency constraint would dominate. Recognizing which regime (batch vs real-time) a use case falls into should be one of the first questions asked before comparing any accuracy/latency numbers.",
+  learn:"📖 Related → Q15 (cadence), Q18 (reframing a 'speed AND accuracy' customer ask using this distinction)."
+},
+{
+  id:18, topic:"Structured trade-off answers", trap:"Single-track-answer trap", diff:"Senior",
+  q:"Across all three real interview questions (MCP server count, super-agent vs orchestrator, accuracy vs latency), what's the ONE repeating structural gap in a 2-3 YOE-style answer versus a 5+ YOE-style answer?",
+  opts:[
+    "A 5+ YOE answer just uses more technical jargon without necessarily being more correct.",
+    "A 2-3 YOE answer gives a correct, single-track answer defending ONE specific choice. A 5+ YOE answer frames the decision as a trade-off with NAMED AXES (e.g., ownership, security boundary, cadence, cost, overfitting risk), places the specific scenario on each axis, THEN gives a conditional recommendation — and names the precise concept/term if one exists.",
+    "A 5+ YOE answer always recommends the more expensive or more complex option to sound thorough.",
+    "There's no real structural difference; interview performance is essentially random and unrelated to answer structure."
+  ],
+  correct:1,
+  exp:"The repeating pattern across all three questions: giving a single correct-sounding answer ('one MCP server because X', 'avoid super-agent because Y', 'pick the accurate model') defends a conclusion without showing the REASONING FRAMEWORK behind it. Interviewers at senior level are usually not testing 'did you get the right answer' — the right answer is almost always 'it depends.' They're testing whether you can name the axes it depends on (explicitly, out loud), place the given scenario on each axis, THEN give a conditional recommendation, and name the precise term/concept if one exists (attention dilution, blast radius, out-of-time holdout, cadence) — because precise vocabulary signals you've engaged with the concept beyond just building it once.",
+  why:[
+    "Jargon without structure doesn't help — the interviewer explicitly reacted to MISSING REASONING (Q1: 50% satisfied) and missing TERMINOLOGY (Q2: 'what's that concept called') as two distinct, separate gaps.",
+    "✅ Correct. Name 2-4 axes -> place the scenario on each -> give a conditional recommendation -> name the term if one exists. Every follow-up question in the real interview was the interviewer probing for this framework, not signaling the initial answer was wrong.",
+    "5+ YOE answers aren't about picking the pricier/more complex option — in the model-selection question, the senior answer could just as easily land on the FASTER, cheaper model if the scenario's axes pointed that way (e.g., real-time cadence, unvalidated accuracy number).",
+    "Interview performance correlates strongly with whether you can articulate a decision framework versus just a conclusion — this is a learnable, structural skill, not randomness."
+  ],
+  deep:"The actionable habit for future interviews, stated explicitly in the source material: whenever asked 'why did you choose X over Y,' structure the answer as (1) name the 2-4 axes the decision depends on, explicitly, out loud; (2) state where THIS use case lands on each axis; (3) give the conditional recommendation; (4) name the concept/term if one exists. This structure alone would have converted all three '50-70% correct' answers into 'strong hire' signals, without changing the underlying reasoning that was already mostly correct — the gap was entirely in STRUCTURE and VOCABULARY, not raw understanding.",
+  learn:"📖 Related → Q1 (Q1's gap), Q9 (Q2's missing term), Q15 (Q3's cadence axis) — this question ties all three together. Golden Lessons 1, 2, and 7."
+},
+/*__DATA__*/
+];
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += "<p>Clean sweep on first try. 🎯 Next time an interviewer asks \"why did you choose X,\" you've got the axes AND the vocabulary ready.</p>"; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

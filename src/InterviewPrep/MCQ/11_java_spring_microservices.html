@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java & Spring Boot Microservices — Scenario MCQs (8)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#c2410c; --accent2:#9a3412;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#7c3aed; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#fb923c; --accent2:#fdba74;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#c4b5fd; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>☕ Java &amp; Spring Boot Microservices — Scenario MCQs</h1>
+  <p>Topic 11 · 8 real-world questions · Spring Boot, microservices, REST, Spring Batch, JPA, resilience · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 8</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Grounded in your 2.5 yrs Java/Spring Boot (ERP + Banking). Likely asked as "tell me about your backend background." ⚠ = debatable.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Spring dependency injection / beans", trap:"New-keyword trap", diff:"Intermediate",
+  q:"In a Spring Boot service, a teammate creates dependencies with `new PaymentClient()` inside each class instead of injecting them. Why is constructor injection of Spring-managed beans preferred?",
+  code:"// Preferred: constructor injection\n@Service\nclass OrderService {\n    private final PaymentClient payments;\n    OrderService(PaymentClient payments) { this.payments = payments; }\n}",
+  opts:[
+    "`new` is faster because it skips the Spring container.",
+    "Spring manages beans in its IoC container; constructor-injecting them gives a single managed instance, decoupling + easy mocking in tests, lifecycle management, and configuration in one place — `new` bypasses all of that.",
+    "There's no difference; `new` and injection behave identically.",
+    "You must use field injection (@Autowired on fields); constructor injection is discouraged."
+  ],
+  correct:1,
+  exp:"Spring's IoC container creates and wires beans. Injecting them (ideally via the constructor) means the container supplies dependencies — giving you loose coupling, trivial mocking in unit tests (pass a fake in the constructor), singleton lifecycle management, and centralized configuration. Using `new` hard-codes the dependency, bypasses the container, and makes the class hard to test and configure.",
+  why:[
+    "Skipping the container isn't a real 'speed' win and forfeits DI's benefits — wrong reason.",
+    "✅ Correct. Container-managed beans + constructor injection = decoupling, testability (mock in tests), lifecycle, central config.",
+    "There's a big difference — `new` creates an unmanaged instance outside Spring's control.",
+    "Field injection works but constructor injection is actually PREFERRED (immutability via final, easier testing, explicit deps)."
+  ],
+  deep:"IoC/DI is Spring's core: @Component/@Service/@Repository beans are created and wired by the container. Constructor injection is preferred over @Autowired field injection because it allows `final` fields (immutability), makes dependencies explicit, and enables plain-constructor instantiation in tests (no Spring context needed to mock). This is the SAME dependency-injection principle as FastAPI's Depends — your Java background transfers directly. `new`-ing dependencies couples classes tightly and defeats mocking/config, so avoid it for collaborators.",
+  learn:"Cross-ref → Lesson 09-MCQ Q3 (FastAPI Depends — same DI concept)."
+},
+{
+  id:2, topic:"Microservice resilience", trap:"Cascading-failure trap", diff:"Senior",
+  q:"In your microservices, Service A calls Service B synchronously. When B slows down, A's threads pile up waiting, A exhausts its thread pool, and the failure CASCADES to services calling A. What pattern prevents this?",
+  opts:[
+    "Add more threads to Service A so it never runs out.",
+    "A circuit breaker (e.g., Resilience4j): after B's failures/timeouts cross a threshold, 'open' the circuit and fail fast (or return a fallback) instead of piling up blocked threads — stopping the cascade.",
+    "Retry the call to B infinitely until it responds.",
+    "Merge A and B into one service so there's no network call."
+  ],
+  correct:1,
+  exp:"A slow dependency causing blocked threads that exhaust the pool and cascade is a classic distributed-systems failure. A CIRCUIT BREAKER monitors failures/timeouts to B; once they exceed a threshold it 'opens' — subsequent calls fail fast or return a fallback immediately instead of blocking — so A's threads aren't consumed waiting on a sick B, and the failure doesn't propagate.",
+  why:[
+    "More threads just delays exhaustion and can worsen resource pressure — it doesn't stop the cascade.",
+    "✅ Correct. Circuit breaker fails fast / falls back once B is unhealthy, preventing thread-pool exhaustion and cascading failure.",
+    "Infinite retries hammer the struggling B and hold threads longer — making the cascade worse.",
+    "Merging services defeats the microservice architecture and isn't a general resilience fix."
+  ],
+  deep:"Circuit breaker states: CLOSED (calls flow, failures counted) → OPEN (threshold exceeded → fail fast / fallback for a cooldown) → HALF-OPEN (test a few calls; recover to CLOSED or back to OPEN). Resilience4j (the modern successor to Hystrix) provides this plus bulkheads (isolate thread pools per dependency), timeouts, retries with backoff, and rate limiters. This is the SAME resilience thinking as the LLM provider-fallback and tool-error patterns in the GenAI topics — fail fast, isolate, degrade gracefully. Timeouts on inter-service calls are mandatory (never call without one).",
+  learn:"Cross-ref → Lesson 10-MCQ Q5 (provider fallback) + Lesson 02-agents (tool resilience)."
+},
+{
+  id:3, topic:"Spring Batch", trap:"Load-it-all trap", diff:"Senior",
+  q:"Your resume mentions Spring Batch for high-volume data processing. A job must process 50 million rows. A naive approach loads all rows into a List and processes them, causing OutOfMemoryError. How does Spring Batch's chunk-oriented model solve this?",
+  opts:[
+    "Give the JVM more heap so the full List fits in memory.",
+    "Chunk-oriented processing: read items in chunks (read → process → write a fixed-size chunk at a time, committing per chunk), so memory stays bounded regardless of total row count.",
+    "Load all rows but process them faster with more threads.",
+    "Spring Batch can only handle small datasets; use raw JDBC for 50M rows."
+  ],
+  correct:1,
+  exp:"Loading 50M rows into a List blows the heap. Spring Batch's CHUNK-ORIENTED model reads items one at a time up to a chunk size (e.g., 1000), processes them, writes the chunk, and commits — then repeats. Only one chunk is in memory at a time, so memory is bounded no matter how many total rows exist. That's exactly what Spring Batch is built for.",
+  why:[
+    "Bumping heap doesn't scale — 50M rows may not fit at any reasonable heap size, and it's fragile.",
+    "✅ Correct. Chunk-oriented (read/process/write fixed-size chunks, commit per chunk) keeps memory bounded for huge datasets.",
+    "More threads speeds processing but doesn't fix loading everything into memory at once (still OOM).",
+    "Spring Batch is DESIGNED for large-scale batch (that's its purpose) — this option is backwards."
+  ],
+  deep:"Spring Batch structure: a Job → Steps; a chunk-oriented Step has an ItemReader (streams items), ItemProcessor (transforms/filters), and ItemWriter (writes a chunk). commit-interval (chunk size) controls how many items per transaction — bounding memory and enabling restart-from-last-commit on failure. Add-ons: restartability (resume after crash), skip/retry policies, and partitioning/parallel steps for throughput. The core idea — stream in bounded batches rather than loading everything — is the same discipline as the unbounded-stream memory bug in Lesson 01 (flush in batches, don't accumulate forever).",
+  learn:"Cross-ref → Lesson 01-SeniorDS (unbounded stream / batch flushing)."
+},
+{
+  id:4, topic:"REST design / idempotency", trap:"Wrong-verb trap", diff:"Intermediate",
+  q:"Your REST API uses POST for everything, including fetching and updating resources. A reviewer flags it. Which mapping follows REST conventions and why does it matter?",
+  opts:[
+    "POST-for-everything is fine as long as the body describes the action.",
+    "Use HTTP verbs semantically: GET (read, safe + idempotent), POST (create), PUT (full update, idempotent), PATCH (partial update), DELETE (idempotent) — so caching, retries, and client expectations work correctly.",
+    "Only GET and POST exist in REST; PUT/PATCH/DELETE aren't real.",
+    "Verbs don't matter; only the URL path matters in REST."
+  ],
+  correct:1,
+  exp:"HTTP verbs carry semantics that clients, proxies, and caches rely on. GET is safe and idempotent (cacheable, retryable), POST creates, PUT replaces (idempotent), PATCH partially updates, DELETE removes (idempotent). Using POST for reads breaks caching and makes retries unsafe (a retried POST may double-create). Correct verb usage makes the API predictable and lets infrastructure behave correctly.",
+  why:[
+    "POST-for-everything breaks GET caching and idempotency guarantees that clients/proxies depend on.",
+    "✅ Correct. Semantic verbs (GET/POST/PUT/PATCH/DELETE) with correct safety/idempotency enable caching, safe retries, and clear contracts.",
+    "PUT/PATCH/DELETE are standard HTTP methods — this is false.",
+    "Verbs matter a lot — they define safety, idempotency, and cacheability, not just the path."
+  ],
+  deep:"Idempotency is key: GET/PUT/DELETE are idempotent (repeating them has the same effect — safe to retry), POST is NOT (retrying can create duplicates — which is why you add idempotency keys for critical POSTs, same as the MCP create_quote dedup in Lesson 03). Safe methods (GET/HEAD) must not change state. Correct verbs + status codes (Lesson 09-MCQ Q9) form the REST contract. This background maps directly to designing GenAI/MCP APIs — the same principles govern both.",
+  learn:"Cross-ref → Lesson 09-MCQ (status codes) + Lesson 03-MCP (idempotency)."
+},
+{
+  id:5, topic:"Transactions / @Transactional", trap:"Partial-write trap", diff:"Senior",
+  q:"A method debits one account and credits another in two separate DB writes. If the second write fails, money is debited but never credited (data corruption). In Spring, what's the correct fix?",
+  code:"@Transactional\npublic void transfer(Long from, Long to, BigDecimal amt) {\n    debit(from, amt);   // if credit() throws,\n    credit(to, amt);    // the whole tx rolls back\n}",
+  opts:[
+    "Add a try/catch and manually undo the debit if the credit fails.",
+    "Wrap the operation in @Transactional so both writes commit together or roll back together atomically — if the second write throws, the first is rolled back.",
+    "Do the two writes in separate transactions so each commits independently.",
+    "Add a nightly job to detect and fix mismatched balances."
+  ],
+  correct:1,
+  exp:"The two writes must be ATOMIC — all-or-nothing. @Transactional wraps them in a single database transaction: if any write throws a runtime exception, Spring rolls back the whole transaction, so you never end up with a debit without a matching credit. Manual undo logic is error-prone; the nightly job is reactive damage control.",
+  why:[
+    "Manual compensation (try/catch undo) is fragile — the undo itself can fail, and it reinvents what transactions do correctly.",
+    "✅ Correct. @Transactional makes both writes commit-or-rollback atomically; a failing second write rolls back the first.",
+    "Separate transactions is exactly the bug — independent commits allow a debit to persist without the credit.",
+    "A nightly reconciliation job fixes corruption AFTER it happens; you want to PREVENT it with atomicity."
+  ],
+  deep:"@Transactional (backed by ACID transactions) guarantees atomicity within ONE database. Caveats: by default it rolls back on unchecked (runtime) exceptions, not checked ones (configurable); it works via Spring AOP proxies, so self-invocation within the same bean bypasses it. For distributed transactions ACROSS microservices/databases, ACID doesn't apply — you use the SAGA pattern (compensating actions / orchestrated steps), the same distributed-consistency lesson from the multi-agent topic (Lesson 02-agents Q12). Know when it's one-DB (@Transactional) vs cross-service (saga).",
+  learn:"Cross-ref → Lesson 02-agents Q12 (saga pattern for distributed consistency)."
+},
+{
+  id:6, topic:"JPA / N+1 queries", trap:"Lazy-loop trap", diff:"Senior",
+  q:"A Spring Data JPA endpoint returns 100 orders and accesses each order's customer in a loop. Hibernate logs show 101 SQL queries. What's the problem and fix?",
+  opts:[
+    "Hibernate is slow; switch to raw JDBC.",
+    "The N+1 problem: lazy-loaded associations fire one query per order's customer (1 + 100). Fix with a fetch JOIN (JPQL JOIN FETCH) or an @EntityGraph so related data loads in one/few queries.",
+    "Add more DB connections to the pool so 101 queries run in parallel.",
+    "Cache each order individually."
+  ],
+  correct:1,
+  exp:"This is the N+1 query problem: one query fetches the orders, then each order's LAZY customer association triggers a separate query (100 more) = 101 total. Fix by eager-fetching the association in the query — a JPQL `JOIN FETCH` or an `@EntityGraph` — so Hibernate loads orders + customers together in one (or a few batched) queries.",
+  why:[
+    "Hibernate isn't the problem — the lazy-loading-in-a-loop usage is; dropping to raw JDBC is overkill.",
+    "✅ Correct. N+1 from lazy associations; fix with JOIN FETCH / @EntityGraph (or batch fetching) to load related data efficiently.",
+    "More connections lets you issue 101 queries faster, but the fix is issuing FEWER queries, not parallelizing the waste.",
+    "Per-order caching masks it for repeats but the N+1 pattern still hits the DB hard on cache misses."
+  ],
+  deep:"N+1 is the #1 JPA/ORM performance pitfall — identical to the Python ORM N+1 in Lesson 09-MCQ Q10. Fixes: JOIN FETCH in JPQL (one query with a join), @EntityGraph (declarative fetch plan), or hibernate.default_batch_fetch_size (batch the N into IN-clauses). Beware JOIN FETCH with pagination + collections (can cause in-memory paging / row explosion — selectinload-style batch fetching is safer for one-to-many). Detect via SQL logging or a query counter per request. General principle across Java AND Python: watch DB round-trips per request and batch/eager-load.",
+  learn:"Cross-ref → Lesson 09-MCQ Q10 (N+1 in Python ORM — same problem)."
+},
+{
+  id:7, topic:"Microservices vs monolith", trap:"Microservices-always trap", diff:"Senior",
+  q:"A startup with a small team and one product wants to launch fast, but insists on splitting into 15 microservices 'because that's modern.' What's the senior view?",
+  opts:[
+    "Yes — microservices are always better than a monolith.",
+    "Match architecture to context: microservices add operational complexity (deployment, networking, distributed debugging, data consistency); a well-structured monolith is often the right START, splitting into services only when scaling/team/domain boundaries justify it.",
+    "Never use microservices; monoliths are always superior.",
+    "Split into exactly 15 services regardless of the domain."
+  ],
+  correct:1,
+  exp:"Microservices aren't free — they add real operational cost: independent deployments, network calls that fail, distributed tracing/debugging, and data-consistency challenges (no cross-service ACID). For a small team and one product, a well-modularized MONOLITH usually ships faster and is easier to operate; you split into services when clear scaling, team-ownership, or domain boundaries justify the overhead. Match architecture to the actual need.",
+  why:[
+    "'Always better' is the exact over-engineering trap — microservices impose overhead a small team can ill afford.",
+    "✅ Correct. Match to context; a modular monolith often best to start, split when scale/team/domain boundaries justify it.",
+    "'Never' is equally dogmatic — microservices genuinely help at scale / with independent teams.",
+    "Picking a service count arbitrarily ('15') ignores domain boundaries — services should map to bounded contexts, not a number."
+  ],
+  deep:"This is the SAME 'match complexity to the problem' judgment as the multi-agent-vs-single-agent question (Lesson 02-agents Q4). Microservices win when you need independent scaling, independent deployment/team ownership, tech heterogeneity, or fault isolation — and you can afford the ops (CI/CD, service mesh, observability, distributed data). A modular monolith gives clean boundaries with far less operational burden and is the pragmatic default for small teams/early products. Split along DDD bounded contexts when the pain (deploy coupling, scaling hotspots) justifies it — not because it's 'modern.'",
+  learn:"Cross-ref → Lesson 02-agents Q4 (match architecture complexity to the problem)."
+},
+{
+  id:8, topic:"Java concurrency vs Python GIL", trap:"Same-as-python trap", diff:"Senior",
+  q:"Coming from Python, you assume Java threads can't run CPU-bound work in parallel (like Python's GIL). Is that correct?",
+  opts:[
+    "Yes — Java has a GIL too, so threads can't parallelize CPU work.",
+    "No — the JVM has NO GIL, so multiple threads run truly in parallel across cores for CPU-bound work; but you must guard shared mutable state (synchronization, locks, concurrent collections) to avoid race conditions.",
+    "Java threads are identical to Python threads in every way.",
+    "Java can't do multithreading at all; it only supports multiprocessing."
+  ],
+  correct:1,
+  exp:"The JVM has no Global Interpreter Lock, so Java threads execute in genuine parallel across CPU cores — including for CPU-bound work (unlike CPython threads, which the GIL serializes). The trade-off: with real parallelism you MUST protect shared mutable state using synchronization (synchronized, locks, java.util.concurrent structures, atomics) to prevent race conditions.",
+  why:[
+    "The JVM has no GIL — Java threads DO parallelize CPU work; this is a key difference from CPython.",
+    "✅ Correct. No GIL → true multi-core parallelism for CPU work; but shared mutable state needs synchronization to avoid races.",
+    "They're NOT identical — the GIL (Python) vs no-GIL (JVM) is a fundamental difference in CPU parallelism.",
+    "Java has rich multithreading (Thread, ExecutorService, ForkJoinPool, virtual threads) — 'no multithreading' is false."
+  ],
+  deep:"Contrast with Lesson 01-SeniorDS (Python GIL): CPython threads can't parallelize CPU-bound Python code (use multiprocessing); the JVM parallelizes threads across cores freely. So in Java, threading IS the answer for CPU parallelism — but correctness now depends on thread-safety: use java.util.concurrent (ConcurrentHashMap, ExecutorService, atomics), immutability, and synchronization to avoid race conditions/deadlocks. Modern Java adds virtual threads (Project Loom) for massive cheap concurrency (great for I/O). Knowing this Java-vs-Python distinction is a strong signal you understand concurrency, not just one language's model.",
+  learn:"Cross-ref → Lesson 01-SeniorDS A2 (Python GIL, threads vs processes)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Your backend foundation is solid — lean on it.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Agents & Agentic Architecture — Scenario MCQs (16)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#c026d3; --accent2:#a21caf;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#7c3aed; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#e879f9; --accent2:#f0abfc;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#c4b5fd; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🤖 AI Agents &amp; Agentic Architecture — Scenario MCQs</h1>
+  <p>Topic 02 · 16 real-world questions · agent loops, tool calling, multi-agent orchestration, CrewAI, ReAct, planning, reliability · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 16</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Scenario-grounded, production-grade agent questions. Items marked ⚠ are genuinely debatable. Deep-dive theory: SeniorDS_RealTime lessons 06 &amp; 07.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Chain vs Agent", trap:"Over-engineering trap", diff:"Intermediate",
+  q:"Your task is a fixed 3-step pipeline: extract fields from a document → validate them → write to a database. Every request follows the exact same path. A teammate wants to build this as an autonomous agent with tool-calling 'to be future-proof.' What's the right call?",
+  opts:[
+    "Build the agent — agents are always more flexible and scalable than chains.",
+    "Build it as a deterministic chain (fixed sequence); an agent adds LLM-decision overhead, cost, and unpredictability for a path that never varies.",
+    "Build both and A/B test which is faster.",
+    "Build an agent but force it to always call the tools in the same order via the system prompt."
+  ],
+  correct:1,
+  exp:"When the sequence is known and never varies, a chain is the correct tool: deterministic, cheap, testable, and it can't 'wander.' An agent adds an LLM decision at each step — extra latency, cost, and a non-zero chance of doing something unplanned — with zero benefit when there's nothing to decide. Use the simplest thing that solves the problem.",
+  why:[
+    "Agents are NOT always better — they trade predictability and cost for flexibility you don't need here.",
+    "✅ Correct. Fixed, invariant sequence → chain. Reserve agents for when the path genuinely depends on the input.",
+    "A/B testing a settled design question wastes effort; the sequence is fixed, so the chain wins by definition on cost/predictability.",
+    "Forcing an agent to always do the same order is just a chain with extra cost and failure modes bolted on."
+  ],
+  deep:"Chain = developer hard-codes the control flow; the LLM (if used) is one stage. Agent = the LLM decides the next action at runtime based on state. The senior instinct is to reach for the SIMPLEST construct: many production 'agents' are really a chain plus one conditional branch (a router). Only escalate to a full agent loop when you genuinely cannot enumerate the steps in advance (e.g., 'answer this question' might need 0, 1, or 5 tool calls). Every added degree of autonomy is a degree of unpredictability you must test and guard.",
+  learn:"Go deeper → Lesson 06, section F1 (Chain vs Agent)."
+},
+{
+  id:2, topic:"ReAct vs Plan-and-Execute", trap:"Pattern-fit trap", diff:"Senior",
+  q:"You're building an agent for a complex, multi-step research task (gather from 5 sources, cross-reference, produce a structured report). With a plain ReAct loop it wanders, repeats steps, and sometimes forgets earlier findings. Which pattern better fits, and why?",
+  opts:[
+    "Stick with ReAct but raise the max-iteration limit so it has more attempts.",
+    "Plan-and-Execute: an LLM planner lays out the full multi-step plan up front, then an executor carries out each step — more coherent and inspectable for complex, mostly-predictable tasks.",
+    "Remove tools entirely and let the LLM answer from its own knowledge.",
+    "Switch to a single giant prompt containing all 5 sources and no agent loop."
+  ],
+  correct:1,
+  exp:"ReAct reasons only one step ahead, so on long multi-step tasks it can lose the thread, repeat work, and drift. Plan-and-Execute separates a planner (reason about the WHOLE task once, produce an explicit plan) from an executor (carry out each step). That gives coherence over many steps and a plan you can inspect/approve before it runs — a much better fit for structured, multi-source research.",
+  why:[
+    "More iterations of a myopic loop just means more wandering — it doesn't give the agent a coherent overall plan.",
+    "✅ Correct. Plan-and-Execute plans the whole task up front, then executes — coherent + inspectable for complex tasks.",
+    "Removing tools defeats the purpose (it needs to gather from real sources) and invites hallucination.",
+    "A single giant prompt may fit but loses the structured, verifiable multi-step process and hits lost-in-the-middle on long inputs."
+  ],
+  deep:"ReAct = Thought→Action→Observation, re-derived every step: adaptive and simple, but one-step-ahead and it pays an LLM call per step. Plan-and-Execute = plan once (cheap, coherent, approvable) then execute (often with a small ReAct loop per step), plus optional RE-PLANNING when a step invalidates the plan. Choose ReAct for short/reactive tasks where each step's result unpredictably changes the next; choose Plan-and-Execute for long, structured tasks or where you want a human to approve the plan first. Watch the failure mode: a stale plan needs an explicit re-plan step.",
+  learn:"Go deeper → Lesson 06, section F2 (ReAct vs Plan-and-Execute)."
+},
+{
+  id:3, topic:"Tool calling", trap:"Vague-tool trap", diff:"Senior",
+  q:"Your agent has a get_customer_orders(customer_id) tool but keeps calling it with the customer's NAME instead of ID, or calling it repeatedly with guesses. The tool works fine when called correctly. What is the most likely root cause?",
+  opts:[
+    "The LLM is too small; only frontier models can call tools reliably.",
+    "The tool's description and input schema are vague/underspecified, so the model doesn't know it needs an ID (not a name) or what a valid call looks like.",
+    "Tool calling is fundamentally unreliable; wrap it in 5 retries and hope.",
+    "The temperature is too low, making the model rigid about arguments."
+  ],
+  correct:1,
+  exp:"The model chooses tools and arguments based ENTIRELY on the tool's name, description, and input schema — that's its only guide. If the description doesn't clearly state 'requires a numeric customer_id (not a name); call get_customer_id first if you only have a name,' the model guesses. Precise descriptions + typed schemas + when-to-use guidance fix this.",
+  why:[
+    "Small models are worse at tool use, but a well-described tool dramatically improves even mid-size models; the described symptom screams under-specified tooling.",
+    "✅ Correct. Vague description/schema → the model can't know it needs an ID or what a valid call is → it guesses. Tighten the spec.",
+    "Blind retries paper over the real problem (bad arguments) and waste calls/money.",
+    "Temperature affects sampling, not whether the model knows the required argument type — this isn't a temperature issue."
+  ],
+  deep:"A tool definition is a prompt: the description is what the LLM reads to decide WHEN to call it, and the JSON schema constrains the arguments. Best practices: (1) describe the tool's purpose and WHEN to use it, not just what it does; (2) type every parameter and mark required ones; (3) note preconditions ('needs an ID — resolve a name to an ID first'); (4) return structured, clearly-labeled results so the model knows if it succeeded. This is exactly the FastMCP/@tool pattern — auto-deriving schema from type hints + docstring is why good docstrings matter.",
+  learn:"Go deeper → Lesson 06, section F1 + Lesson 07, section F6 (MCP tool registration)."
+},
+{
+  id:4, topic:"Multi-agent orchestration", trap:"Multi-agent-everything trap", diff:"Senior-trap",
+  q:"A junior engineer proposes a 6-agent system (planner, researcher, writer, critic, formatter, publisher) for what is essentially 'summarize a document and email it.' What is the most senior response?",
+  opts:[
+    "Approve it — more specialized agents always produce higher quality.",
+    "Push back: multi-agent adds coordination overhead, latency, cost, and failure surface; this task is a simple chain (summarize → email). Add agents only when the problem genuinely needs independent, specialized reasoning.",
+    "Approve it but merge all 6 agents into one prompt.",
+    "Reject agents entirely; multi-agent systems never work in production."
+  ],
+  correct:1,
+  exp:"Multi-agent architectures are powerful but expensive: every agent boundary adds an LLM call, coordination logic, latency, cost, and a new place to fail. 'Summarize and email' is a two-step chain — six agents is massive over-engineering. The senior move is to match architecture to problem complexity: reach for multi-agent only when subtasks genuinely need independent, specialized reasoning or parallelism.",
+  why:[
+    "'More agents = more quality' is false; it usually means more coordination bugs, latency, and cost for no gain.",
+    "✅ Correct. Match complexity to the problem; this is a simple chain. Multi-agent is justified only by genuine specialization/parallelism needs.",
+    "Merging 6 agents into one prompt is just admitting they weren't needed — but phrase it as the right architecture (a chain), not a bloated single prompt.",
+    "Multi-agent DOES work in production for genuinely complex/parallel problems; blanket rejection is as wrong as blanket adoption."
+  ],
+  deep:"When multi-agent IS justified: (1) genuinely independent subtasks that benefit from specialized prompts/tools/models per agent; (2) parallelism (fan-out research across sources); (3) separation of concerns for reliability (a 'critic' agent reviewing a 'writer'). Common patterns: supervisor/orchestrator-worker (one coordinator delegates), sequential pipeline, and debate/critic loops. But each boundary is a serialization/coordination cost. Rule: start with one agent + good tools; split into multiple agents only when a single agent measurably can't handle the complexity.",
+  learn:"Go deeper → Lesson 06 (agent patterns) + Lesson 07, section F7 (A2A / multi-agent)."
+},
+{
+  id:5, topic:"CrewAI", trap:"Framework-role trap", diff:"Intermediate",
+  q:"Your resume lists CrewAI for multi-agent workflows. In CrewAI's model, what do 'agents,' 'tasks,' and the 'process' (sequential/hierarchical) primarily define?",
+  opts:[
+    "Agents = prompts, tasks = tools, process = the embedding model used.",
+    "Agents = role-playing workers (role, goal, backstory, tools), tasks = units of work assigned to agents, process = how tasks are coordinated (sequential or hierarchical/manager-delegated).",
+    "Agents = vector stores, tasks = SQL queries, process = the database transaction isolation level.",
+    "Agents = LLM providers, tasks = API endpoints, process = the retry policy."
+  ],
+  correct:1,
+  exp:"CrewAI structures multi-agent work as: AGENTS (each with a role, goal, backstory, and tools — role-playing specialists), TASKS (discrete units of work with a description and expected output, assigned to agents), and a PROCESS that coordinates them — sequential (task after task) or hierarchical (a manager agent delegates and reviews).",
+  why:[
+    "This scrambles the concepts; agents aren't just prompts and process isn't an embedding model.",
+    "✅ Correct. Agents (role/goal/backstory/tools), tasks (assigned work units), process (sequential or hierarchical coordination).",
+    "Vector stores / SQL / isolation levels are unrelated to CrewAI's core abstractions.",
+    "LLM providers / endpoints / retry policy mischaracterizes all three abstractions."
+  ],
+  deep:"CrewAI's mental model is a 'crew' of role-playing agents completing tasks under a process. Sequential process = tasks run in order, output feeding forward. Hierarchical = a manager agent plans, delegates to workers, and reviews results (an orchestrator-worker pattern). Compared to raw LangGraph, CrewAI is higher-level and opinionated (fast to stand up role-based crews) but less flexible for arbitrary custom control flow — LangGraph gives you explicit state/nodes/edges when you need fine-grained control. Know when to use each: CrewAI for quick role-based collaboration, LangGraph for custom stateful workflows.",
+  learn:"Go deeper → Lesson 06 (agent patterns); compare with LangGraph in Lesson 07."
+},
+{
+  id:6, topic:"Agent memory", trap:"Statelessness trap", diff:"Intermediate",
+  q:"Your customer-support agent answers each message perfectly in isolation but 'forgets' what the user said two messages ago, re-asking for info already provided. Architecturally, what is missing?",
+  opts:[
+    "A bigger LLM with a longer context window; memory is automatic above 128k tokens.",
+    "Conversational state/memory persisted across turns (e.g., a checkpointer keyed by session/thread ID) so prior messages are replayed into each new turn.",
+    "A higher temperature so the model is more creative about recalling context.",
+    "A second agent whose only job is to remind the first agent what was said."
+  ],
+  correct:1,
+  exp:"LLMs are stateless per call — an agent only 'remembers' what you feed into the current prompt. Multi-turn memory is an architectural feature: persist the conversation state (message history) keyed by a session/thread ID and replay it into each new turn. Without that, every message is a blank slate, so the agent re-asks for known info.",
+  why:[
+    "A bigger context window does NOT create memory — if you don't pass prior turns, the model still can't see them. Memory is about what you persist and re-inject, not window size.",
+    "✅ Correct. Persist conversational state (checkpointer + thread/session ID) and replay prior turns into each request.",
+    "Temperature has nothing to do with recall of prior turns.",
+    "A 'reminder agent' still needs the history stored somewhere — you've just moved the missing piece, not solved it."
+  ],
+  deep:"In LangGraph this is a checkpointer (InMemory/Sqlite/Postgres saver) keyed by thread_id: after each step it snapshots state; the same thread_id resumes accumulated state on the next turn. That replayed state (usually the message list via an add_messages reducer) IS the 'memory.' For long conversations, add summarization/trimming so you don't blow the context window — short-term memory (recent turns) + optionally long-term memory (facts stored in a vector store) is the common two-tier design. Your DocSage uses MemorySaver for exactly this.",
+  learn:"Go deeper → Lesson 07, section F4 (LangGraph memory & checkpointers)."
+},
+{
+  id:7, topic:"Agent loops / termination", trap:"Runaway-loop trap", diff:"Senior",
+  q:"In production, one of your agents occasionally runs 40+ reasoning steps on a single query, burning tokens and money before finally answering. What is the essential safeguard, and what does it protect against?",
+  opts:[
+    "Set temperature=0 so the agent reasons deterministically and stops looping.",
+    "Cap max iterations (and ideally a wall-clock/token budget); this prevents runaway loops where the agent never decides it's 'done'.",
+    "Remove all tools so the agent can only answer directly.",
+    "Increase the context window so the agent can hold more reasoning steps."
+  ],
+  correct:1,
+  exp:"An agent loop continues until the model decides it's finished — and sometimes it never cleanly decides, spiraling into dozens of steps. A max-iteration cap (plus a token/time budget) is the essential circuit breaker: it bounds cost and latency and forces a terminal state (return best answer so far, or a graceful failure) instead of running forever.",
+  why:[
+    "temperature=0 makes sampling deterministic but doesn't stop an agent from looping — it can deterministically loop.",
+    "✅ Correct. Cap iterations + token/time budget to bound runaway loops and force termination.",
+    "Removing tools cripples the agent's actual capability; the fix is bounding the loop, not lobotomizing it.",
+    "A bigger window lets it loop LONGER before hitting a limit — the opposite of a safeguard."
+  ],
+  deep:"Every agent framework exposes an iteration/step cap (LangGraph recursion_limit, LangChain max_iterations) — treat it as mandatory production hygiene, not optional. Layer additional guards: a token budget per request, a wall-clock timeout, and loop-detection (same tool + same args repeated → break). On hitting the cap, decide the terminal behavior deliberately: return the best partial answer, escalate to a human, or return a safe failure — never just crash. Pair with tracing so you can see WHY it looped (usually vague tool descriptions or unclear success criteria — see Q3).",
+  learn:"Go deeper → Lesson 06, section F5 (debugging agent failures)."
+},
+{
+  id:8, topic:"Agent debugging", trap:"Blame-the-tool trap", diff:"Senior",
+  q:"An agent returns a wrong refund amount in production. Tracing shows: retrieval returned the correct policy, the get_order_total tool returned the correct $89.99, but the final answer says $134.99. Where is the bug?",
+  opts:[
+    "The get_order_total tool is broken; it must have returned the wrong number.",
+    "The LLM reasoning step: it received correct inputs but computed/hallucinated the wrong amount (e.g., applied a nonexistent multiplier). Fix the prompt/output constraints at that step.",
+    "Retrieval is at fault; re-embed the policy documents.",
+    "The vector database returned a stale chunk."
+  ],
+  correct:1,
+  exp:"The trace exonerates retrieval (correct policy) and the tool (correct $89.99). The corruption appears at the LLM REASONING step, which turned correct inputs into $134.99 — a hallucinated computation. The fix lives there: constrain that step (e.g., force the amount to be copied verbatim from the tool result rather than freely computed), not in the tool or retrieval.",
+  why:[
+    "The trace shows the tool returned the CORRECT value — blaming it ignores the evidence.",
+    "✅ Correct. Correct inputs → wrong output = the reasoning step hallucinated. Constrain/verify that step.",
+    "Retrieval returned the correct policy per the trace; re-embedding fixes a non-existent problem.",
+    "The chunk was correct per the trace; staleness isn't the issue here."
+  ],
+  deep:"This is the core agent-debugging discipline: get the trace, then ISOLATE which component failed — LLM reasoning, tool call, retrieval, or prompt — instead of guessing. A tool that faithfully executes a bad decision is still a 'success' at the tool level; the bug is upstream in reasoning. Fixes for reasoning-step corruption: tighter prompts, structured output that forces values to come from tool results (not free-form math), and a post-step validation guard. Don't add a retry (the tool isn't flaky) and don't touch retrieval (it was correct) — target the root cause.",
+  learn:"Go deeper → Lesson 06, section F5 (debugging an agent failure)."
+},
+{
+  id:9, topic:"Agentic RAG design", trap:"Fixed-vs-dynamic trap", diff:"Senior",
+  q:"Your DocSage agent can access 4 different knowledge bases (HR policy, product docs, refund policy, technical FAQ). What makes it 'agentic' rather than a fixed RAG chain?",
+  opts:[
+    "It retrieves from all 4 knowledge bases every time and concatenates the results.",
+    "The LLM autonomously decides WHICH knowledge base(s) to query (or none) based on the user's question, via tool calling.",
+    "It uses a bigger embedding model across all 4 knowledge bases.",
+    "It stores all 4 knowledge bases in a single merged vector index."
+  ],
+  correct:1,
+  exp:"Agentic RAG = the LLM DECIDES the retrieval strategy. Exposing each knowledge base (or a router) as a tool lets the agent pick the right source for the question — HR question → HR KB, refund question → refund KB, greeting → no retrieval at all. That autonomous routing is what makes it agentic vs a chain that always hits the same fixed retriever.",
+  why:[
+    "Always querying all 4 and concatenating is a fixed chain (and wasteful/noisy) — no decision is being made.",
+    "✅ Correct. The agent chooses which KB(s) to query (or none) per question via tool calling — that's the agentic part.",
+    "A bigger embedding model improves relevance but doesn't add the autonomous routing that defines 'agentic.'",
+    "Merging into one index removes the ability to route to the right source and adds cross-domain noise."
+  ],
+  deep:"Two designs: (1) each KB is its own tool — the agent calls the relevant one(s); (2) a single retriever tool + a router that picks the namespace/collection. Both let the model decide. Benefits: less noise (don't mix HR docs into a refund answer), lower cost (skip retrieval for chit-chat), and multi-step ability (retrieve from product docs, realize you also need the refund policy, retrieve again). This is exactly the DocSage claim on your resume — be ready to whiteboard: agent node (bound to KB tools) → tools_condition → tool node(s) → grade → generate.",
+  learn:"Go deeper → Lesson 01 (RAG MCQs Q7) + Lesson 06, section F1."
+},
+{
+  id:10, topic:"Human-in-the-loop", trap:"Full-autonomy trap", diff:"Intermediate",
+  q:"Your agent can issue refunds and cancel orders autonomously. Finance is nervous about it acting on a hallucinated instruction. What is the standard pattern to make this safe without removing the capability?",
+  opts:[
+    "Trust the LLM; modern models rarely hallucinate high-stakes actions.",
+    "Human-in-the-loop: pause the agent before any irreversible/high-stakes action and require explicit human approval before it executes.",
+    "Log the actions after they execute so you can reverse them later.",
+    "Lower the temperature to 0 so it never takes wrong actions."
+  ],
+  correct:1,
+  exp:"For irreversible or high-stakes actions (refunds, cancellations, sending money), the standard safety pattern is human-in-the-loop (HITL): the agent proposes the action and PAUSES for explicit human approval before executing. It keeps the capability while adding a human checkpoint exactly where a mistake would be costly.",
+  why:[
+    "'Modern models rarely hallucinate' is not a safety strategy for irreversible financial actions — one mistake is one too many.",
+    "✅ Correct. HITL: pause before high-stakes/irreversible actions and require human approval before execution.",
+    "Logging-after-the-fact means the damage is already done; you want a gate BEFORE execution, not a record after.",
+    "temperature=0 reduces randomness but a deterministic agent can still confidently take a wrong action on a bad instruction."
+  ],
+  deep:"HITL is implemented as an interrupt/approval gate in the graph: the agent reaches a node that would trigger a side effect, the graph pauses (e.g., LangGraph interrupt() with a checkpointer), a human approves/edits/rejects, then it resumes. Design the gate around REVERSIBILITY and BLAST RADIUS: auto-approve low-risk reversible actions (read a record), gate high-risk irreversible ones (issue refund). This is the final backstop in a defense-in-depth stack alongside sandboxed least-privilege tools and output validation.",
+  learn:"Go deeper → Lesson 07, section F4 (HITL via checkpointers) + Lesson 08, G4."
+},
+{
+  id:11, topic:"Agent evaluation", trap:"Outcome-only trap", diff:"Senior-trap",
+  q:"Two versions of your booking agent both produce the correct final confirmation for a test case. Version X checked availability then booked; Version Y booked immediately without checking availability (it got lucky — the slot was free). Outcome-only evaluation scores both 100%. Why is this dangerous?",
+  opts:[
+    "It isn't dangerous; identical correct outputs mean identical quality.",
+    "Outcome-only eval misses that Version Y skipped a required step (availability check) and only succeeded by luck — trajectory/step-level evaluation would catch the unsafe process.",
+    "The test case is wrong; both agents are fine.",
+    "You should just ship whichever agent is faster."
+  ],
+  correct:1,
+  exp:"Two agents can reach the same correct answer through very different quality of process. Version Y skipped the availability check and only succeeded because the slot happened to be free — on the next input it will double-book. Outcome-only evaluation can't see this; trajectory (step-level) evaluation checks WHETHER the right tools were called in the right order, catching the unsafe shortcut.",
+  why:[
+    "Identical outputs do NOT mean identical quality — one agent has a latent, dangerous bug the output hides.",
+    "✅ Correct. Trajectory eval catches Version Y's skipped required step; outcome-only eval is blind to it.",
+    "The test case is fine; the point is that outcome-only scoring is insufficient for agents.",
+    "Speed is irrelevant when one version has an unsafe process that will fail on other inputs."
+  ],
+  deep:"Agent evaluation must score the TRAJECTORY, not just the final answer: task success, tool-use accuracy (right tools, right order, none missing — precision/recall on tool calls), reasoning quality, error recovery, plus latency/cost. Version Y would show tool_recall < 1.0 (missed the availability-check tool) even at task_success = true. Methods: LLM-as-judge or rule-based checks over the trace, human review for high-stakes, run offline on a curated task set + online on sampled production traces. 'Right answer, wrong/lucky process' is exactly what trajectory eval exists to catch.",
+  learn:"Go deeper → Lesson 06, section F3 (how to evaluate an agent)."
+},
+{
+  id:12, topic:"Tool errors / resilience", trap:"Crash-on-error trap", diff:"Intermediate",
+  q:"One of your agent's tools (an external pricing API) intermittently returns a 500 error. Currently, when it fails, the whole agent run crashes with an unhandled exception. What is the correct handling?",
+  opts:[
+    "Remove the tool so it can never fail.",
+    "Catch the tool error and return a structured error message to the agent so it can react — retry, try an alternative, or gracefully tell the user — instead of crashing.",
+    "Ignore the error and let the agent proceed with no data.",
+    "Automatically retry the exact call 20 times regardless of the error type."
+  ],
+  correct:1,
+  exp:"A tool failure should be an OBSERVATION the agent can reason about, not a crash. Catch the error and return it as a structured result ('pricing API unavailable') so the agent can decide: retry a transient error, fall back to an alternative source, or gracefully inform the user. This turns a hard failure into a recoverable state the agent handles.",
+  why:[
+    "Removing a needed capability to avoid failure is throwing out the baby with the bathwater.",
+    "✅ Correct. Surface the error to the agent as a structured observation so it can retry / fall back / degrade gracefully.",
+    "Proceeding with no data invites a hallucinated or wrong answer built on a silent gap.",
+    "Blind 20x retries ignore error type (don't retry a 400/auth error) and can hammer a struggling service — retry transient errors with backoff, cap attempts."
+  ],
+  deep:"Resilient tool design: (1) wrap tool bodies so exceptions become structured error results, not crashes; (2) classify errors — retry transient (429/5xx/timeout) with exponential backoff, fail fast on permanent (400/401); (3) give the agent fallback options where possible; (4) cap retries and the overall loop. At the architecture level for multi-agent pipelines, patterns like circuit breakers and message queues + dead-letter queues (saga pattern) prevent one flaky component from corrupting downstream steps.",
+  learn:"Go deeper → Lesson 06, F5 + Lesson 01 (Nablon Q23 saga pattern)."
+},
+{
+  id:13, topic:"AI Agent vs Agentic AI", trap:"Terminology trap", diff:"Senior",
+  q:"An interviewer asks you to distinguish an 'AI agent' from 'Agentic AI.' Which framing is most accurate?",
+  opts:[
+    "They are identical marketing terms with no real distinction.",
+    "An AI agent is a single LLM-driven entity that perceives, decides, and acts with tools; 'Agentic AI' describes the broader paradigm/systems (often multi-agent, goal-driven, autonomous over many steps) built from such agents.",
+    "An AI agent has no tools; Agentic AI is any LLM with a system prompt.",
+    "AI agent means supervised learning; Agentic AI means reinforcement learning."
+  ],
+  correct:1,
+  exp:"An AI agent is the unit: an LLM-driven entity that observes state, decides an action, uses tools, and loops toward a goal. 'Agentic AI' is the broader paradigm — systems exhibiting autonomy, goal-directed multi-step behavior, and often multiple coordinating agents. One is the building block; the other is the design philosophy/system built from it.",
+  why:[
+    "They're related but not identical — one is a component, the other a paradigm/system-level term.",
+    "✅ Correct. Agent = the individual tool-using, decision-making entity; Agentic AI = the broader autonomous, goal-driven (often multi-agent) systems paradigm.",
+    "Agents typically DO use tools; and 'any LLM with a system prompt' is not agentic (no autonomous action/looping).",
+    "Neither term refers to supervised vs reinforcement learning — that's a category error."
+  ],
+  deep:"Practical distinction for interviews: a plain LLM call = no autonomy. An 'AI agent' adds the loop — perceive → reason → act (tools) → observe → repeat toward a goal. 'Agentic AI' scales that up: multi-step autonomy, planning, memory, and often multiple specialized agents collaborating (orchestrator-worker, debate, etc.). Your DocSage is 'an AI agent'; a system where several such agents plan and delegate to each other is 'agentic AI.' Don't overclaim — be precise about which you actually built.",
+  learn:"Go deeper → AIAgentVsAgenticAI lessons + Lesson 06/07."
+},
+{
+  id:14, topic:"Guardrails / safety", trap:"Trust-the-LLM trap", diff:"Senior",
+  q:"Your agent exposes a run_sql(query) tool so it can answer data questions. A security reviewer flags it. What is the correct hardening, and what's the underlying principle?",
+  opts:[
+    "Trust the LLM to only write safe SELECT queries; add a note in the prompt.",
+    "Replace the general run_sql tool with narrow, purpose-built read-only tools (e.g., get_orders_by_customer) and/or enforce a read-only, least-privilege DB role — principle: least privilege / minimize blast radius.",
+    "Keep run_sql but increase the LLM size so it makes fewer mistakes.",
+    "Allow run_sql but log queries so you can review them after they run."
+  ],
+  correct:1,
+  exp:"A general run_sql tool is a huge blast radius — a hallucinated or injected query could read or destroy anything the DB role permits. The fix is least privilege: replace it with narrow, purpose-built read-only tools, and/or run under a read-only DB role scoped to only the needed tables. Even a compromised agent then can't do damage beyond a tiny, safe surface.",
+  why:[
+    "A prompt note is not a security control — prompt injection or hallucination can override it trivially.",
+    "✅ Correct. Narrow, least-privilege, read-only tools/roles minimize blast radius — the core security principle for agent tools.",
+    "A bigger model still shouldn't be TRUSTED with a destructive general tool; capability, not model size, is the risk.",
+    "After-the-fact logging doesn't PREVENT a destructive query; you need a gate/constraint before execution, not a record after."
+  ],
+  deep:"Agent tool security = least privilege + sandboxing + defense in depth. Give tools the MINIMUM capability needed (read-only, specific tables, parameterized, no arbitrary SQL/shell). Combine with input guardrails (treat retrieved/user content as untrusted, watch for prompt injection), output validation, and human-in-the-loop for high-stakes actions. The mental model: assume the LLM CAN be tricked or can hallucinate — design so that when it does, the worst case is contained. A narrow tool that physically cannot drop a table beats any prompt that asks it not to.",
+  learn:"Go deeper → Lesson 08, section G4 (prompt injection & guardrails)."
+},
+{
+  id:15, topic:"State management (LangGraph)", trap:"Reducer trap", diff:"Senior",
+  q:"In your LangGraph agent, each node returns a partial state update. You notice the conversation 'messages' list keeps getting REPLACED (only the latest message survives) instead of accumulating. What is the likely cause?",
+  opts:[
+    "LangGraph doesn't support message history; you must store it externally.",
+    "The 'messages' field isn't using an accumulating reducer (e.g., add_messages); by default a returned value REPLACES the field rather than appending to it.",
+    "The checkpointer is disabled, so nothing persists.",
+    "The temperature is too high, causing the model to drop earlier messages."
+  ],
+  correct:1,
+  exp:"In LangGraph, a node returning a value for a state key REPLACES that key by default. To ACCUMULATE (append) messages across nodes/turns, the field must declare a reducer — add_messages (or operator.add) — which tells LangGraph to merge/append the update instead of overwriting. Missing reducer = each update clobbers the list.",
+  why:[
+    "LangGraph absolutely supports message history — via reducers + a checkpointer.",
+    "✅ Correct. Without an accumulating reducer (add_messages), returned values replace the field instead of appending.",
+    "A disabled checkpointer affects cross-invocation persistence, not the within-run append behavior — the symptom here is the reducer.",
+    "Temperature affects generation, not how state updates are merged."
+  ],
+  deep:"LangGraph state is a typed dict; each key can have a reducer defining how updates merge. Default = overwrite. add_messages = append with de-dup/ID handling for message lists; operator.add = concatenate lists; you can write custom reducers. This is a favorite gotcha because it's subtle: your nodes 'work' but state silently collapses to the last write. Pair reducers with a checkpointer (thread_id) for cross-turn memory. Know the trio: State schema + reducers (how updates merge within a run) + checkpointer (how state persists across runs).",
+  learn:"Go deeper → Lesson 07, section F4 (LangGraph state & checkpointers)."
+},
+{
+  id:16, topic:"Cost & latency", trap:"Quality-at-any-cost trap", diff:"Senior",
+  q:"Your multi-step agent is accurate but each user query costs ~$0.40 and takes 12 seconds (multiple large-model calls in the loop). Product wants it under $0.10 and 4 seconds without gutting quality. What's the most effective first move?",
+  opts:[
+    "Switch the whole system to the cheapest model available and accept lower quality.",
+    "Use a tiered/router approach: a small fast model for routing/simple steps and the large model only where it's genuinely needed; also cut unnecessary tool calls and reduce loop iterations.",
+    "Cache every response by exact query string and hope for repeats.",
+    "Remove all tools so there's only one LLM call."
+  ],
+  correct:1,
+  exp:"The cost/latency comes from calling a large model on EVERY step. The highest-leverage move is tiering: route with a small, cheap, fast model and reserve the expensive model for steps that truly need its capability; simultaneously trim unnecessary tool calls and cap loop iterations. This preserves quality where it matters while collapsing cost and latency.",
+  why:[
+    "Downgrading everything to the cheapest model tanks quality — the explicit constraint was 'without gutting quality.'",
+    "✅ Correct. Model tiering (small model for routing/simple steps, large model only where needed) + fewer tool calls/iterations.",
+    "Exact-string caching helps only for identical repeats (rare in support); it won't touch the per-step model-call cost for new queries.",
+    "Removing all tools cripples the agent's function; the goal is efficiency, not lobotomy."
+  ],
+  deep:"Agent cost/latency optimization toolkit: (1) MODEL TIERING — cheap/fast model for classification/routing/simple steps, frontier model only for hard reasoning; (2) reduce steps — better tool descriptions and clear success criteria cut redundant iterations (see Q3/Q7); (3) SEMANTIC caching — cache by embedding similarity, not exact string, so paraphrases hit; (4) parallelize independent tool calls; (5) trim/summarize context to shrink prompt tokens; (6) stream responses to cut perceived latency. Measure per-step token/cost with tracing first, then attack the biggest contributor — usually 'large model called on every trivial step.'",
+  learn:"Go deeper → Lesson 08, section G3 (cost/latency monitoring) + Lesson 09, H5."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Strong agent fundamentals.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nablon.AI — AI Engineer L2 Assessment Review (23 MCQs)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#6d28d9; --accent2:#4c1d95;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#a78bfa; --accent2:#c4b5fd;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.5rem;}
+  header p{margin:0;opacity:.9;font-size:.88rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.4em 0 .3em;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧪 Nablon.AI — AI Engineer L2 Assessment (Review Mode)</h1>
+  <p>23 real MCQs · click an option: green = correct, red = try again · full explanation + distractor analysis under each</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 23</span>
+    <button id="revealAll">Reveal all answers</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Answers are my reasoned analysis of each question. Items marked ⚠ are genuinely debatable — think them through, don't just memorize. Company/platform: Nablon.AI via AutoProctor.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Async Python", trap:"Reading trap",
+  q:"What is wrong with this async code?",
+  code:"import asyncio\n\nasync def fetch_data():\n    return 'result'\n\nasync def main():\n    result = fetch_data()      # <-- look here\n    print(result)\n\nasyncio.run(main())",
+  opts:[
+    "The fetch_data() function is defined but never invoked because main() is not declared async.",
+    "The event loop is not explicitly started; asyncio.run() must wrap the call to fetch_data().",
+    "The return statement in fetch_data() is unreachable without a running loop, so Python prints None.",
+    "A coroutine object is returned instead of the actual result; await is missing before fetch_data()."
+  ],
+  correct:3,
+  exp:"Calling an async function WITHOUT await returns a coroutine object, not its result. `result = fetch_data()` gives a coroutine; you must write `result = await fetch_data()`. So print(result) shows something like <coroutine object ...>, not 'result'.",
+  why:[
+    "main() IS declared async, and fetch_data() is invoked — it's just invoked incorrectly (no await).",
+    "asyncio.run() DOES start the event loop correctly. That part is fine.",
+    "The return isn't unreachable and Python doesn't print None — it prints a coroutine object.",
+    "✅ Correct. Awaiting is what actually runs the coroutine and yields its value; without await you hold an un-awaited coroutine."
+  ]
+},
+{
+  id:2, topic:"FastAPI / Deployment", trap:"Local-vs-prod trap",
+  q:"A FastAPI endpoint works fine locally but in production all requests return stale data even after the database is updated. The code uses a module-level variable. What is the root cause?",
+  code:"db_cache = fetch_all_records()   # module level",
+  opts:[
+    "Each worker process re-executes the module-level assignment independently, causing inconsistent cache versions across workers.",
+    "Module-level code runs only once at import, so the cache never refreshes after the first load.",
+    "The variable name conflicts with a FastAPI internal caching helper, leading to automatic cache bypass.",
+    "Python's bytecode cache (.pyc) prevents the fetch_all_records() call from running more than once per deployment."
+  ],
+  correct:1,
+  exp:"A module-level variable is assigned ONCE, at import time. `db_cache` is populated when the process starts and is never re-read, so it can never reflect later DB updates → permanently stale. Locally it seems fine because dev servers use --reload, which re-imports the module on every code change and masks the bug; production has no reload, so the cache is frozen forever.",
+  why:[
+    "This describes INCONSISTENCY across workers (different values), but the symptom is uniform staleness (all requests stale) — that's the 'runs once at import' issue, not per-worker divergence.",
+    "✅ Correct. Import-time execution runs once; the cache is never refreshed, so it's stale the moment the DB changes.",
+    "There is no such 'FastAPI internal caching helper' name conflict — pure distractor.",
+    "The .pyc bytecode cache has nothing to do with runtime execution frequency; it caches compiled bytecode, not results."
+  ],
+  note:"Option A is tempting because production DOES run multiple workers — but re-read the symptom: it's consistent staleness, not workers disagreeing. The fix either way: don't cache at module level; use a real cache (Redis) with TTL or query per request."
+},
+{
+  id:3, topic:"Agents / Reliability", trap:"Silent-failure trap",
+  q:"A LangChain agent occasionally hangs indefinitely in production with no error or timeout. The agent calls an external REST API as a tool. What is the most likely root cause and fix?",
+  opts:[
+    "The external API returns a 'processing' status with HTTP 200, and the agent misinterprets it as a final answer.",
+    "The API call lacks a timeout; the agent blocks waiting for a response that never arrives. Set a timeout and also cap agent iterations.",
+    "The agent uses a synchronous HTTP call inside an async event loop, causing deadlock under concurrency.",
+    "The LLM's context window is exceeded, causing it to return empty responses that the agent cannot handle."
+  ],
+  correct:1,
+  exp:"'Hangs indefinitely with no error or timeout' is the signature of a network call with no timeout set. The request blocks forever waiting on a response that never comes. The robust fix is two-fold: set an explicit request timeout AND cap the agent's max iterations so a stuck tool can't loop forever.",
+  why:[
+    "A 200 'processing' status would cause a WRONG answer, not an indefinite hang.",
+    "✅ Correct. No timeout on the HTTP call → the thread blocks forever; add a timeout + iteration cap.",
+    "A sync call in an async loop blocks that loop but usually still returns when the call completes — it wouldn't hang *indefinitely* the way a timeout-less request does.",
+    "An exceeded context window throws an error or returns empty fast — it doesn't hang silently forever."
+  ]
+},
+{
+  id:4, topic:"Python / Memory", trap:"Unbounded-stream trap",
+  q:"A Python microservice processes 1000 records/sec in testing but memory grows unboundedly in production until the pod OOMKills every few hours. The core logic is shown. What is wrong?",
+  code:"results = []\nfor record in stream_records():\n    results.append(process(record))\nsend_batch(results)",
+  opts:[
+    "The send_batch() function serializes the entire list to JSON, building a large string that lingers in the socket buffer.",
+    "The list `results` grows indefinitely because send_batch() is called only once, after the entire stream is consumed.",
+    "The thread-pool executor retains references to each result slice until all workers finish, causing memory to scale with thread count.",
+    "Each call to process() creates a new object that holds a reference to the input record, preventing garbage collection."
+  ],
+  correct:1,
+  exp:"stream_records() is an unbounded/continuous stream. The loop keeps appending to `results` forever and send_batch() only runs AFTER the loop finishes — which never happens for a live stream. In testing the stream is finite (it ends), so memory looks fine; in production the stream never ends, so `results` grows without bound → OOM. Fix: flush in fixed-size batches inside the loop.",
+  why:[
+    "JSON serialization is a one-time cost at send time; it doesn't explain unbounded GROWTH over hours.",
+    "✅ Correct. The accumulator never flushes for a never-ending stream → unbounded growth. Batch-and-clear inside the loop.",
+    "No thread pool is used in this code; irrelevant distractor.",
+    "process() output is appended, but the growth is from never flushing the list, not from per-record reference retention."
+  ]
+},
+{
+  id:5, topic:"RAG / Retrieval diversity", trap:"Redundancy trap",
+  q:"A RAG system fetches top-5 chunks for every query. For 'What is the refund policy?' it retrieves 5 chunks — 3 of them are near-identical paragraphs from the same document section. The LLM answer is still poor. What is the core problem and fix?",
+  opts:[
+    "The cosine threshold is set too low, letting many similar chunks pass; raising it reduces noise.",
+    "Top-K retrieval returns the most similar chunks without diversity, crowding out other useful content.",
+    "Overlapping chunks during indexing cause identical vectors; reduce overlap to eliminate redundancy.",
+    "The cross-encoder reranker over-weights similar chunks; disabling it improves diversity."
+  ],
+  correct:1,
+  exp:"Pure top-K by similarity has no diversity mechanism, so it happily returns 3 near-duplicate chunks, wasting 3 of your 5 slots and crowding out other relevant information the answer needs. The fix is MMR (Maximal Marginal Relevance) or another diversity-aware re-ranking that balances relevance against redundancy.",
+  why:[
+    "Raising the threshold removes low-similarity chunks, but the duplicates here are HIGH-similarity — they'd still pass. Doesn't solve redundancy.",
+    "✅ Correct. Top-K optimizes similarity only; add MMR/diversity so near-duplicates don't crowd out useful chunks.",
+    "Overlap can create similar chunks, but reducing indexing overlap is a blunt fix and doesn't address the core retrieval-diversity gap at query time.",
+    "There may be no reranker at all; and a cross-encoder generally IMPROVES ranking. Disabling it is the wrong direction."
+  ]
+},
+{
+  id:6, topic:"RAG / Aggregation limits", trap:"Scale-of-query trap",
+  q:"A lawyer asks a RAG system over 10,000 pages of case law: 'Summarize all software patent cases from 2018 to 2022.' The bot retrieves 5 chunks and gives a partial answer. What is the architectural limitation?",
+  opts:[
+    "The vector index stores entire documents instead of chunks, so each vector represents an average of all topics.",
+    "The retrieval pipeline uses a cosine threshold that excludes documents from 2018–2022 due to terminology drift.",
+    "The embedding model was not trained on legal terminology, so it fails to match legal phrases correctly.",
+    "Single-shot RAG retrieves a fixed number of chunks and makes one LLM call; it cannot aggregate across many documents."
+  ],
+  correct:3,
+  exp:"'Summarize ALL cases from 2018–2022' is an AGGREGATION / exhaustive query. Standard single-shot top-K RAG fetches a fixed handful of chunks and makes one LLM call — it fundamentally cannot enumerate or aggregate over hundreds of relevant documents. This needs a different architecture: metadata-filtered retrieval + map-reduce summarization, or an agentic/iterative approach.",
+  why:[
+    "Whether it stores docs or chunks doesn't change the core issue: a fixed top-K can't cover 'all' matching cases.",
+    "A cosine threshold excluding the target years is a specific misconfiguration, not the fundamental architectural limit of top-K RAG.",
+    "Embedding-terminology mismatch would hurt relevance generally, but the bot DID retrieve relevant chunks — it just can't aggregate across all of them.",
+    "✅ Correct. Fixed-K + single call = no aggregation over large corpora. Use metadata filtering + map-reduce or an agentic loop."
+  ]
+},
+{
+  id:7, topic:"RAG / Compound queries", trap:"Multi-topic trap",
+  q:"A RAG support bot works well for simple questions but gives inconsistent answers for compound queries like 'What is the return policy and does it apply differently for international orders?' What is the cause and fix?",
+  opts:[
+    "The LLM pays attention only to the first part of the context when multiple topics are present.",
+    "The retrieval relevance threshold is applied per sub-topic, causing both to fall below and triggering keyword fallback.",
+    "A compound query produces a blended embedding that is less similar to either individual topic, so retrieval misses both.",
+    "The vector store separates policies into different namespaces, so a single query can only access one namespace."
+  ],
+  correct:2,
+  exp:"A single embedding of a two-part question is the 'average' of both intents, so it sits BETWEEN the two topic clusters and matches neither well — retrieval under-serves both sub-questions. Fix: query decomposition — split the compound question into sub-queries, retrieve for each, then synthesize.",
+  why:[
+    "This blames LLM attention, but the failure starts earlier at RETRIEVAL — the blended embedding already misses the right chunks.",
+    "Per-sub-topic thresholds aren't how standard retrieval works; this is an invented mechanism.",
+    "✅ Correct. Blended embedding of a compound query is less similar to either topic → misses both. Decompose the query.",
+    "Namespace separation is a specific design choice, not the general reason compound queries degrade."
+  ]
+},
+{
+  id:8, topic:"NLQ-to-SQL / Semantics", trap:"Business-term mapping trap",
+  q:"You are building NLQ-to-SQL for an enterprise warehouse. A user asks 'Show me revenue by region for Q3.' The schema columns are: trx_amt_usd, geo_territory_cd, fiscal_period_key. The generated SQL errors. What is the core challenge?",
+  opts:[
+    "The LLM outputs ANSI SQL, but the target warehouse uses Snowflake-specific syntax, causing runtime errors.",
+    "Fiscal calendars vary by company; the LLM assumes a standard calendar, returning wrong date ranges.",
+    "The LLM must map business terms ('revenue', 'region', 'Q3') to obscure column names without any schema or glossary.",
+    "Schema complexity beyond 50 tables causes the LLM to miss join paths, leading to ungrouped rows."
+  ],
+  correct:2,
+  exp:"The columns are cryptic (trx_amt_usd, geo_territory_cd, fiscal_period_key) while the user speaks in business language (revenue, region, Q3). Without a semantic layer / glossary / schema descriptions mapping business terms to physical columns, the LLM can't know that 'revenue' = trx_amt_usd. That semantic gap is the core challenge.",
+  why:[
+    "Dialect differences cause syntax errors but are easily fixed; they aren't the CORE challenge here given the cryptic schema.",
+    "Fiscal-calendar variance is a real issue (and relates to fiscal_period_key) but secondary — the primary blocker is term→column mapping.",
+    "✅ Correct. Business-term-to-obscure-column mapping needs a glossary / semantic layer; that's the fundamental challenge.",
+    "50+ tables and join complexity is a scaling concern, not the immediate reason THIS query fails on cryptic column names."
+  ]
+},
+{
+  id:9, topic:"NLQ-to-SQL / Query correctness", trap:"Missing-bound trap",
+  q:"A NLQ system generates this SQL for 'How many new customers signed up last month?'. The query runs without error but the business number is inflated. What is most likely wrong?",
+  code:"SELECT COUNT(*) FROM customers WHERE created_at >= '2026-02-01'",
+  opts:[
+    "The query includes test accounts, internal users, and duplicates; business definitions like 'new customer' aren't applied.",
+    "The WHERE clause has no upper bound, so it counts all customers from February onward, not just February.",
+    "COUNT(*) counts NULL customer_ids (which exist from data migrations), while COUNT(DISTINCT) would exclude them.",
+    "The WHERE clause uses a hard-coded date, so it always counts February data regardless of the actual month."
+  ],
+  correct:1,
+  exp:"The filter is `created_at >= '2026-02-01'` with NO upper bound. 'Last month' should be a bounded range (Feb 1 to Mar 1), but this counts everyone who signed up from Feb 1 all the way to today — several months of customers — massively inflating the count. Fix: add `AND created_at < '2026-03-01'`.",
+  why:[
+    "Test accounts/duplicates/business-definition issues do inflate counts and matter in practice, but the GLARING, concrete bug in THIS query is the missing upper bound.",
+    "✅ Correct. Open-ended >= with no upper bound counts far more than one month → inflated.",
+    "COUNT(*) counts rows regardless of NULL customer_id; that's not why the number is inflated here.",
+    "The date is hard-coded, but that causes wrong-month/stale results, not the inflation described — inflation comes from the missing upper bound."
+  ]
+},
+{
+  id:10, topic:"RAG / Evaluation bootstrapping", trap:"No-ground-truth trap",
+  q:"You ship a RAG chatbot to a client. They ask how to know if it is actually working. You have no labeled ground-truth dataset yet. What is the most practical first evaluation step?",
+  opts:[
+    "Measure cosine similarity between query and response; flag low-similarity responses as potential hallucinations.",
+    "Configure RAGAS, which requires 100 question-context-answer triples to calibrate scores before it becomes reliable.",
+    "Run an A/B test comparing chatbot to human agents, using escalation rate and resolution time as proxies.",
+    "Use a separate LLM (LLM-as-judge) to score a sample of real queries on faithfulness and relevance."
+  ],
+  correct:3,
+  exp:"With no labeled data, LLM-as-judge is the most practical FIRST step: it's reference-free, needs no ground-truth dataset, and can score a sample of real production queries on faithfulness (grounded in context?) and relevance (answers the question?) immediately. It's fast to stand up and gives actionable signal.",
+  why:[
+    "Query↔response cosine similarity is a weak, noisy hallucination signal — a fluent wrong answer can be very 'similar' to the query. Not reliable.",
+    "RAGAS is great but needs curated triples/setup — not the fastest FIRST step when you have zero labeled data.",
+    "A/B vs human agents is valuable but heavy to set up and slow; not the practical FIRST move.",
+    "✅ Correct. LLM-as-judge on a sample = reference-free, immediate, scores faithfulness + relevance without labels."
+  ]
+},
+{
+  id:11, topic:"RAG / Metric interpretation", trap:"Metric-blind-spot trap",
+  q:"Your RAG system scores well on retrieval metrics (high MRR and NDCG) but client complaints about answer quality remain high. What does this indicate?",
+  opts:[
+    "The retrieval metrics are computed on a static test set; production queries are phrased differently, so actual retrieval is poor.",
+    "The correct answer spans multiple chunks, and only one is retrieved, so the LLM lacks the full information.",
+    "The retrieved chunks are placed in the middle of the prompt where LLM attention is lower; reordering would improve generation.",
+    "Retrieval metrics only confirm that the right documents are found; the LLM may still generate poor answers due to prompt or model issues."
+  ],
+  correct:3,
+  exp:"Retrieval metrics (MRR/NDCG) measure ONLY whether the right documents are found and ranked well. They say nothing about the GENERATION step. High retrieval + poor answers means the failure is downstream: prompt design, the model ignoring/mis-using context, formatting, or hallucination. You must evaluate generation separately (faithfulness, answer relevancy).",
+  why:[
+    "Possible, but it's a specific hypothesis; the correct answer is the general principle that retrieval metrics don't cover generation.",
+    "Also a specific cause (and would usually lower recall metrics too); not the general indication.",
+    "The 'lost in the middle' effect is real but a narrow hypothesis; not what high-retrieval-yet-bad-answers primarily indicates.",
+    "✅ Correct. Good retrieval ≠ good answers. Generation is a separate stage that needs its own evaluation."
+  ]
+},
+{
+  id:12, topic:"Evaluation / Metrics vs humans", trap:"Metric-worship trap",
+  q:"You compare two prompting strategies for an enterprise summarization tool. Strategy A scores higher on ROUGE-L. Strategy B scores lower on ROUGE-L but humans consistently prefer it in blind evaluation. Which do you ship and why?",
+  opts:[
+    "Ship B because ROUGE-L penalises valid paraphrases, while human preference directly measures user value.",
+    "Rerun with BERTScore, which correlates better with human judgement, and ship the winner.",
+    "Ship A because ROUGE-L is the industry standard and human evaluations are biased by length and recency.",
+    "Expand the human evaluation to 50+ annotators to achieve statistical significance, then ship the winner."
+  ],
+  correct:0,
+  exp:"ROUGE-L measures n-gram/sequence overlap with a reference, so it penalises valid paraphrases and rewards surface copying. Human preference in blind evaluation is the closest proxy to actual user value. When a lexical metric and consistent human preference disagree, trust the humans — ship B.",
+  why:[
+    "✅ Correct. ROUGE-L over-rewards lexical overlap and misses paraphrase quality; consistent human preference is the ground truth for value.",
+    "BERTScore correlates better than ROUGE, but you ALREADY have the strongest signal — direct human preference. No need to defer the decision to another automated metric.",
+    "Treating ROUGE-L as authoritative over consistent human preference is exactly the mistake; 'industry standard' doesn't mean 'measures value'.",
+    "You already see a CONSISTENT human preference; more annotators is over-engineering when the signal is already clear. (Reasonable to do later, but not why you'd delay shipping.)"
+  ]
+},
+{
+  id:13, topic:"Docker / GPU", trap:"Silent-CPU-fallback trap",
+  q:"You Dockerize a Python AI service. It works on your laptop with a GPU but in the container inference is 10x slower. What is the most likely cause?",
+  opts:[
+    "Model weights were saved with GPU tensor addresses, causing a remapping overhead when loaded in a different environment.",
+    "Docker's overlay filesystem adds per-layer I/O overhead when loading large weight files.",
+    "The container's cgroup memory limit is below the model's working set, forcing PyTorch to fall back to CPU.",
+    "The base image lacks CUDA libraries, so pip installs the CPU-only version of PyTorch without any error."
+  ],
+  correct:3,
+  exp:"The classic containerized-AI gotcha: if the base image doesn't have the right CUDA toolkit, pip installs the CPU-only PyTorch wheel silently (no error). Inference then runs entirely on CPU → ~10x slower. Fix: use a CUDA base image (e.g., nvidia/cuda or a CUDA-enabled PyTorch image) and pass --gpus to the container.",
+  why:[
+    "PyTorch remaps tensors to the available device on load (map_location); saved 'GPU addresses' aren't a real 10x-slowdown cause.",
+    "Overlay FS adds a one-time load cost, not a 10x per-inference slowdown.",
+    "A too-low memory limit would OOM-kill the container, not silently fall back to CPU.",
+    "✅ Correct. Missing CUDA → CPU-only PyTorch wheel installed silently → runs on CPU → 10x slower. Use a CUDA base image + --gpus."
+  ]
+},
+{
+  id:14, topic:"Kubernetes / Cold start", trap:"Cold-start bottleneck trap", debatable:true,
+  q:"Your AI service on Kubernetes scales pod count correctly during a traffic spike but new pods take 4–5 minutes to become ready while users receive 503 errors. What is the bottleneck and fix?",
+  opts:[
+    "CPU resource requests are too low, causing throttling that delays Python imports and model loading.",
+    "The container image is very large and is pulled from ECR on every new node, dominating startup time.",
+    "The readiness probe is too aggressive (failureThreshold=1, periodSeconds=30), cutting traffic before startup completes.",
+    "New pods load model weights from scratch each time, and weight loading is the dominant delay."
+  ],
+  correct:3,
+  exp:"For an AI service, loading multi-GB model weights on every new pod is the classic dominant cold-start cost — it happens on EVERY pod regardless of node, giving a consistent 4–5 min readiness delay. Fixes: bake weights into the image or a shared/prewarmed volume, use an init container / model cache, keep warm pods (min replicas), and set a proper readiness probe with initialDelaySeconds.",
+  why:[
+    "CPU throttling slows startup somewhat but rarely produces a consistent multi-minute delay by itself.",
+    "Large image pull is a very real cause — but it mainly hurts when NEW NODES are added (images are cached per node), whereas the symptom is per-POD. Strong runner-up (see ⚠).",
+    "A too-aggressive readiness probe keeps traffic away / restarts pods, but doesn't itself create a 4–5 min load time — it's a distractor dressed up with real-looking params.",
+    "✅ Best answer. Per-pod model-weight loading is the most universal, AI-specific explanation for consistent multi-minute readiness."
+  ],
+  note:"⚠ Debatable: Option B (large image pulled on new nodes) is a strong real-world alternative. Distinguish them: if the cluster is provisioning new NODES during the spike → image pull dominates (B); if pods land on warm nodes → model loading dominates (D). Given the symptom is stated per-pod, D is the safer pick — but be ready to argue B."
+},
+{
+  id:15, topic:"AWS Lambda / RDS", trap:"Timeout-source trap", debatable:true,
+  q:"You deploy an AI agent to AWS Lambda. It calls the OpenAI API, queries PostgreSQL RDS, and writes to S3. It works locally pointed at production but times out on the RDS database call inside Lambda. What is most likely wrong?",
+  opts:[
+    "Lambda cold starts inside a VPC require ENI provisioning that can take over a minute, causing timeouts on first invocation.",
+    "Lambda's default timeout is 3 seconds; cold start with SSL and connection pool takes 4–6 seconds, so increase the timeout and use RDS Proxy.",
+    "Lambda runs in a VPC but a security group or subnet routing prevents outbound access to RDS; adjust VPC configuration.",
+    "The Lambda execution role lacks rds-db:connect permission, so IAM authentication fails silently."
+  ],
+  correct:1,
+  exp:"'Works locally but times out only inside Lambda' points to Lambda's execution-timeout / connection-setup cost. Lambda's default timeout is short (3s), and a cold connection (SSL handshake + pool init) can take 4–6s → it times out in Lambda but not locally (no such limit). Fix: raise the function timeout and use RDS Proxy to pool/reuse DB connections.",
+  why:[
+    "VPC ENI cold starts were a real historical delay, but AWS largely fixed this (Hyperplane ENIs); it's not the most likely cause today.",
+    "✅ Keyed answer. Short default timeout + multi-second cold DB connect explains 'works locally, times out in Lambda'; RDS Proxy is the canonical fix.",
+    "SG/subnet misconfig is a very strong alternative — a blocked network path causes the connection to hang until timeout (see ⚠).",
+    "Missing rds-db:connect (IAM auth) fails with an auth error, not a silent hang/timeout."
+  ],
+  note:"⚠ Genuinely debatable between B and C. If RDS is private and Lambda's VPC security-group/route to RDS is misconfigured, the connection hangs → timeout (C). Tell them apart: a connection REFUSED / no-route error ⇒ C (networking); a call that succeeds only with a longer timeout ⇒ B. I keyed B because it best explains 'works locally, fails only in Lambda' + RDS Proxy is the textbook fix — but C is fully defensible."
+},
+{
+  id:16, topic:"AWS Spot / Batch jobs", trap:"'Specific to Spot' trap",
+  q:"Your team suggests parallelising a nightly embedding job across 50 AWS Spot instances to reduce cost vs one large on-demand instance. What is the critical engineering risk SPECIFIC to Spot instances?",
+  opts:[
+    "Running 50 concurrent upserts may exceed the vector database's write throughput, silently dropping some records.",
+    "Spot GPU instances may not be available in all AZs, causing the job to fall back to on-demand pricing unpredictably.",
+    "Partitioning the document ranges across 50 instances may create overlapping IDs, leading to unintended overwrites.",
+    "Spot instances can be terminated with only 2 minutes' notice; without checkpointing, work is lost and must restart from zero."
+  ],
+  correct:3,
+  exp:"The DEFINING property of Spot instances is that AWS can reclaim them at any time with only a ~2-minute warning. For a long batch job with no checkpointing, an interrupted instance loses all its progress and must restart — the risk that is SPECIFIC to Spot. Fix: checkpoint progress frequently and handle the interruption notice to save state.",
+  why:[
+    "Vector-DB write throughput is a concern for any parallel job (on-demand too) — not specific to Spot.",
+    "AZ availability / price fallback is a real Spot annoyance but a cost/scheduling issue, not the critical work-loss risk.",
+    "Overlapping IDs from bad partitioning is a general parallelism bug, not Spot-specific.",
+    "✅ Correct. 2-minute termination with no checkpointing = lost work — the risk unique to Spot. Checkpoint + handle the interruption notice."
+  ]
+},
+{
+  id:17, topic:"Agents / Tool loops", trap:"Repeated-tool-call trap",
+  q:"A LangChain ReAct agent with 5 tools calls the same tool 8–10 times in a row with slightly different inputs before arriving at an answer. What is causing this and how do you fix it?",
+  opts:[
+    "The ReAct chain-of-thought explores all tool combinations before committing, leading to many reasoning steps.",
+    "Tool responses are unstructured text; the LLM cannot parse them reliably and calls again to get structured data.",
+    "Function-calling mode retries automatically when JSON schema validation fails; malformed responses cause repeated calls.",
+    "Vague tool descriptions leave the LLM uncertain about success criteria, so it keeps retrying with variation."
+  ],
+  correct:3,
+  exp:"'Same tool, slightly different inputs, many times' is the signature of the LLM not knowing when it has SUCCEEDED. Vague/unclear tool descriptions (and unclear return semantics) leave the model guessing, so it keeps trying variations. Fix: write precise tool descriptions and clear success/return contracts so the model knows when to stop.",
+  why:[
+    "ReAct doesn't brute-force 'all combinations'; it reasons step by step. This mischaracterizes the loop.",
+    "Unstructured responses can cause re-calls, but that usually yields re-parsing attempts, not creative input VARIATION searching for success.",
+    "Automatic JSON-schema retries usually re-send the SAME input, not 'slightly different inputs' — and they're framework-automatic, not exploratory.",
+    "✅ Correct. Vague tool descriptions → no clear success criteria → the LLM keeps retrying with variations. Tighten descriptions + return contracts."
+  ]
+},
+{
+  id:18, topic:"Agents / Determinism & audit", trap:"Regulated-consistency trap",
+  q:"An enterprise agent gives different answers to the same question on different days and is sometimes confidently wrong. It uses temperature=0.7 and no session memory. The client is in a regulated industry and needs consistency and full auditability. What changes do you make?",
+  opts:[
+    "Use majority voting: send each query three times and return the most frequent answer.",
+    "Fine-tune the model on 500 domain examples; this reduces variance and eliminates provider model updates.",
+    "Add a Redis cache keyed on query hash; return cached responses for repeated questions.",
+    "Set temperature=0, pin the model version, log full request/response traces, and add faithfulness verification."
+  ],
+  correct:3,
+  exp:"For consistency + auditability in a regulated setting you attack each requirement directly: temperature=0 (deterministic sampling), pin the model version (provider updates won't silently change behavior), log full request/response traces (auditability), and add faithfulness verification (catches confidently-wrong answers). That's the complete, correct set.",
+  why:[
+    "Majority voting reduces some variance but is expensive (3x calls), still non-deterministic, and doesn't address auditability or model-version drift.",
+    "Fine-tuning does NOT eliminate provider model updates or guarantee determinism, and it's heavy for a consistency/audit problem.",
+    "A cache makes REPEATED identical queries consistent but does nothing for new/paraphrased queries, determinism of generation, or audit trails.",
+    "✅ Correct. temp=0 + pinned model + full trace logging + faithfulness checks covers determinism, drift, auditability, and correctness together."
+  ]
+},
+{
+  id:19, topic:"RAG / Input handling", trap:"Special-character trap", debatable:true,
+  q:"A production RAG pipeline runs correctly for 99% of queries but silently returns wrong answers for queries containing special characters like curly braces, backslashes, or Unicode emoji. Retrieval metrics look normal. Where is the bug most likely hiding?",
+  opts:[
+    "The embedding model normalises Unicode (e.g., NFC), splitting emoji into multiple tokens that shift the vector toward unrelated semantics.",
+    "The vector database client uses msgpack, which silently strips backslashes and control characters before indexing.",
+    "The query is inserted directly into an f-string or .format() template, causing prompt syntax breakage.",
+    "A content-moderation filter truncates the query at the first special character, sending a partial query to the LLM."
+  ],
+  correct:3,
+  exp:"'Silently wrong' (no error) + affects several different special-char types (braces, backslashes, emoji) + 'retrieval metrics look normal' points to a pre-processing/generation-path step that quietly mangles the query for ALL these characters. A moderation/sanitization filter truncating at the first special character produces a partial query → silently wrong answer, while your retrieval metrics (measured on clean test queries) stay normal.",
+  why:[
+    "Unicode/emoji tokenization would affect emoji only — not backslashes and braces — and would degrade retrieval, but metrics 'look normal'.",
+    "A specific msgpack claim is an invented, oddly-specific mechanism; not the general cause across all three char types.",
+    "Curly braces breaking .format() is a real, well-known bug — BUT it usually THROWS an exception (not 'silently wrong'), and backslashes/emoji don't break .format(). Strong runner-up (see ⚠).",
+    "✅ Best answer. A filter truncating at the first special character explains all three char types AND silent (no-error) wrong answers."
+  ],
+  note:"⚠ Debatable vs Option C. The classic senior gotcha is 'user input with curly braces breaks .format() prompt templates' — memorize that too. I keyed D because the question stresses SILENT wrong answers across braces + backslashes + emoji, which .format() (curly-brace-only, and it raises errors) doesn't fully explain. If the question emphasized an exception/traceback, C would be the answer."
+},
+{
+  id:20, topic:"RAG / Multi-symptom diagnosis", trap:"Bundle-diagnosis trap",
+  q:"You deploy a RAG chatbot for a large bank. After 2 weeks you notice: (a) answers are accurate but users keep asking follow-up clarifications, (b) the same factual question phrased differently gets different confidence levels, (c) retrieval latency spikes for longer queries. Which diagnosis-and-fix set is correct?",
+  opts:[
+    "(a) Top-K too low → increase to 10. (b) Vector DB not persisting embeddings → enable persistence. (c) Long queries trigger full table scans → add indexes.",
+    "(a) max_tokens too low → increase. (b) Duplicate ingestion runs cause embedding variance → deduplicate. (c) Connection pool size insufficient → increase pool.",
+    "(a) Chunks too small → increase chunk size or use parent-document retrieval. (b) Embedding model not robust to paraphrase → use a stronger model or HyDE. (c) Exact cosine search on a large index → switch to ANN (FAISS/HNSW).",
+    "(a) System prompt too restrictive → relax it. (b) Temperature >0.5 → set to 0. (c) Embedding API rate limit → add cache."
+  ],
+  correct:2,
+  exp:"Each symptom maps cleanly: (a) accurate but users need follow-ups = answers lack surrounding context = chunks too small → larger chunks / parent-document retrieval. (b) same meaning, different phrasing, different results = embedding not robust to paraphrase → stronger embedding model or HyDE. (c) latency spikes on longer queries = doing exact (brute-force) similarity on a large index → switch to an ANN index (FAISS/HNSW). Only option C gets all three right.",
+  why:[
+    "(a) higher Top-K adds more chunks but not more CONTEXT per hit; (b) persistence doesn't explain paraphrase variance; (c) 'full table scans' misframes vector search.",
+    "(a) max_tokens truncates output length, not the need for clarification; (b) dedup doesn't fix paraphrase sensitivity; (c) connection pool isn't the driver of query-length-dependent latency.",
+    "✅ Correct. Small chunks → parent-doc; paraphrase weakness → stronger model/HyDE; exact search on large index → ANN. All three fit.",
+    "(a)(b)(c) here are plausible-sounding but each misdiagnoses the specific symptom (prompt/temperature/rate-limit don't explain follow-ups, paraphrase variance, or length-scaled latency)."
+  ]
+},
+{
+  id:21, topic:"MLOps / Root-cause rigor", trap:"Premature-conclusion trap",
+  q:"A client's AI contract-analysis tool drops from 91% to 74% accuracy over 3 months with no code changes. What is the most rigorous way to diagnose the root cause?",
+  opts:[
+    "Run three parallel investigations: data distribution shift, silent model-provider update, and concept drift in business rules.",
+    "Rebuild the vector index from scratch, as HNSW/IVF indices degrade over time with upserts.",
+    "Assume prompt injection from new contracts and audit recent low-confidence predictions for adversarial patterns.",
+    "Attribute the drop to natural variance in LLM-based evaluation (±8–15%) and re-evaluate the baseline."
+  ],
+  correct:0,
+  exp:"'No code changes' but accuracy dropped means something in the ENVIRONMENT changed. The rigorous approach is to investigate the top hypotheses in parallel rather than latching onto one: (1) data distribution shift (inputs changed), (2) a silent model-provider update (the API model changed under you), (3) concept drift (business rules/definitions moved). Systematic multi-hypothesis investigation is what 'rigorous' means.",
+  why:[
+    "✅ Correct. Multi-hypothesis parallel investigation (data shift / provider update / concept drift) is the rigorous root-cause method.",
+    "Rebuilding the index assumes ONE cause prematurely; index degradation rarely causes a 17-point accuracy drop and isn't established.",
+    "Assuming prompt injection is another single-cause guess without evidence.",
+    "A 17-point drop over 3 months is far beyond eval noise — dismissing it as 'natural variance' is the least rigorous option."
+  ]
+},
+{
+  id:22, topic:"Deployment / Data residency", trap:"Compliance-constraint trap",
+  q:"A large enterprise requires your AI agent deployed in THEIR own AWS account with zero data leaving their VPC, plus full audit logs of every LLM call. The agent uses an LLM, a vector database, and calls internal APIs. Which deployment design is correct?",
+  opts:[
+    "Deploy in your own AWS account, connect via Transit Gateway, store logs in your account with cross-account read access.",
+    "Deploy on AWS Outposts in the client's data centre, using self-hosted LLM and local log shipping.",
+    "Deploy in Azure using Azure OpenAI and Azure AI Search, assuming the client has an existing Azure EA.",
+    "Deploy within the client's AWS account using Amazon Bedrock or a self-hosted LLM, and store logs in their CloudWatch with KMS."
+  ],
+  correct:3,
+  exp:"The constraints are explicit: run in the CLIENT's AWS account, no data leaving their VPC, and full audit logs. Option D satisfies all three: deploy inside their account, use Bedrock (in-VPC via VPC endpoints) or a self-hosted LLM so data never leaves, and log every call to their CloudWatch encrypted with KMS for auditability.",
+  why:[
+    "Deploying in YOUR account with cross-account log access means data leaves the client's VPC — violates the core requirement.",
+    "AWS Outposts in their DATA CENTRE contradicts 'in their AWS account'; over-engineered and doesn't match the stated constraint.",
+    "Moving to Azure ignores the explicit AWS-account + VPC requirement and assumes infrastructure they didn't specify.",
+    "✅ Correct. Client's own account + Bedrock/self-hosted LLM (data stays in VPC) + CloudWatch logs with KMS = meets residency AND audit requirements."
+  ]
+},
+{
+  id:23, topic:"Multi-agent / Reliability", trap:"Distributed-consistency trap",
+  q:"You have a multi-agent pipeline: Agent 1 extracts from documents, Agent 2 enriches via an external API, Agent 3 writes to a database. In production Agent 2 intermittently fails and Agent 3 writes partial corrupt records. What is the architectural fix?",
+  opts:[
+    "Add a circuit breaker around Agent 2's API calls; on failure return a default value and flag the record for later backfill.",
+    "Implement a saga pattern with message queues so Agent 3 only runs on explicit success messages; failures go to a DLQ.",
+    "Add OpenTelemetry tracing to identify which invocations fail, then add retry logic and input validation.",
+    "Wrap Agent 2 and Agent 3 in a distributed XA transaction with two-phase commit to roll back on failure."
+  ],
+  correct:1,
+  exp:"The core defect is that Agent 3 writes even when Agent 2 failed, producing corrupt partial records. The right architectural fix is a saga pattern with message queues: Agent 3 only consumes/executes on an explicit SUCCESS message from Agent 2, and failures route to a dead-letter queue (DLQ) for inspection/retry. This guarantees no partial writes and gives durable, decoupled reliability.",
+  why:[
+    "A circuit breaker with a DEFAULT value can still feed Agent 3 bad/placeholder data → it would still write incorrect records. Doesn't prevent corruption.",
+    "✅ Correct. Saga + message queues means Agent 3 runs only on success; failures → DLQ. No partial/corrupt writes, decoupled and durable.",
+    "Tracing + retry + validation improves observability and resilience but doesn't architecturally PREVENT Agent 3 from writing on Agent 2's failure.",
+    "Distributed XA / two-phase commit across an external API + DB is a well-known anti-pattern (external APIs aren't transactional; 2PC is brittle and blocking). Wrong tool."
+  ]
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};          // qid -> true once first answered correctly
+const firstTryWrong = {};   // qid -> true if a wrong option was clicked before the correct one
+const quizEl = document.getElementById("quiz");
+
+function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  card.id = "q" + q.id;
+
+  let html = '<div class="q-head">';
+  html += '<span class="q-num">Q' + q.id + '</span>';
+  html += '<span class="tag">' + esc(q.topic) + '</span>';
+  html += '<span class="tag trap">' + esc(q.trap) + '</span>';
+  if (q.debatable) html += '<span class="tag trap">⚠ debatable</span>';
+  html += '</div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+
+  q.opts.forEach((opt, i) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + i + '">' +
+            '<span class="letter">' + LETTERS[i] + '</span>' +
+            '<span class="opt-text">' + esc(opt) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  // explanation panel
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why the correct answer (' + LETTERS[q.correct] + ') is right</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  q.why.forEach((w, i) => {
+    exp += '<li><b>' + LETTERS[i] + ':</b> ' + esc(w) + '</li>';
+  });
+  exp += '</ul>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  exp += '</div>';
+  html += exp;
+
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) {
+    document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show");
+    return;
+  }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;                 // already solved; lock further clicks
+  const fb = document.getElementById("fb" + qid);
+
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!";
+    fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");   // auto-reveal on solve
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option.";
+    fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent =
+    "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width =
+    (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Topics to review</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else {
+    s += '<p>Clean sweep on first try. 🎯</p>';
+  }
+  s += '<p style="color:var(--muted);font-size:.82rem">Full deep-dive theory for these topics lives in the SeniorDS_RealTime lessons (RAG, agents, vector stores, eval, prod-ops).</p>';
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+
+document.getElementById("reset").onclick = () => {
+  location.reload();
+};
+
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

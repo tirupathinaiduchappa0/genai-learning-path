@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LLM Fundamentals & Transformers — Scenario MCQs (15)</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#7c3aed; --accent2:#6d28d9;
+    --correct:#16a34a; --correct-bg:#dcfce7; --wrong:#dc2626; --wrong-bg:#fee2e2;
+    --tag:#0891b2; --trap:#b45309; --diff:#db2777; --deep:#2563eb; --deep-bg:#dbeafe; --bar:#e2e8f0;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#a78bfa; --accent2:#c4b5fd;
+    --correct:#4ade80; --correct-bg:#14532d; --wrong:#f87171; --wrong-bg:#7f1d1d;
+    --tag:#67e8f9; --trap:#fbbf24; --diff:#f9a8d4; --deep:#60a5fa; --deep-bg:#1e3a8a; --bar:#334155;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:26px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 4px;font-size:1.45rem;}
+  header p{margin:0;opacity:.92;font-size:.86rem;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 90px;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;position:sticky;top:92px;z-index:40;background:var(--bg);padding:10px 0;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .score{font-weight:700;font-size:.9rem;}
+  .progress-outer{background:var(--bar);border-radius:20px;height:12px;overflow:hidden;margin:6px 0 14px;}
+  .progress-inner{background:linear-gradient(90deg,var(--correct),var(--accent));height:100%;width:0%;transition:width .3s;}
+  .q{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;padding:16px 18px;}
+  .q-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .q-num{font-weight:800;color:var(--accent);}
+  .tag{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:var(--tag);}
+  .tag.trap{background:var(--trap);}
+  .tag.diff{background:var(--diff);}
+  .q-text{font-weight:600;margin:6px 0 10px;}
+  pre{background:rgba(120,120,120,.12);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.4;margin:8px 0;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;margin:7px 0;cursor:pointer;transition:.12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.correct .letter{color:var(--correct);}
+  .opt.wrong .letter{color:var(--wrong);}
+  .opt.locked{cursor:default;}
+  .feedback{font-size:.82rem;font-weight:600;margin:6px 0 0;min-height:1em;}
+  .feedback.ok{color:var(--correct);}
+  .feedback.no{color:var(--wrong);}
+  .explain{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;font-size:.9rem;}
+  .explain.show{display:block;}
+  .explain h4{margin:.5em 0 .3em;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .explain .why-right{background:var(--correct-bg);border-left:3px solid var(--correct);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain .deep{background:var(--deep-bg);border-left:3px solid var(--deep);padding:8px 10px;border-radius:6px;margin:4px 0;}
+  .explain ul{margin:.3em 0;padding-left:1.1em;}
+  .explain li{margin:.25em 0;}
+  .explain .caveat{background:rgba(180,83,9,.12);border-left:3px solid var(--trap);padding:8px 10px;border-radius:6px;margin:6px 0;}
+  .explain .learn{font-size:.82rem;color:var(--muted);margin-top:6px;font-style:italic;}
+  .show-exp{font-size:.76rem;margin-top:8px;}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px;}
+  .summary{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px 18px;margin:18px 0;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧠 LLM Fundamentals &amp; Transformers — Scenario MCQs</h1>
+  <p>Topic 05 · 15 real-world questions · tokenization, embeddings, self-attention, transformers, decoding, fine-tuning, RLHF · green = correct, red = try again</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="score" id="score">First-try score: 0 / 15</span>
+    <button id="revealAll">Reveal all</button>
+    <button id="reset">Reset</button>
+    <button id="theme">🌙 Dark</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="bar"></div></div>
+  <div id="quiz"></div>
+  <div class="summary" id="summary"></div>
+  <footer>Where "buzzword vs real mechanism" gets exposed. ⚠ = debatable. Deep-dive: SeniorDS_RealTime Lesson 02 &amp; 09.</footer>
+</div>
+<script>
+const QUESTIONS = [
+{
+  id:1, topic:"Tokenization", trap:"Words-equal-tokens trap", diff:"Intermediate",
+  q:"You budget prompts assuming '1 word = 1 token' and hit unexpected context-limit errors and cost overruns, especially with code, JSON, and non-English text. What did you misunderstand about tokenization?",
+  opts:[
+    "Tokens are always whole words, so your budget must just be off by a rounding error.",
+    "Tokens are SUB-WORD units (BPE): common words may be 1 token, but rare words, code symbols, whitespace, and non-English text split into MANY tokens — so token count ≠ word count.",
+    "Tokenization only affects output, not the input prompt size.",
+    "Every character is one token, so you should count characters instead."
+  ],
+  correct:1,
+  exp:"Modern LLMs use sub-word tokenization (BPE/WordPiece/SentencePiece). Frequent words are often a single token, but rare words, punctuation, code, repeated whitespace, and especially non-English scripts fragment into many tokens. A rough English rule is ~0.75 words/token, but code and other languages can be far denser — so budgeting by word count under-counts and blows your context/cost.",
+  why:[
+    "Tokens are NOT whole words; that's the exact misconception causing the overrun.",
+    "✅ Correct. Sub-word (BPE) units: rare words/code/whitespace/non-English fragment into many tokens; token ≠ word.",
+    "Tokenization affects BOTH input and output — the input prompt is tokenized and counts against the context window.",
+    "It's not one-char-per-token either; a token is a sub-word chunk, variable in length."
+  ],
+  deep:"BPE builds a vocabulary by iteratively merging frequent character pairs, so 'the' might be 1 token while 'tokenization' → ['token','ization'] and an emoji or CJK character may be several tokens. Practical consequences: (1) budget with a real tokenizer (tiktoken) not word counts; (2) code/JSON is token-dense — retrieved code chunks cost more than you'd guess; (3) non-English text can cost 2-3x the tokens of equivalent English. Tokenization is stage 1 of the LLM pipeline: text → token IDs → embeddings.",
+  learn:"Go deeper → Lesson 02, section B1 (tokenization)."
+},
+{
+  id:2, topic:"Embeddings vs one-hot", trap:"Lookup-table trap", diff:"Intermediate",
+  q:"An interviewer asks why LLMs use dense embeddings instead of one-hot vectors for tokens. What's the core reason?",
+  opts:[
+    "One-hot vectors are too slow to compute; embeddings are just a speed optimization.",
+    "Dense embeddings place tokens in a continuous space where SEMANTIC/SYNTACTIC similarity is geometric proximity — one-hot vectors are orthogonal and carry no notion of similarity between tokens.",
+    "Embeddings are required by the softmax function; one-hot wouldn't work at all.",
+    "One-hot vectors use more memory only because they store floats."
+  ],
+  correct:1,
+  exp:"One-hot vectors are all mutually orthogonal — 'king' and 'queen' are exactly as dissimilar as 'king' and 'banana' (distance is identical). Dense embeddings map tokens into a learned continuous space where similar tokens sit close together and relationships become directions, giving the model a rich, generalizable notion of meaning that one-hot fundamentally cannot represent.",
+  why:[
+    "It's not primarily a speed hack — one-hot's real failure is that it encodes NO similarity structure.",
+    "✅ Correct. Embeddings encode similarity as geometry (similar tokens are close); one-hot vectors are orthogonal with no similarity signal.",
+    "Softmax works on either; the reason for embeddings is representational richness, not a softmax requirement.",
+    "Memory is a minor point; the fundamental issue is that one-hot carries no semantic relationships."
+  ],
+  deep:"The token embedding matrix (vocab_size × d_model) is a learned lookup: each token ID indexes a dense vector trained so that meaning/usage patterns become geometry. This is why 'king − man + woman ≈ queen' works in word-vector space and why LLM embeddings generalize — the model can interpolate/relate tokens it's seen in similar contexts. One-hot's orthogonality throws all of that away. Note: these are TOKEN embeddings inside the model; separate sentence-embedding models (for RAG retrieval) are related but distinct.",
+  learn:"Go deeper → Lesson 02, B1 + Lesson 03, C3 (embeddings)."
+},
+{
+  id:3, topic:"Self-attention", trap:"Mechanism-hand-wave trap", diff:"Senior",
+  q:"In one sentence of mechanism (not analogy): what does self-attention actually compute for each token?",
+  code:"# scaled dot-product attention\nscores  = Q @ K.T / sqrt(d_k)   # (seq, seq)\nweights = softmax(scores)        # each row sums to 1\noutput  = weights @ V            # weighted sum of value vectors",
+  opts:[
+    "It picks the single most similar previous token and copies its embedding.",
+    "For each token it forms Query/Key/Value vectors, scores its Query against every token's Key (scaled dot product), softmaxes to weights, and outputs the weighted sum of all tokens' Value vectors.",
+    "It averages all token embeddings equally to produce a sentence vector.",
+    "It runs a small RNN over the tokens to capture order."
+  ],
+  correct:1,
+  exp:"Self-attention: each token projects to Query, Key, Value. A token's Query is dot-producted with every token's Key (scaled by √dₖ) to get scores; softmax turns scores into weights that sum to 1; the token's output is the weighted sum of all Value vectors. So each token's new representation is a learned, content-based blend of all other tokens — that's how context flows.",
+  why:[
+    "It doesn't 'pick one' token — it computes a weighted blend over ALL tokens (soft, not hard, selection).",
+    "✅ Correct. Q·Kᵀ/√dₖ → softmax → weighted sum of V. Content-based, weighted aggregation over all tokens.",
+    "It's not an equal average — the softmax weights are learned and content-dependent, not uniform.",
+    "No RNN is involved; attention is parallel over the sequence and order comes from positional encodings, not recurrence."
+  ],
+  deep:"Q = 'what I'm looking for', K = 'what I offer', V = 'what I pass on'. The √dₖ scaling keeps dot products from growing with dimension and pushing softmax into tiny-gradient regions. Because every token attends to every token in ONE step, attention has O(1) path length between any two positions (vs O(n) for RNNs) and is fully parallelizable — the two properties that made Transformers scale. Multi-head runs this in several subspaces in parallel to capture different relationships.",
+  learn:"Go deeper → Lesson 02, sections B2-B3 (attention + multi-head)."
+},
+{
+  id:4, topic:"Positional encoding", trap:"Order-free trap", diff:"Senior",
+  q:"Why do Transformers need positional encodings at all, when RNNs didn't?",
+  opts:[
+    "They don't; positional encodings are an optional performance tweak.",
+    "Self-attention is order-invariant (permuting the input tokens permutes the outputs identically) — it has no inherent notion of position — so position must be injected explicitly via positional encodings.",
+    "Positional encodings replace the need for embeddings entirely.",
+    "They exist only to make the model bigger so it memorizes more."
+  ],
+  correct:1,
+  exp:"Attention treats its input as a SET, not a sequence — shuffle the tokens and you get correspondingly shuffled outputs, with no sense of who came first. RNNs got order for free from sequential processing; Transformers process all tokens in parallel, so they must be TOLD position via positional encodings added to the token embeddings.",
+  why:[
+    "They're not optional — without them the model literally can't tell 'dog bites man' from 'man bites dog.'",
+    "✅ Correct. Attention is permutation-equivariant (order-blind), so position is injected explicitly via positional encodings.",
+    "Positional encodings ADD to embeddings; they don't replace them (embeddings carry meaning, positions carry order).",
+    "They're about encoding order, not about size/memorization."
+  ],
+  deep:"Original Transformer used fixed sinusoidal encodings (sin/cos of varying frequency) added to embeddings; modern LLMs often use learned positions or, increasingly, RoPE (rotary — rotates Q/K by position, giving good relative-position behavior and length extrapolation) or ALiBi (biases attention scores by distance). The key insight interviewers want: attention alone is order-blind, so position is a first-class, explicitly-added signal. This is why 'the model saw the tokens' isn't enough — it must also know their order.",
+  learn:"Go deeper → Lesson 02, B1-B3 (positional encoding, RoPE/ALiBi)."
+},
+{
+  id:5, topic:"Causal masking", trap:"Bidirectional-decoder trap", diff:"Senior",
+  q:"During training of a GPT-style decoder, what stops the model from 'cheating' by looking at the next token it's supposed to predict, and how is it implemented?",
+  code:"scores = Q @ K.T / sqrt(d_k)\nscores = scores + causal_mask   # 0 on/below diagonal, -inf ABOVE\nweights = softmax(scores)        # e^(-inf) = 0 -> no future attention",
+  opts:[
+    "Nothing — the model is allowed to see future tokens during training.",
+    "A causal mask adds -inf to attention scores for future positions BEFORE softmax, so their weights become exactly 0 — each position can attend only to itself and earlier tokens.",
+    "The tokens are fed one at a time during training, so future tokens don't exist yet.",
+    "Dropout randomly hides future tokens so it can't rely on them."
+  ],
+  correct:1,
+  exp:"Causal (masked) self-attention adds −∞ to the raw scores for all future positions before the softmax; since e^(−∞)=0, those future tokens receive exactly zero attention weight. So position t can only attend to positions ≤ t. This lets the model train on the full sequence in parallel (teacher forcing) while preserving the left-to-right, autoregressive property it uses at inference.",
+  why:[
+    "If it could see future tokens it would trivially cheat — that's exactly what the mask prevents.",
+    "✅ Correct. −∞ above the diagonal before softmax → future weights = 0. Enables parallel training while staying autoregressive.",
+    "Training is NOT one-token-at-a-time — the whole sequence is processed in parallel; the mask is what enforces causality efficiently.",
+    "Dropout is regularization, unrelated to enforcing causality."
+  ],
+  deep:"Encoders (BERT) use UNMASKED bidirectional attention because they see the whole input at once for understanding tasks. Decoders (GPT/LLaMA) use the causal mask for generation. The mask is a lower-triangular structure added to the (seq×seq) score matrix. This is why training can be parallel (compute loss on all positions at once with teacher forcing) yet inference is sequential (generate one token, append, repeat). Related: the KV-cache stores past K/V so generation is O(1) per new token instead of recomputing — consistent with causality since you only ever cache the past.",
+  learn:"Go deeper → Lesson 02, section B2 (masked self-attention)."
+},
+{
+  id:6, topic:"Decoding: temperature/top_p", trap:"Knob-confusion trap", diff:"Intermediate",
+  q:"For a data-extraction task you need deterministic, repeatable JSON output. Which decoding setting is correct, and what do temperature and top_p actually control?",
+  code:"# they shape SAMPLING from the next-token distribution\nprobs = softmax(logits / temperature)   # <1 sharpens, >1 flattens\n# top_p: keep smallest set of tokens whose cumulative prob >= p",
+  opts:[
+    "Set temperature high (e.g., 1.5) so the model is confident and precise.",
+    "Set temperature to 0 (greedy) — temperature scales logits before softmax (lower = sharper/more deterministic), top_p (nucleus) keeps the smallest token set summing to p; low temp gives repeatable extraction.",
+    "temperature and top_p change what the model KNOWS, so raise both for accuracy.",
+    "Set top_p to 0 so it considers all tokens equally."
+  ],
+  correct:1,
+  exp:"Both parameters shape SAMPLING from the next-token probability distribution, not the model's knowledge. Temperature divides the logits before softmax: <1 sharpens toward the top token (more deterministic), >1 flattens (more random), 0 ≈ greedy (always the argmax). top_p (nucleus) restricts sampling to the smallest set of tokens whose cumulative probability ≥ p. For deterministic extraction: temperature 0.",
+  why:[
+    "High temperature makes output MORE random, not more precise — the opposite of what extraction needs.",
+    "✅ Correct. temp=0 (greedy) for deterministic extraction; temp scales logits (sharpen/flatten), top_p = nucleus tail-cut.",
+    "They do NOT change what the model knows — only how the next token is sampled from a fixed distribution.",
+    "top_p=0 doesn't mean 'all tokens equally'; low top_p tightens the candidate set (and top_p is usually left at 1.0 when tuning temperature)."
+  ],
+  deep:"Temperature reshapes the WHOLE distribution's sharpness; top_p truncates the low-probability tail dynamically. Best practice: tune ONE and leave the other neutral (e.g., temp with top_p=1.0). Low temp for factual/extraction/code/RAG (deterministic, grounded); higher temp and/or top_p~0.9 for creative variety. Caveat: even temp=0 isn't perfectly deterministic across hardware/batching/provider changes — pin the model version too if you need strict reproducibility (regulated/audit).",
+  learn:"Go deeper → Lesson 09, section H5 (temperature & top_p)."
+},
+{
+  id:7, topic:"Autoregressive generation / KV-cache", trap:"Recompute trap", diff:"Senior",
+  q:"Generating a 500-token response, you notice the FIRST token is slow but each subsequent token is fast. What mechanism explains this, and what is the first token's cost about?",
+  opts:[
+    "The model gets 'warmed up' after the first token; it's just JIT compilation.",
+    "The KV-cache: the first step processes the whole prompt (the 'prefill', O(n²) over prompt length); then each new token reuses cached Keys/Values so it only computes attention against the cache — roughly O(1) per new token instead of reprocessing everything.",
+    "The first token is slow because of network latency only; generation itself is constant time.",
+    "Later tokens are fast because the model stops using attention after the first token."
+  ],
+  correct:1,
+  exp:"Autoregressive generation has two phases. PREFILL: process the entire prompt once and compute Keys/Values for every prompt token (the expensive, quadratic-in-prompt-length step — that's the slow first token / time-to-first-token). DECODE: for each new token, reuse the cached K/V of all prior tokens and only compute the new token's attention against them — so per-token cost is roughly constant instead of reprocessing the whole sequence each step.",
+  why:[
+    "It's not generic 'warm-up' or JIT — it's the specific prefill-then-cached-decode structure of the KV-cache.",
+    "✅ Correct. KV-cache: expensive prefill over the prompt, then O(1)-ish per token by reusing cached K/V. Explains slow-first, fast-rest.",
+    "Network latency doesn't explain the internal per-token compute difference; the KV-cache does.",
+    "Attention is used for EVERY token; later tokens are fast because prior K/V are cached, not because attention stops."
+  ],
+  deep:"Without a KV-cache, generating token N would recompute attention over all N-1 prior tokens every step → O(n²) total, wasteful. The KV-cache stores each token's K and V once; each new token computes its Q and attends against the cached K/V. This is why 'time to first token' (prefill, prompt-length dependent) and 'inter-token latency' (decode, cached) are reported separately, and why long PROMPTS raise TTFT while long OUTPUTS raise total decode time. It's memory-heavy (cache grows with sequence length) — a real production constraint (GQA/MQA shrink it).",
+  learn:"Go deeper → Lesson 02, B1 (autoregressive loop) + B3 (GQA/MQA)."
+},
+{
+  id:8, topic:"Context window / long context", trap:"Bigger-window-solves-all trap", diff:"Senior-trap",
+  q:"Your team wants to drop RAG and just paste entire document sets into a 200k-token context window. What are the real trade-offs you should raise?",
+  opts:[
+    "None — a big enough context window makes RAG obsolete.",
+    "Cost/latency scale with tokens (attention is ~quadratic in sequence length), 'lost in the middle' degrades recall of mid-context info, and you still can't fit truly large corpora — so retrieval + curation still matter even with big windows.",
+    "Large context windows are always cheaper than running retrieval.",
+    "Bigger windows increase accuracy monotonically with no downside."
+  ],
+  correct:1,
+  exp:"Big context windows help but don't make retrieval obsolete: (1) COST and LATENCY scale with tokens, and attention compute is roughly quadratic in sequence length, so stuffing 200k tokens per call is expensive/slow; (2) 'LOST IN THE MIDDLE' — models attend most to the start/end, so facts buried mid-context get missed; (3) many real corpora exceed even huge windows. Retrieval + curation (send fewer, more relevant tokens) still wins on cost, latency, and often accuracy.",
+  why:[
+    "A big window doesn't obsolete RAG — cost, latency, lost-in-the-middle, and corpus size all still bite.",
+    "✅ Correct. Quadratic-ish cost/latency, lost-in-the-middle, and finite window mean curation/retrieval still matter.",
+    "Stuffing huge contexts is usually MORE expensive per call than retrieving a few relevant chunks — not cheaper.",
+    "Accuracy does NOT rise monotonically — irrelevant filler adds noise and triggers lost-in-the-middle."
+  ],
+  deep:"'Just use a bigger window' is a classic senior trap. Full attention is O(n²) in sequence length, so both compute and dollar cost grow fast with context; and empirically, relevant info in the MIDDLE of a long context is recalled worse than at the edges (U-shaped attention). RAG's value is precisely CURATION — retrieve and rerank the few most relevant chunks so the model sees signal, not noise, cheaply. Long context and RAG are complementary: bigger windows relax chunk-count limits, but precision retrieval still drives quality and cost.",
+  learn:"Go deeper → Lesson 01 (RAG Q18 lost-in-the-middle) + Lesson 02 (O(n²))."
+},
+{
+  id:9, topic:"Fine-tuning vs RAG vs prompting", trap:"Wrong-lever trap", diff:"Senior",
+  q:"A client wants the model to (a) always respond in a strict legal-brief FORMAT and (b) answer using their constantly-updated case database. What's the right combination?",
+  opts:[
+    "Fine-tune on both the format and the entire case database; retrain nightly.",
+    "Use prompting/fine-tuning for the stable BEHAVIOR (legal-brief format) and RAG for the changing KNOWLEDGE (case database) — behavior and knowledge are different levers.",
+    "Use RAG for both; retrieve format examples and cases together every call.",
+    "Fine-tune for the database; prompting can't influence knowledge at all."
+  ],
+  correct:1,
+  exp:"RAG injects KNOWLEDGE at inference (perfect for a constantly-updated case DB — no retraining). Fine-tuning (or a strong system prompt with examples) shapes BEHAVIOR — the strict brief format. Retraining nightly just to absorb DB changes is wasteful and always slightly stale. Combine: prompt/fine-tune the format, RAG the cases.",
+  why:[
+    "Fine-tuning a nightly-changing database means constant retraining — expensive, slow, and stale between runs.",
+    "✅ Correct. Behavior (format) via prompting/fine-tuning; changing knowledge (cases) via RAG. Different problems, different tools.",
+    "RAG can supply case content, but reliably ENFORCING a strict format is a behavior problem better solved by prompting/fine-tuning.",
+    "Prompting DOES influence knowledge at inference (via provided context/RAG); and fine-tuning is the wrong tool for fast-changing facts."
+  ],
+  deep:"The canonical rule: RAG = what the model KNOWS (facts, fresh/private data, at inference); fine-tuning = HOW it behaves (style, format, tone, a narrow skill, baked into weights). Try in order of cost: prompting → RAG → fine-tuning. For strict format, a system prompt with 1-2 few-shot examples often suffices before you reach for fine-tuning. Most production systems combine RAG + prompt engineering; fine-tune only when prompting can't reliably enforce the behavior. Fine-tuning does NOT reliably teach fresh facts and risks the model confidently reciting stale data.",
+  learn:"Go deeper → Lesson 09, section H4 (fine-tuning vs RAG)."
+},
+{
+  id:10, topic:"PEFT / LoRA", trap:"Full-finetune trap", diff:"Senior",
+  q:"You need to adapt a 7B model to your domain's writing style but only have a single consumer GPU. Full fine-tuning won't fit in memory. What's the standard approach and why does it work?",
+  opts:[
+    "Full fine-tuning is the only real option; rent a huge multi-GPU cluster.",
+    "LoRA: freeze the base weights and train small low-rank adapter matrices (B·A) — you train ~0.1-1% of the params because task adaptation is empirically low-rank, so it fits on one GPU; QLoRA adds 4-bit quantization of the frozen base to shrink memory further.",
+    "Just use a bigger prompt; fine-tuning is never necessary.",
+    "Retrain the model from scratch on your domain data."
+  ],
+  correct:1,
+  exp:"LoRA freezes the pretrained weights and injects small trainable low-rank matrices (ΔW = B·A) into layers; you train only those (~0.1-1% of parameters), which fits on a single GPU and produces a tiny swappable adapter. It works because the WEIGHT UPDATE a task needs is empirically low-rank. QLoRA goes further, quantizing the frozen base to 4-bit so even large models fit in limited memory while adapters train in higher precision.",
+  why:[
+    "Full fine-tuning on a cluster works but is overkill for a style adaptation when PEFT fits on one GPU with near-equal quality.",
+    "✅ Correct. LoRA (freeze base + train low-rank B·A, ~1% of params) fits on one GPU; QLoRA adds 4-bit base quantization.",
+    "A bigger prompt may not reliably enforce a consistent style, and this question is specifically about parameter-efficient fine-tuning.",
+    "Training from scratch discards the pretrained model entirely — massively more expensive and unnecessary."
+  ],
+  deep:"LoRA: for a weight matrix W (d×d), instead of learning a full ΔW (d² params) you learn A (d×r) and B (r×d) with rank r≪d, so trainable params ≈ 2·d·r — often <1% of full. At inference, effective weight = W + B·A (adapters can be merged for zero overhead). QLoRA: 4-bit NF4 quantize the frozen base (slashes memory), train LoRA adapters on top → fine-tune 65B on a single pro GPU. Other PEFT: adapters, prefix/prompt tuning (even fewer params, less expressive). Half the real work is DATA quality + evaluating against the base model for regressions (catastrophic forgetting).",
+  learn:"Go deeper → Lesson 09, section H4 (PEFT/LoRA/QLoRA)."
+},
+{
+  id:11, topic:"RLHF / alignment", trap:"Training-stage trap", diff:"Senior",
+  q:"Where does RLHF fit in an LLM's training, and what problem does it solve that plain next-token pretraining does not?",
+  opts:[
+    "RLHF is the pretraining objective; it's how the model learns language in the first place.",
+    "RLHF is a post-pretraining alignment stage: after pretraining (+ supervised instruction tuning), it uses human preference data (often via a reward model + PPO, or DPO) to make outputs more helpful/harmless/aligned with what humans prefer.",
+    "RLHF replaces the Transformer architecture with a reinforcement-learning agent.",
+    "RLHF is only used to make the model faster at inference."
+  ],
+  correct:1,
+  exp:"Pretraining teaches the model to predict the next token over a huge corpus — it learns language and knowledge but not necessarily to be helpful, follow instructions, or avoid harmful output. RLHF is an ALIGNMENT stage AFTER pretraining (and usually after supervised instruction tuning): humans rank outputs, a reward model learns those preferences, and the LLM is optimized (PPO, or the simpler DPO) to produce preferred responses.",
+  why:[
+    "Pretraining's objective is next-token prediction, NOT RLHF — RLHF comes later.",
+    "✅ Correct. RLHF = post-pretraining alignment using human-preference data (reward model + PPO, or DPO) for helpful/harmless outputs.",
+    "RLHF doesn't change the architecture — it's still a Transformer; RLHF is a training/optimization stage.",
+    "RLHF is about alignment/quality, not inference speed."
+  ],
+  deep:"Typical modern pipeline: (1) PRETRAIN (next-token prediction, general knowledge/language); (2) SFT / instruction tuning (supervised on instruction→response pairs, teaches following instructions/format); (3) PREFERENCE ALIGNMENT — RLHF (train a reward model on human rankings, then optimize the policy with PPO) or DPO (Direct Preference Optimization — skips the separate reward model, optimizes directly on preference pairs, simpler/more stable). This is what turns a raw text-predictor into a helpful assistant. Know the stages and that DPO is the increasingly-popular, lighter alternative to full RLHF.",
+  learn:"Go deeper → Lesson 09, H4 (alignment: SFT/RLHF/DPO)."
+},
+{
+  id:12, topic:"Why Transformers beat RNNs", trap:"History trap", diff:"Intermediate",
+  q:"What were the two key advantages that let Transformers replace RNNs/LSTMs for large language modeling?",
+  opts:[
+    "Transformers use less memory and have fewer parameters than RNNs.",
+    "(1) Parallelism — all tokens are processed at once (RNNs are inherently sequential), enabling massive-scale training; (2) direct long-range dependencies — attention connects any two tokens in one step (O(1) path), avoiding RNNs' vanishing-gradient/bottleneck problems.",
+    "Transformers don't need training data because they use attention.",
+    "RNNs can't call GPUs, but Transformers can."
+  ],
+  correct:1,
+  exp:"Two things: (1) PARALLELISM — RNNs must process tokens one after another (step t depends on t-1), so they can't parallelize over sequence length; Transformers process the whole sequence at once, unlocking GPU-scale training. (2) LONG-RANGE DEPENDENCIES — attention connects any two positions directly in a single step (path length O(1)), whereas RNNs pass information through many sequential steps, causing vanishing gradients and an information bottleneck.",
+  why:[
+    "Transformers often have MORE parameters and use plenty of memory — that's not the advantage.",
+    "✅ Correct. Parallel processing (scale) + O(1) direct long-range dependencies (no vanishing-gradient bottleneck).",
+    "They absolutely need (lots of) training data — attention isn't magic that removes that.",
+    "RNNs can run on GPUs too; the difference is Transformers PARALLELIZE across the sequence, RNNs don't."
+  ],
+  deep:"RNN/LSTM limits: sequential computation (no seq-parallelism → slow to train at scale) and long-range info squeezed through a single evolving hidden state (vanishing gradients, forgetting). Attention fixes both: parallel over tokens (great for GPUs) and any-to-any connections in one hop. The trade-off Transformers accept is O(n²) attention cost in sequence length (the long-context problem from Q8) — but the parallelism + long-range wins were decisive for scaling to LLMs. This 'what did it solve' question is a very common warm-up.",
+  learn:"Go deeper → Lesson 02, section B3 (vs RNN/LSTM)."
+},
+{
+  id:13, topic:"Hallucination (why it happens)", trap:"Bug trap", diff:"Senior",
+  q:"An interviewer asks why LLMs hallucinate 'confidently.' What's the most accurate framing?",
+  opts:[
+    "It's a fixable software bug; a patch will eliminate hallucination entirely.",
+    "LLMs are trained to produce PLAUSIBLE next tokens, not to verify truth; when they lack the knowledge they still generate fluent, high-probability text — confidence reflects token likelihood, not factual certainty.",
+    "Hallucination only happens when temperature is above 1.0.",
+    "It happens because the model's weights are corrupted during training."
+  ],
+  correct:1,
+  exp:"An LLM optimizes for likely, fluent continuations — not for truth. It has no built-in fact-checker; when it doesn't 'know,' it still emits the most probable-sounding text, which can be wrong yet fluent. The apparent 'confidence' is just high token probability / fluent phrasing, not calibrated factual certainty. That's why hallucination is an inherent property, not a simple bug.",
+  why:[
+    "It's not a single fixable bug — it stems from the training objective (plausibility, not verified truth). Mitigations reduce it; they don't eliminate it.",
+    "✅ Correct. Trained for plausible next tokens, not truth; fluent-but-wrong output, and 'confidence' = token likelihood, not factual certainty.",
+    "Hallucination happens at temperature 0 too — determinism ≠ correctness.",
+    "Weights aren't 'corrupted'; the behavior follows directly from the next-token training objective."
+  ],
+  deep:"Because the objective is P(next token | context), the model is a fluent-text generator, not a knowledge oracle. Mitigations reduce (never eliminate): GROUNDING via RAG (give it the facts), requiring CITATIONS, low temperature for factual tasks, faithfulness/entailment checks post-generation, and honest 'I don't know' fallbacks. Note temperature 0 removes randomness but not hallucination — a deterministic model can confidently state an ungrounded claim. This framing ('plausibility ≠ truth') is exactly what senior interviewers want, and it ties straight into your RAG grounding work.",
+  learn:"Go deeper → Lesson 05-agents/RAG (E4) + Lesson 08 (faithfulness)."
+},
+{
+  id:14, topic:"Encoder vs decoder vs enc-dec", trap:"Architecture-mismatch trap", diff:"Senior",
+  q:"You need SENTENCE EMBEDDINGS for semantic search (not generation). Which model family is the natural fit, and why?",
+  opts:[
+    "A decoder-only model like GPT, because it's the most capable at everything.",
+    "An encoder-style model (e.g., BERT/sentence-transformers) — bidirectional attention builds rich whole-sentence representations ideal for embeddings, whereas decoder-only models are optimized for causal next-token generation.",
+    "An encoder-decoder like T5, because embeddings require translation.",
+    "Any model works identically for embeddings; the architecture is irrelevant."
+  ],
+  correct:1,
+  exp:"Encoders (BERT family, sentence-transformers) use BIDIRECTIONAL attention — every token sees the whole sentence — producing rich representations well-suited to pooling into a sentence embedding for retrieval/classification. Decoder-only models are trained causally for generation; while decoder-based embedding models exist, the natural, efficient choice for semantic-search embeddings is an encoder-style embedding model.",
+  why:[
+    "Decoder-only is built for generation (causal), not primarily for producing embeddings; 'most capable at everything' is not the right reason.",
+    "✅ Correct. Encoder (bidirectional) models build whole-sentence representations ideal for embeddings; decoders are generation-optimized.",
+    "Embeddings don't require translation; enc-dec (T5) is a seq2seq architecture, not the go-to for sentence embeddings.",
+    "Architecture matters: bidirectional vs causal attention meaningfully affects representation quality for embeddings."
+  ],
+  deep:"Three families: ENCODER-ONLY (BERT) — bidirectional, great for understanding/embeddings/classification; DECODER-ONLY (GPT/LLaMA) — causal, great for generation; ENCODER-DECODER (T5, translation) — encoder reads source, decoder generates target with cross-attention. For RAG retrieval you use a dedicated EMBEDDING model (often encoder-based, e.g., BGE/E5/all-MiniLM), trained specifically to map text to a similarity-friendly space — not your generative LLM. Match the architecture to the task: understanding/embeddings → encoder; generation → decoder.",
+  learn:"Go deeper → Lesson 02, B4 (encoder vs decoder) + Lesson 03 (embeddings)."
+},
+{
+  id:15, topic:"Model selection (GPT/LLaMA/Groq/Claude)", trap:"One-model trap", diff:"Intermediate",
+  q:"Your resume lists GPT-4, LLaMA, Groq, and Claude. An interviewer asks how you choose a model for a feature. What's the strongest, most senior answer?",
+  opts:[
+    "Always use the largest, most capable model (GPT-4) for everything to be safe.",
+    "Choose per requirement: capability/quality vs cost vs latency vs privacy/hosting — e.g., a small fast model (or Groq's fast inference) for simple/high-volume steps, a frontier model (GPT-4/Claude) for hard reasoning, and open models (LLaMA) when self-hosting/data-residency matters.",
+    "Pick whichever model is newest, regardless of the task.",
+    "Model choice doesn't matter; they're all interchangeable."
+  ],
+  correct:1,
+  exp:"Senior model selection is a trade-off across capability, cost, latency, and privacy/hosting — matched to the task. Use small/fast models (or Groq for very low-latency inference) for routing and simple high-volume steps; reserve frontier models (GPT-4, Claude) for genuinely hard reasoning; choose open-weight models (LLaMA) when you must self-host for data residency/compliance or cost control. Note Groq is an inference PROVIDER (fast hardware serving open models), not a model family — a good distinction to make.",
+  why:[
+    "Using the biggest model for everything wastes cost/latency on trivial steps — the anti-pattern of model tiering.",
+    "✅ Correct. Match model to task across capability/cost/latency/privacy; tier small-fast vs frontier vs self-hosted-open.",
+    "'Newest' isn't a criterion; requirements (cost/latency/privacy/quality) are.",
+    "They're not interchangeable — they differ in capability, cost, speed, licensing, and hosting."
+  ],
+  deep:"Practical selection axes: (1) CAPABILITY (reasoning depth, context length, multimodality); (2) COST per token; (3) LATENCY (Groq's LPU hardware serves open models like LLaMA at very high speed — great for real-time UX); (4) PRIVACY/HOSTING (open weights like LLaMA can be self-hosted in your VPC for data residency; GPT-4/Claude are API-only, though enterprise/VPC options exist). Tiering (small model routes/handles simple steps, frontier model for hard cases) is the key cost/latency lever. Clarify that Groq = fast inference provider, not a model — a subtle senior signal.",
+  learn:"Go deeper → Lesson 09, H5 + Lesson 08, G3 (cost/latency, model tiering)."
+},
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const solved = {};
+const firstTryWrong = {};
+const quizEl = document.getElementById("quiz");
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function permutation(n, seed){
+  let s = seed * 2654435761 % 2147483647;
+  const idx = Array.from({length:n}, (_,i)=>i);
+  for (let i=n-1;i>0;i--){ s=(s*48271)%2147483647; const j=s%(i+1); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  return idx;
+}
+
+QUESTIONS.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "q";
+  const perm = permutation(q.opts.length, q.id);
+  const correctDisplayPos = perm.indexOf(q.correct);
+  let html = '<div class="q-head"><span class="q-num">Q' + q.id + '</span>' +
+             '<span class="tag">' + esc(q.topic) + '</span>' +
+             '<span class="tag trap">' + esc(q.trap) + '</span>' +
+             '<span class="tag diff">' + esc(q.diff) + '</span></div>';
+  html += '<div class="q-text">' + esc(q.q) + '</div>';
+  if (q.code) html += '<pre>' + esc(q.code) + '</pre>';
+  perm.forEach((origIdx, pos) => {
+    html += '<div class="opt" data-q="' + q.id + '" data-i="' + origIdx + '">' +
+            '<span class="letter">' + LETTERS[pos] + '</span>' +
+            '<span class="opt-text">' + esc(q.opts[origIdx]) + '</span></div>';
+  });
+  html += '<div class="feedback" id="fb' + q.id + '"></div>';
+
+  let exp = '<div class="explain" id="exp' + q.id + '">';
+  exp += '<h4>Why ' + LETTERS[correctDisplayPos] + ' is correct</h4>';
+  exp += '<div class="why-right">' + esc(q.exp) + '</div>';
+  exp += '<h4>Option-by-option</h4><ul>';
+  perm.forEach((origIdx, pos) => { exp += '<li><b>' + LETTERS[pos] + ':</b> ' + esc(q.why[origIdx]) + '</li>'; });
+  exp += '</ul>';
+  if (q.deep) exp += '<h4>Mechanism deep-dive</h4><div class="deep">' + esc(q.deep) + '</div>';
+  if (q.note) exp += '<div class="caveat">' + esc(q.note) + '</div>';
+  if (q.learn) exp += '<div class="learn">📖 ' + esc(q.learn) + '</div>';
+  exp += '</div>';
+  html += exp;
+  html += '<div class="show-exp"><button data-exp="' + q.id + '">Show explanation</button></div>';
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+quizEl.addEventListener("click", e => {
+  const opt = e.target.closest(".opt");
+  const expBtn = e.target.closest("[data-exp]");
+  if (expBtn) { document.getElementById("exp" + expBtn.dataset.exp).classList.toggle("show"); return; }
+  if (!opt) return;
+  const qid = +opt.dataset.q, i = +opt.dataset.i;
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (solved[qid]) return;
+  const fb = document.getElementById("fb" + qid);
+  if (i === q.correct) {
+    opt.classList.add("correct");
+    fb.textContent = "✓ Correct!"; fb.className = "feedback ok";
+    solved[qid] = true;
+    document.getElementById("exp" + qid).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + qid + '"]').forEach(o => o.classList.add("locked"));
+    updateScore();
+  } else {
+    opt.classList.add("wrong");
+    fb.textContent = "✗ Not quite — try another option."; fb.className = "feedback no";
+    firstTryWrong[qid] = true;
+  }
+});
+
+function updateScore() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const total = QUESTIONS.length;
+  document.getElementById("score").textContent = "First-try score: " + firstTry + " / " + total;
+  document.getElementById("bar").style.width = (100 * Object.keys(solved).length / total) + "%";
+  if (Object.keys(solved).length === total) showSummary();
+}
+
+function showSummary() {
+  const firstTry = Object.keys(solved).filter(id => !firstTryWrong[id]).length;
+  const missed = QUESTIONS.filter(q => firstTryWrong[q.id]);
+  let s = '<h3>📊 Done — first-try score: ' + firstTry + ' / ' + QUESTIONS.length + '</h3>';
+  if (missed.length) {
+    s += '<p><b>Review these</b> (missed on first try):</p><ul>';
+    missed.forEach(q => { s += '<li>Q' + q.id + ' — ' + esc(q.topic) + ' <i>(' + esc(q.trap) + ')</i></li>'; });
+    s += '</ul>';
+  } else { s += '<p>Clean sweep on first try. 🎯 Your fundamentals are solid — this is where most candidates get exposed.</p>'; }
+  document.getElementById("summary").innerHTML = s;
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("revealAll").onclick = () => {
+  QUESTIONS.forEach(q => {
+    document.getElementById("exp" + q.id).classList.add("show");
+    document.querySelectorAll('.opt[data-q="' + q.id + '"]').forEach(o => {
+      if (+o.dataset.i === q.correct) o.classList.add("correct");
+    });
+  });
+};
+document.getElementById("reset").onclick = () => location.reload();
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

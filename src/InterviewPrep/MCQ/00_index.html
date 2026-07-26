@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GenAI Interview-Prep MCQ Bank</title>
+<style>
+  :root {
+    --bg:#f4f6fb; --panel:#fff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --accent:#0e7490; --accent2:#155e75; --tag:#7c3aed; --bar:#e2e8f0;
+    --int:#0284c7; --sen:#7c3aed; --trap:#b45309;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --accent:#22d3ee; --accent2:#67e8f9; --tag:#c4b5fd; --bar:#334155;
+    --int:#38bdf8; --sen:#c4b5fd; --trap:#fbbf24;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:34px 22px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+  header h1{margin:0 0 6px;font-size:1.7rem;}
+  header p{margin:0;opacity:.94;font-size:.92rem;max-width:760px;}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 90px;}
+  .controls{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:14px 0 6px;}
+  .stats{font-size:.9rem;color:var(--muted);}
+  .stats b{color:var(--accent);font-size:1.05rem;}
+  button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px;}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;transition:.15s;position:relative;overflow:hidden;}
+  a.card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.10);}
+  .card .num{font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.08em;}
+  .card h3{margin:4px 0 6px;font-size:1.08rem;color:var(--accent);}
+  .card .desc{font-size:.83rem;color:var(--muted);min-height:3.2em;}
+  .card .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .pill{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff;background:var(--tag);}
+  .pill.q{background:var(--accent);}
+  .pill.int{background:var(--int);}
+  .pill.sen{background:var(--sen);}
+  .section-title{margin:30px 0 4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:34px;line-height:1.7;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧠 GenAI Interview-Prep MCQ Bank</h1>
+  <p>Reverse-engineered scenario MCQs grounded in your resume — Infor MCP server, DocSage Agentic RAG, and 2.5 yrs Java/Spring + React. Every question is a real-world debug / design / trap, with an option-by-option breakdown, a mechanism deep-dive, and a go-learn pointer. Green = correct, red = try again.</p>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <span class="stats"><b id="totalQ">171</b> questions across <b>13</b> topics · pick any card to start</span>
+    <button id="theme">🌙 Dark</button>
+  </div>
+
+  <div class="section-title">Core GenAI (your day-to-day)</div>
+  <div class="grid" id="gridCore"></div>
+
+  <div class="section-title">Foundations &amp; Data</div>
+  <div class="grid" id="gridFound"></div>
+
+  <div class="section-title">Production &amp; Full-Stack (defend the resume)</div>
+  <div class="grid" id="gridProd"></div>
+
+  <div class="section-title">Real Interview Debriefs</div>
+  <div class="grid" id="gridReal"></div>
+
+  <div class="section-title">Origin</div>
+  <div class="grid" id="gridOrigin"></div>
+
+  <footer>
+    Built one topic at a time, each fully validated. Deterministic option-shuffling spreads answers across A/B/C/D.<br>
+    Cross-links tie Java/Spring concepts to their GenAI/Python counterparts. ⚠ marks genuinely debatable questions.
+  </footer>
+</div>
+<script>
+const TOPICS = [
+  { g:"gridCore", file:"01_rag_advanced_patterns.html", num:"TOPIC 01", title:"RAG & Advanced RAG Patterns", q:18, diff:"Senior",
+    desc:"Corrective/Adaptive RAG, chunking, reranking, retrieval failures, grading — the DocSage core." },
+  { g:"gridCore", file:"02_ai_agents_agentic.html", num:"TOPIC 02", title:"AI Agents & Agentic Systems", q:16, diff:"Senior",
+    desc:"ReAct loops, tool calling, multi-agent design, planning, single-vs-multi-agent tradeoffs." },
+  { g:"gridCore", file:"03_mcp_server_design.html", num:"TOPIC 03", title:"MCP Server Design", q:15, diff:"Senior",
+    desc:"Tool design, service-aware OAuth, session mgmt, field-level relevance — your Infor MCP work." },
+  { g:"gridCore", file:"04_langgraph_internals.html", num:"TOPIC 04", title:"LangGraph Internals", q:15, diff:"Senior",
+    desc:"State graphs, conditional edges, MemorySaver, streaming, checkpointing, cycles." },
+  { g:"gridFound", file:"05_llm_transformers_fundamentals.html", num:"TOPIC 05", title:"LLM Fundamentals & Transformers", q:15, diff:"Senior",
+    desc:"Attention, tokenization, context windows, sampling, KV cache, decoding strategies." },
+  { g:"gridFound", file:"06_vector_dbs_embeddings.html", num:"TOPIC 06", title:"Vector DBs & Embeddings", q:13, diff:"Intermediate",
+    desc:"FAISS, HNSW/IVF, similarity metrics, HuggingFace embeddings, index tradeoffs." },
+  { g:"gridFound", file:"07_prompt_engineering_structured.html", num:"TOPIC 07", title:"Prompt Engineering & Structured Output", q:13, diff:"Intermediate",
+    desc:"Few-shot, CoT, YAML instructions, JSON-mode, schema enforcement, output parsing." },
+  { g:"gridFound", file:"08_rag_evaluation_hallucination.html", num:"TOPIC 08", title:"RAG Evaluation & Hallucination", q:12, diff:"Senior",
+    desc:"Faithfulness, groundedness, RAGAS metrics, hallucination validation, eval pipelines." },
+  { g:"gridProd", file:"09_python_backend_api_auth.html", num:"TOPIC 09", title:"Python Backend, API & Auth", q:10, diff:"Senior",
+    desc:"FastAPI, async, Depends DI, OAuth/JWT, pydantic, N+1, streaming responses." },
+  { g:"gridProd", file:"10_production_llm_ops.html", num:"TOPIC 10", title:"Production LLM Ops", q:10, diff:"Senior",
+    desc:"Cost/latency, caching, fallbacks, observability, rate limits, guardrails, deployment." },
+  { g:"gridProd", file:"11_java_spring_microservices.html", num:"TOPIC 11", title:"Java / Spring Microservices", q:8, diff:"Intermediate",
+    desc:"DI, circuit breakers, @Transactional, JPA N+1, each cross-linked to a GenAI counterpart." },
+  { g:"gridProd", file:"12_react_frontend.html", num:"TOPIC 12", title:"React.js & Frontend", q:8, diff:"Intermediate",
+    desc:"Hooks, immutability, useEffect deps, stale closures, Redux Toolkit, race conditions." },
+  { g:"gridReal", file:"13_mcp_agent_architecture_tradeoffs.html", num:"TOPIC 13", title:"MCP & Agent Architecture Trade-offs", q:18, diff:"Senior",
+    desc:"MCP server topology, attention dilution vs multi-agent cost, accuracy-vs-latency framing — from real 2026 interview questions." },
+  { g:"gridOrigin", file:"nablon_ai_l2_assessment.html", num:"ORIGINAL", title:"Nablon.AI L2 Assessment", q:23, diff:"Mixed",
+    desc:"The 23-question assessment that started it all — the engine and style live here." }
+];
+
+const diffClass = d => d === "Intermediate" ? "int" : (d === "Senior" ? "sen" : "");
+let total = 0;
+TOPICS.forEach(t => {
+  if (t.g !== "gridOrigin") total += t.q;
+  const a = document.createElement("a");
+  a.className = "card";
+  a.href = t.file;
+  a.innerHTML =
+    '<div class="num">' + t.num + '</div>' +
+    '<h3>' + t.title + '</h3>' +
+    '<div class="desc">' + t.desc + '</div>' +
+    '<div class="meta">' +
+      '<span class="pill q">' + t.q + ' questions</span>' +
+      '<span class="pill ' + diffClass(t.diff) + '">' + t.diff + '</span>' +
+    '</div>';
+  document.getElementById(t.g).appendChild(a);
+});
+document.getElementById("totalQ").textContent = total;
+
+const themeBtn = document.getElementById("theme");
+themeBtn.onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "🌙 Dark" : "☀️ Light";
+};
+</script>
+</body>
+</html>

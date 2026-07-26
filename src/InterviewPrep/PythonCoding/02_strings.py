@@ -313,3 +313,19 @@ def group_by_first_char(arr):
     return groups
 
 print("Group:", group_by_first_char(["Rajini", "Ramu", "Suhash", "Soundarya", "Aman"]))
+
+#Group anagrams from a list of strings.
+
+input_data = ["eat", "tea", "tan", "ate", "nat", "bat"]
+
+def groupAnagrams(data):
+    freq = {}
+    for word in data:
+        key = "".join(sorted(word))  # sort chars -> string key
+        if key not in freq:
+            freq[key] = []
+        freq[key].append(word)       # append, don't overwrite
+    print(freq)
+    return list(freq.values())
+
+print(groupAnagrams(input_data))

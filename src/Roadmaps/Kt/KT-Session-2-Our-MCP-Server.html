@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Session 2 — Our SXe MCP Server: Tools &amp; Agents</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#818cf8; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --border:#334155; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  a{color:var(--accent);text-decoration:none}
+  .layout{display:flex;min-height:100vh}
+  nav.toc{width:300px;flex-shrink:0;background:#0b1424;border-right:1px solid var(--border);padding:22px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  nav.toc h4{color:var(--accent);text-transform:uppercase;font-size:.78rem;letter-spacing:1px;margin:0 0 6px}
+  nav.toc .badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(251,191,36,.15);color:var(--amber);margin-bottom:14px}
+  nav.toc a{display:block;color:var(--muted);padding:7px 10px;border-radius:6px;font-size:.9rem;border-left:2px solid transparent}
+  nav.toc a:hover{background:var(--panel);color:var(--text);border-left-color:var(--accent)}
+  .content{flex:1;max-width:900px;margin:0 auto;padding:36px 40px 80px}
+  header.top{background:linear-gradient(135deg,#92400e,#0ea5e9);padding:34px;border-radius:14px;margin-bottom:10px}
+  header.top h1{margin:0;font-size:1.9rem}
+  header.top p{margin:6px 0 0;color:#e0f2fe}
+  h2{color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:48px;scroll-margin-top:20px}
+  h3{color:var(--accent2);margin-top:26px}
+  .time{display:inline-block;font-size:.78rem;color:var(--accent);background:var(--panel);padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+  .analogy{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .analogy .t{font-weight:700;color:var(--amber);margin-bottom:4px}
+  .example{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:8px;padding:14px 18px;margin:18px 0}
+  .example .t{font-weight:700;color:var(--green);margin-bottom:4px}
+  .keyterm{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .keyterm .t{font-weight:700;color:var(--accent2)}
+  .warn{background:var(--panel2);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:8px;padding:12px 16px;margin:16px 0}
+  .warn .t{font-weight:700;color:var(--red)}
+  .diagram{background:#0b1424;border:1px solid var(--border);border-radius:12px;padding:20px;margin:22px 0;text-align:center;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--panel);border-radius:10px;overflow:hidden}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:.95rem}
+  th{background:var(--panel2);color:var(--accent);font-size:.85rem;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;color:#7dd3fc;font-size:.9em}
+  pre.codeblock{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:'Consolas','Courier New',monospace;font-size:.86rem;color:#cbd5e1;line-height:1.5}
+  pre.codeblock .cm{color:#64748b}
+  pre.codeblock .kw{color:#c084fc}
+  pre.codeblock .st{color:#7dd3fc}
+  pre.codeblock .fn{color:#34d399}
+  .recap{background:linear-gradient(135deg,#1e3a8a33,#0ea5e922);border:1px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:30px}
+  .recap h3{color:var(--accent);margin-top:0}
+  .pager{display:flex;justify-content:space-between;margin-top:40px;gap:10px}
+  .pager a{background:var(--panel);border:1px solid var(--border);padding:12px 18px;border-radius:8px;flex:1;text-align:center}
+  .pager a:hover{border-color:var(--accent)}
+  ul li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <span class="badge">SESSION 2 · Intermediate</span>
+    <h4>On this page</h4>
+    <a href="#s21">2.1 Bird's-eye view</a>
+    <a href="#s22">2.2 Our tech stack</a>
+    <a href="#s23">2.3 How WE use MCP</a>
+    <a href="#s24">2.4 Anatomy of a Tool</a>
+    <a href="#s25">2.5 What is an Agent</a>
+    <a href="#s26">2.6 Read vs Write agents</a>
+    <a href="#s27">2.7 Multi-agent patterns</a>
+    <a href="#s28">2.8 3 ways to build a server</a>
+    <a href="#s29">2.9 Recap</a>
+    <hr style="border-color:#334155;margin:16px 0"/>
+    <a href="KT-Session-1-Foundations.html">← Session 1</a>
+    <a href="KT-Session-Index.html">Index</a>
+    <a href="KT-Session-3-Building-and-Advanced.html">Session 3 →</a>
+  </nav>
+
+  <div class="content">
+    <header class="top">
+      <h1>Session 2 — Our SXe MCP Server</h1>
+      <p>How our server is built: architecture, the anatomy of a tool, what an agent is, and read vs write. <p>
+    </header>
+
+    <p style="color:var(--muted);font-size:1.05rem">
+      In Session 1 we learned the concepts. Now we open the hood of <b>our</b> system — the SXe MCP server that
+      powers conversational access to the Infor SX.e ERP. By the end you'll understand how a user question becomes
+      a real ERP action, what a tool looks like in our code, and how agents orchestrate those tools.
+    </p>
+
+    <h2 id="s21">2.1 Bird's-eye view — the full journey <span class="time"></span></h2>
+    <p>Here's the end-to-end flow, from the screen a user is on to the ERP and back:</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  U([User on an SX.e screen]) --> IBC[IBC Context<br/>company, product, vendor, PO on screen]
+  IBC --> ORC[GenAI Orchestrator<br/>routes to the right agent]
+  ORC --> AG[Agent<br/>rules + tool selection]
+  AG --> MCP[SXe MCP Server<br/>our tools]
+  MCP --> GW[SX.e API Gateway]
+  GW --> ERP[(SX.e ERP)]
+  ERP --> GW --> MCP --> AG --> U
+      </pre>
+    </div>
+    <div class="keyterm">
+      <div class="t">Key term — IBC Context</div>
+      IBC is the "screen context." When a user opens the assistant while viewing PO 2705 in company 1000, that
+      context (company, PO, product, vendor) is passed in automatically — so the agent already knows <em>what</em>
+      the user is looking at without asking.
+    </div>
+
+    <h2 id="s22">2.2 Our tech stack <span class="time"></span></h2>
+    <table>
+      <tr><th>Layer</th><th>Technology</th><th>Why</th></tr>
+      <tr><td>Language</td><td>Python 3.11+</td><td>Fast to build, rich ecosystem</td></tr>
+      <tr><td>MCP framework</td><td>FastMCP</td><td>Turns a Python function into an MCP tool with one decorator</td></tr>
+      <tr><td>Transport</td><td>Streamable HTTP</td><td>Works over the web; scalable, stateless</td></tr>
+      <tr><td>Auth</td><td>OAuth2 + token/oper caching</td><td>Secure, multi-tenant</td></tr>
+      <tr><td>Backend</td><td>SX.e REST API gateway</td><td>Reuses existing, validated ERP endpoints</td></tr>
+    </table>
+    <div class="keyterm">
+      <div class="t">One line to remember</div>
+      Our server is a <b>Python program</b> that turns each SX.e API endpoint into an <b>MCP tool</b> the AI can call.
+    </div>
+
+    <h2 id="s23">2.3 How WE use MCP — endpoint-as-tool <span class="time"></span></h2>
+    <p>
+      We made a deliberate design choice: <b>expose each SX.e endpoint as its own tool</b>. A tool authenticates,
+      builds the request, calls the endpoint, and returns the response. Nothing more, nothing hidden.
+    </p>
+    <p><b>Why this approach:</b></p>
+    <ul>
+      <li><b>Reuse</b> — the ERP already has hundreds of tested endpoints; we don't rebuild logic.</li>
+      <li><b>Safety</b> — the endpoint's own business rules and validations still apply. We can't bypass them.</li>
+      <li><b>Granularity</b> — one endpoint = one tool = clear, predictable behavior the LLM can reason about.</li>
+      <li><b>Multi-tenant</b> — company/user come from context, never hardcoded.</li>
+    </ul>
+    <div class="example">
+      <div class="t">✅ Example — our domains</div>
+      We have tools grouped by area: <code>customer</code>, <code>order</code>, <code>product</code>,
+      <code>vendor</code>, <code>purchase_order</code>, <code>po_action</code>, <code>quotation</code>.
+      Each folder holds one file per tool.
+    </div>
+
+    <h2 id="s24">2.4 Anatomy of a Tool <span class="time"></span></h2>
+    <p>Every tool follows the same clean pattern. Here's the shape (simplified):</p>
+    <pre class="codeblock"><span class="cm"># 1. Decorators register it as an MCP tool and add guardrails</span>
+<span class="kw">@mcp.tool()</span>
+<span class="kw">@require_cono</span>              <span class="cm"># company number is required</span>
+<span class="kw">@log_tool_execution</span>
+<span class="kw">async def</span> <span class="fn">get_pos_for_acknowledgment</span>(cono, pono=0, vendno=0, ...):
+    <span class="st">"""Returns POs eligible for acknowledgment (this docstring
+    tells the LLM WHEN to use the tool)."""</span>
+
+    <span class="cm"># 2. Authenticate + get the endpoint URL (framework handles token/oper)</span>
+    headers, url, token = <span class="kw">await</span> authenticate_and_prepare(cono, ENDPOINT, ctx)
+
+    <span class="cm"># 3. Build the request payload</span>
+    payload = build_payload(required={...}, optional={...})
+
+    <span class="cm"># 4. Call the SX.e endpoint</span>
+    response = <span class="kw">await</span> backend_client.post(url, headers, payload)
+
+    <span class="cm"># 5. Standardize the response (success / 420 / error)</span>
+    <span class="kw">return await</span> handle_api_response(response, data_key=<span class="st">"loadpoearesults"</span>)</pre>
+    <table>
+      <tr><th>Piece</th><th>What it does</th></tr>
+      <tr><td><code>@mcp.tool()</code></td><td>Registers the function as a callable MCP tool</td></tr>
+      <tr><td><b>docstring</b></td><td>The tool's "job ad" — the LLM reads it to decide when to call it. This is critical.</td></tr>
+      <tr><td><code>authenticate_and_prepare</code></td><td>Gets a valid token, resolves the operator, builds the URL — shared by all tools</td></tr>
+      <tr><td><code>build_payload</code></td><td>Assembles the request body cleanly (required + optional fields)</td></tr>
+      <tr><td><code>handle_api_response</code></td><td>Uniformly handles success, business errors (420), and failures; extracts the right data key</td></tr>
+    </table>
+    <div class="keyterm">
+      <div class="t">The big idea</div>
+      The <b>docstring is as important as the code</b>. The code does the work; the docstring is how the AI knows
+      the tool exists and when to use it. A vague description = the LLM calls the wrong tool.
+    </div>
+
+    <h2 id="s25">2.5 What is an Agent (and how it differs from a tool) <span class="time"></span></h2>
+    <p>
+      A <b>tool</b> is one action. An <b>agent</b> is the <b>rulebook</b> that decides which tools to use, in what order,
+      and how to talk to the user. In our system an agent is defined in a <b>YAML instructions file</b> — no code, just rules.
+    </p>
+    <div class="analogy">
+      <div class="t">🧠 Analogy: brain &amp; hands</div>
+      Tools are the <b>hands</b> (they do things). The agent is the <b>brain's rulebook</b> (it decides which hand to use).
+      Same hands can be driven by different rulebooks — that's why we have several agents sharing tools.
+    </div>
+    <p>A typical agent YAML has these parts:</p>
+    <pre class="codeblock"><span class="kw">agent:</span>
+  name: <span class="st">"PurchaseOrderAcknowledgmentAgent"</span>
+  description: <span class="st">"Acknowledge POs and edit line/header fields..."</span>
+<span class="kw">critical_rules:</span>   <span class="cm"># the non-negotiable guardrails</span>
+<span class="kw">tools:</span>            <span class="cm"># which tools this agent may use</span>
+<span class="kw">tool_selection:</span>   <span class="cm"># routing: which tool for which question</span>
+<span class="kw">parameter_resolution:</span> <span class="cm"># where each input comes from (IBC, user...)</span>
+<span class="kw">behavior:</span>         <span class="cm"># step-by-step conduct rules</span>
+<span class="kw">display_guidelines:</span> <span class="cm"># how to format the answer (tables)</span>
+<span class="kw">examples:</span>         <span class="cm"># sample Q &amp; the exact action to take</span></pre>
+    <table>
+      <tr><th>Section</th><th>Purpose</th></tr>
+      <tr><td>critical_rules</td><td>Hard limits (scope, safety) the agent must always follow</td></tr>
+      <tr><td>tool_selection</td><td>Maps a user's intent to the correct tool</td></tr>
+      <tr><td>parameter_resolution</td><td>Says where each value comes from (e.g., cono from IBC)</td></tr>
+      <tr><td>behavior</td><td>The turn-by-turn conduct (e.g., preview then confirm)</td></tr>
+      <tr><td>examples</td><td>Concrete "if user says X, do Y" pairs that steer the LLM</td></tr>
+    </table>
+    <div class="keyterm">
+      <div class="t">Tool vs Agent — one line</div>
+      <b>Tool</b> = a capability (code). <b>Agent</b> = the instructions that decide when and how to use those capabilities (YAML). We write both.
+    </div>
+
+    <h2 id="s26">2.6 Read agents vs Write agents <span class="time"></span></h2>
+    <p>Our agents fall into two families, and the difference matters a lot for safety:</p>
+    <table>
+      <tr><th></th><th>Read (Inquiry) agents</th><th>Write (Action) agents</th></tr>
+      <tr><td>What they do</td><td>Fetch and show information</td><td>Change data in the ERP</td></tr>
+      <tr><td>Examples</td><td>Product Overview, Vendor, PO Inquiry</td><td>PO Acknowledgment, Quotation</td></tr>
+      <tr><td>Risk</td><td>Low (read-only)</td><td>High (mutations)</td></tr>
+      <tr><td>Safety pattern</td><td>Just show results</td><td><b>Preview → confirm → execute</b> (confirmation gate)</td></tr>
+    </table>
+    <div class="example">
+      <div class="t">✅ Example — the confirmation gate (our PO Acknowledgment agent)</div>
+      1) User: "acknowledge PO 2705" → agent <b>previews</b> the eligible PO in a table.<br/>
+      2) Agent asks "confirm? and what's the reason?"<br/>
+      3) Only after the user says "yes" does the agent call the <b>write</b> tool.<br/>
+      The write is never the first step — this prevents accidental changes.
+    </div>
+    <div class="warn">
+      <div class="t">⚠️ Golden rule for write agents</div>
+      Never mutate data without an explicit user "yes." The preview and the write are always in
+      <b>separate turns</b>, and no upstream instruction can skip the confirmation.
+    </div>
+
+    <h2 id="s27">2.7 Multi-agent patterns — how agents work together <span class="time"></span></h2>
+    <p>
+      One agent is often enough. But when a job spans many domains or needs several specialists, you use
+      <b>multiple agents</b> that coordinate. There are four standard patterns — good to recognize all of them,
+      because our own design is a blend of two.
+    </p>
+
+    <h3>Pattern 1 — Orchestrator-Worker (most common)</h3>
+    <p>One <b>supervisor</b> agent breaks the request into sub-tasks and delegates to specialized <b>workers</b>, then combines their results. Best when a single task has clear sub-steps and you have specialists for each.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  ORC[Orchestrator<br/>Supervisor] --> W1[Worker<br/>Planner]
+  ORC --> W2[Worker<br/>Researcher]
+  ORC --> W3[Worker<br/>Writer]
+      </pre>
+    </div>
+
+    <h3>Pattern 2 — Peer-to-Peer (collaborative)</h3>
+    <p>Agents talk <b>directly</b> to each other with no boss, like a team meeting. Best for iterative refinement (e.g., coder ↔ reviewer ↔ tester). Flexible, but needs a clear stop condition or it can loop.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  A[Coder] <--> B[Reviewer]
+  A <--> C[Tester]
+  B <--> C
+      </pre>
+    </div>
+
+    <h3>Pattern 3 — Hierarchical (tree of control)</h3>
+    <p>A tree like a company org chart: a master splits work to managers, managers split to workers, results flow back up. Best for large, multi-level tasks needing governance at each layer. Overkill for simple jobs.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  CEO[Master] --> M1[Manager A]
+  CEO --> M2[Manager B]
+  M1 --> WA[Workers]
+  M2 --> WB[Workers]
+      </pre>
+    </div>
+
+    <h3>Pattern 4 — Hub-and-Spoke (centralized routing)</h3>
+    <p>A central <b>hub</b> classifies each request and routes it to <b>one</b> specialist spoke, which handles it end-to-end. Best for clean domain separation (HR / Sales / Tech…). Differs from Orchestrator-Worker: the hub routes to a single spoke rather than combining many workers.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  HUB[Hub<br/>Router] --> S1[HR]
+  HUB --> S2[Sales]
+  HUB --> S3[Tech]
+  HUB --> S4[Legal]
+  HUB --> S5[Finance]
+      </pre>
+    </div>
+
+    <h3>Which pattern for which job?</h3>
+    <table>
+      <tr><th>Scenario</th><th>Best pattern</th></tr>
+      <tr><td>Single task, multiple sub-steps</td><td>Orchestrator-Worker</td></tr>
+      <tr><td>Iterative refinement (code review, debate)</td><td>Peer-to-Peer</td></tr>
+      <tr><td>Large, complex task with many levels</td><td>Hierarchical</td></tr>
+      <tr><td>Domain routing (HR / Sales / Tech)</td><td>Hub-and-Spoke</td></tr>
+      <tr><td>Customer support with specialists</td><td>Hub-and-Spoke</td></tr>
+      <tr><td>Data pipeline / parallel investigation</td><td>Orchestrator-Worker / Hierarchical</td></tr>
+      <tr><td>Open-ended creative work</td><td>Peer-to-Peer</td></tr>
+    </table>
+
+    <div class="example">
+      <div class="t">✅ How this maps to us — why we chose our pattern</div>
+      Our <b>GenAI orchestrator</b> acts as the supervisor/hub: it reads the user's question and the screen (IBC)
+      context, decides which <b>domain agent</b> it belongs to — PO Acknowledgment, Vendor, Product, Customer,
+      Quotation — and routes it to that one specialist agent, which handles the request end-to-end with its own tools.
+      That's essentially a <b>Hub-and-Spoke + Orchestrator-Worker</b> blend.
+    </div>
+    <div class="keyterm">
+      <div class="t">Why it suits an ERP like ours</div>
+      <b>Clean separation</b> (each domain agent owns its tools and rules), <b>safety &amp; governance</b> (each agent is
+      independently reviewed and tested — vital for write actions), <b>easy to extend</b> (add a new agent = add a new
+      spoke, no rewrite), and <b>predictable routing</b> (one request → one accountable agent).
+    </div>
+
+    <h2 id="s28">2.8 Three ways to build an MCP server <span class="time"></span></h2>
+    <p>Our endpoint-as-tool approach is one of three common patterns. Good to know the others exist:</p>
+    <table>
+      <tr><th>Pattern</th><th>How it works</th><th>When to use</th></tr>
+      <tr><td><b>Endpoint-as-tool</b> (ours)</td><td>Each API endpoint becomes a tool</td><td>You have a mature API and want to reuse its validations — our case</td></tr>
+      <tr><td>Database-as-MCP</td><td>Expose tables/queries as tools; the AI can query data directly</td><td>Ad-hoc analytics, when no API exists</td></tr>
+      <tr><td>External server</td><td>Connect to a ready-made server (Jira, GitLab/Oxford, filesystem, GitHub)</td><td>Integrating third-party systems by chat</td></tr>
+    </table>
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  H[MCP Host] --> M1[Endpoint-as-tool<br/>our SXe server] --> ERP[(SX.e API)]
+  H --> M2[Database MCP server] --> DB[(Database)]
+  H --> M3[External MCP server] --> EXT[(Jira / GitLab / Files)]
+      </pre>
+    </div>
+    <div class="keyterm">
+      <div class="t">Takeaway</div>
+      One AI host can plug into <b>many</b> MCP servers at once — ours for the ERP, a Jira server for tickets,
+      a database server for analytics — all through the same standard.
+    </div>
+
+    <div class="recap" id="s29">
+      <h3>🎯 2.9 Recap — the 6 things to remember</h3>
+      <ol>
+        <li><b>Full flow:</b> Screen (IBC) → Orchestrator → Agent → MCP tool → API gateway → ERP → back.</li>
+        <li><b>Our choice:</b> one SX.e endpoint = one tool (reuse + safety + clarity).</li>
+        <li><b>Tool anatomy:</b> decorators → authenticate → build payload → call → handle response; the docstring tells the LLM when to use it.</li>
+        <li><b>Agent:</b> a YAML rulebook (tools, routing, behavior, examples) — the brain that drives the hands.</li>
+        <li><b>Multi-agent patterns:</b> Orchestrator-Worker, Peer-to-Peer, Hierarchical, Hub-and-Spoke — ours is a Hub-and-Spoke / Orchestrator blend (route to one domain specialist).</li>
+        <li><b>Read vs Write:</b> writes always use the preview → confirm → execute gate.</li>
+      </ol>
+    </div>
+
+    <div class="pager">
+      <a href="KT-Session-1-Foundations.html">← Session 1</a>
+      <a href="KT-Session-3-Building-and-Advanced.html">Next: Session 3 — Building &amp; Advanced →</a>
+    </div>
+  </div>
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+</body>
+</html>
